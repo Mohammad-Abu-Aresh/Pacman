@@ -3,3 +3,4 @@ tst.py
 test*
 *.pyc
 __pycache__/
+.*.swp
