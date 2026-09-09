@@ -31,4 +31,4 @@ jobs:
 
     - name: Run Pytest Suite
       run: |
-        pytest -v
+        PYTHONPATH=. pytest tests/test_steve_successful_move.py
