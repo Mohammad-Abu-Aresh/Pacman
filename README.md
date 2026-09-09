@@ -1,4 +1,4 @@
-This activity has been created as part of the 42 curriculum by mabu-are, aabtah.
+*This activity has been created as part of the 42 curriculum by mabu-are, aabtah.*
 Pac-Man (A-Maze-ing Integration - Minecraft Style)
 
 A Python implementation of the classic Pac-Man arcade game built with a modular, object-oriented architecture, featuring procedural maze generation via an external "A-Maze-ing" package, a persistent highscore system, and a unique Minecraft-inspired visual theme and block style.
