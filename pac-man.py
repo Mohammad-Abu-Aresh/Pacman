@@ -1,13 +1,10 @@
-# from package_pacman import ...
-
-def main() -> None:
-    ...
-
+from game import GameEngine
 
 if __name__ == "__main__":
     try:
-        main()
+        game = GameEngine()
+        game.run()
     except Exception:
         exit(1)
-    else:
-        exit(0)
+    except KeyboardInterrupt:
+        exit(1)
