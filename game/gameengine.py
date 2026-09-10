@@ -25,7 +25,7 @@ class GameEngine:
         start_options = Screens().start_screen(screen, width)
         # make the Screen obj sentraliezed what ever the size updated !
         title_game = test_font.render("Pac-Man", False, "#7B00FF")
-        background = pygame.image.load("photos/kjf.png")
+        background = pygame.image.load("photos/main_creen.jpg")
 
         while True:
             for event in pygame.event.get():
