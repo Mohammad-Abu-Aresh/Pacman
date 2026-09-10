@@ -40,8 +40,8 @@ class Button:
         screen.blit(
             button_text,
             (
-                self.x - button_text.get_width() // 2,
-                self.y - button_text.get_height() // 2,
+                self.x - button_text.get_width(),
+                self.y - button_text.get_height(),
             ),
         )
 

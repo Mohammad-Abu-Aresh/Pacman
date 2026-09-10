@@ -1,1 +1,3 @@
-pygame 
+pygame
+flake8
+mypy 
