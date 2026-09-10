@@ -53,8 +53,8 @@ class Screens:
     def start_screen(
         self, screen: pygame.Surface, width: int
     ) -> Callable[[], dict[str, bool]]:
-        bly_now = Button(
-            (width // 2, 200), "Bly Now", 30
+        play_now = Button(
+            (width // 2, 200), "Play Now", 30
         )
         best_players = Button(
             (width // 2, 300), "Best Players", 30
@@ -65,7 +65,7 @@ class Screens:
 
         def draw_buttons() -> dict[str, bool]:
             return {
-                "bly_now": bly_now.draw(screen),
+                "play_now": play_now.draw(screen),
                 "best_players": best_players.draw(screen),
                 "exit_game": exit_game.draw(screen),
             }

@@ -2,5 +2,6 @@ tmp.py
 tst.py
 test*
 *.pyc
+*/*.pyc
 __pycache__/
 .*.swp
