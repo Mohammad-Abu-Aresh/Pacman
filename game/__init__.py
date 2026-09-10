@@ -1,3 +1,3 @@
 from .gameengine import GameEngine
-
-__all__ = ["GameEngine"]
+from .block import Block
+__all__ = ["GameEngine", "Block"]
