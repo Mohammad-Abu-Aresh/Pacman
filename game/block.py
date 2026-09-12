@@ -1,10 +1,7 @@
+from mazegenerator import MazeGenerator
 
 class Block():
-
     def __init__(self, wall: int, x: int, y: int) -> None:
-        # self.x: int = x
-        # self.y: int = y
-
         self.left: bool = True if wall >= 8 else False
         if self.left:
             wall -= 8
@@ -14,12 +11,21 @@ class Block():
         self.right: bool = True if wall >= 2 else False
         if self.right:
             wall -= 2
-        self.right: bool = True if wall >= 1 else False
-        if self.right:
+        self.top: bool = True if wall >= 1 else False
+        if self.top:
             wall -= 1
         if wall > 0:
             raise ValueError("walles have value more than it shuld be")
 
 
 class Mape():
-    def __init__(self, maze: MazeGenerator) -> None:
+    def __init__(self, maze: MazeGenerator = MazeGenerator) -> None:
+        self.mape = self._blocks(maze.maze)
+
+    def _blocks(self, lists: list[list[int]]) -> list[list[Block]]:
+        res = []
+        for lis in lists:
+            arr = []
+            for i in lis:
+                arr = arr + Block(i)
+            res.append(arr)
