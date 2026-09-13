@@ -4,59 +4,66 @@ from .screens import Screens
 
 
 class GameEngine:
-
-    def run(self) -> None:
-        state_variable: int = 1 
+    def __init__(self) -> None:
+        self.state_variable: int = Screens.MAIN_MENU_SCREEN
         # make it str or any to know what screen is this... and rename it
         pygame.init()
 
-        screen_info = pygame.display.Info()
-        width = screen_info.current_w
-        height = screen_info.current_h
+        self.screen_info = pygame.display.Info()
+        width = self.screen_info.current_w
+        height = self.screen_info.current_h
 
-        screen = pygame.display.set_mode(
-            (width, height), pygame.RESIZABLE
+        self.screen = pygame.display.set_mode(
+            (width, height)
         )
         pygame.display.set_caption("Pac-Man")
-        clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
         test_font = pygame.font.Font("font/minecraft.ttf", 50)
         test_font.set_bold(True)
         # make it font without test
-        start_options = Screens().start_screen(screen, width)
+        self.start_options = Screens().MAIN_MENU_SCREEN(self.screen, width, height)
         # make the Screen obj sentraliezed what ever the size updated !
-        title_game = test_font.render("Pac-Man", False, "#7B00FF")
+        self.title_game = test_font.render("Pac-Man", False, "#7B00FF")
         # background = pygame.image.load("photos/main_creen.jpg")
 
         background_raw = pygame.image.load("photos/main_creen.jpg")
 
         background = pygame.transform.scale(background_raw, (width, height))
+        self.background = background
+
+    def run(self) -> None:
+
 
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            screen.blit(background, (0, 0))
-            title_x = width // 2 - title_game.get_width() // 2
-            screen.blit(title_game, (title_x, 20))
+            self.screen.fill((0, 0, 0))
+            if self.state_variable == Screens.MAIN_MENU_SCREEN:
+                self.screen.blit(self.background, (0, 0))
+                title_x = self.screen_info.current_w // 2 - self.title_game.get_width() // 2
+                self.screen.blit(self.title_game, (title_x, 20))
+                drawing_copy = self.start_options()
+                if drawing_copy["play_game"]:
+                    print("PLAY GAME")
+                    #self.state_variable = 2
+                elif drawing_copy["minecraft_mode"]:
+                    print("minecraft_mode")
+                elif drawing_copy["top scores"]:
+                    print("top scores")
+                    #self.state_variable = 4
+                elif drawing_copy["settings"]:
+                    print("SETTINGS")
+                    #self.state_variable = 3
+                elif drawing_copy["quit_game"]:
+                    print("QUIT GAME")
+                    #pygame.quit()
+                    #sys.exit(0)
 
-            if state_variable == 1:
-                drawing_copy = start_options()
-                if drawing_copy["play_now"]:
-                    print("PLAY NOW")
-                    state_variable = 2
-                elif drawing_copy["best_players"]:
-                    print("BEST PLAYERS")
-                    state_variable = 3
-                elif drawing_copy["exit_game"]:
-                    print("EXIT GAME")
-                    pygame.quit()
-                    sys.exit(0)
             pygame.display.update()
-            clock.tick(90)
+            self.clock.tick(60)
 
-        def handle_events() -> None:
-            pass
 
         def update_game_time() -> None:
             pass

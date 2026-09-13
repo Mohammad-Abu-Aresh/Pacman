@@ -3,18 +3,27 @@ import pygame
 
 
 class Button:
+    import pygame
+
+
+class Button:
+
     def __init__(
         self,
         coordinates: tuple[int, int],
-        text: str,
-        font_size: int,
+        size: tuple[int, int],
+        text: str = None,
+        font_size: int = 25,
+        text_color: str |tuple[int, int, int] = "#000000",
+
     ) -> None:
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.text = text
         self.font_size = font_size
+        self.text_color = text_color
         self.rect = pygame.Rect(
-            self.x - 100, self.y - 25, 200, 50
+            self.x - size[0] // 2, self.y - size[1] // 2, size[0], size[1]
         )
         self.clicked = False
 
@@ -24,7 +33,7 @@ class Button:
             "font/minecraft.ttf", self.font_size
         )
         button_text = button_font.render(
-            self.text, False, "#000000"
+            self.text, False, self.text_color
         )
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
@@ -49,24 +58,40 @@ class Button:
 
 
 class Screens:
-
-    def start_screen(
-        self, screen: pygame.Surface, width: int
+    MAIN_MENU_SCREEN = 1
+    GAME_SCREEN = 2
+    SETTINGS_SCREEN = 3
+    HIGHSCORE_SCREEN = 4
+    GAME_OVER_SCREEN = 5
+    VICTORY_SCREEN = 6
+    
+    def MAIN_MENU_SCREEN(
+        self, screen: pygame.Surface, width: int,
+        height: int
     ) -> Callable[[], dict[str, bool]]:
-        play_now = Button(
-            (width // 2, 200), "Play Now", 30
-        )
-        best_players = Button(
-            (width // 2, 300), "Best Players", 30
-        )
-        exit_game = Button(
-            (width // 2, 400), "Exit Game", 30
-        )
+        play_game = Button(
+    (width * 0.21, height * 0.41), (width * 0.22, height * 0.08)
+)
+        minecraft_mode = Button(
+    (width * 0.21, height * 0.51), (width * 0.22, height * 0.08)
+)
+        achievements = Button(
+    (width * 0.21, height * 0.60), (width * 0.22, height * 0.08)
+)
+        settings = Button(
+    (width * 0.21, height * 0.69), (width * 0.22, height * 0.08)
+)
+        quit_game = Button(
+    (width * 0.21, height * 0.78), (width * 0.22, height * 0.08)
+)
 
         def draw_buttons() -> dict[str, bool]:
             return {
-                "play_now": play_now.draw(screen),
-                "best_players": best_players.draw(screen),
-                "exit_game": exit_game.draw(screen),
+                "play_game": play_game.draw(screen),
+                "minecraft_mode": minecraft_mode.draw(screen),
+                "top scores": achievements.draw(screen),
+                "settings": settings.draw(screen),
+                "quit_game": quit_game.draw(screen),
+                
             }
         return draw_buttons
