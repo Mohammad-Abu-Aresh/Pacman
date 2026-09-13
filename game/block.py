@@ -1,5 +1,6 @@
 from mazegenerator import MazeGenerator
 
+
 class Block():
     def __init__(self, wall: int, x: int, y: int) -> None:
         self.left: bool = True if wall >= 8 else False
@@ -29,3 +30,4 @@ class Mape():
             for i in lis:
                 arr = arr + Block(i)
             res.append(arr)
+        return res
