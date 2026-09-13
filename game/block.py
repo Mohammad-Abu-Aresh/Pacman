@@ -29,3 +29,4 @@ class Mape():
             for i in lis:
                 arr = arr + Block(i)
             res.append(arr)
+        return res
