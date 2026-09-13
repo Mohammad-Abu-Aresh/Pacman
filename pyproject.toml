@@ -15,7 +15,9 @@ dependencies = [
     "mazegenerator @ file:///home/mabu-are/core/Pacman/mazegenerator-2.1.0-py3-none-any.whl"
 ]
 
+[tool.poetry]
+package-mode = false
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-package-mode = false

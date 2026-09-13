@@ -3,10 +3,6 @@ import pygame
 
 
 class Button:
-    import pygame
-
-
-class Button:
 
     def __init__(
         self,
@@ -14,7 +10,7 @@ class Button:
         size: tuple[int, int],
         text: str = None,
         font_size: int = 25,
-        text_color: str |tuple[int, int, int] = "#000000",
+        text_color: str | tuple[int, int, int] = "#000000",
 
     ) -> None:
         self.x = coordinates[0]
@@ -64,26 +60,26 @@ class Screens:
     HIGHSCORE_SCREEN = 4
     GAME_OVER_SCREEN = 5
     VICTORY_SCREEN = 6
-    
-    def MAIN_MENU_SCREEN(
+
+    def main_menu_screen(
         self, screen: pygame.Surface, width: int,
         height: int
     ) -> Callable[[], dict[str, bool]]:
         play_game = Button(
-    (width * 0.21, height * 0.41), (width * 0.22, height * 0.08)
-)
+                (width * 0.21, height * 0.41), (width * 0.22, height * 0.08)
+                )
         minecraft_mode = Button(
-    (width * 0.21, height * 0.51), (width * 0.22, height * 0.08)
-)
+                (width * 0.21, height * 0.51), (width * 0.22, height * 0.08)
+                )
         achievements = Button(
-    (width * 0.21, height * 0.60), (width * 0.22, height * 0.08)
-)
+                (width * 0.21, height * 0.60), (width * 0.22, height * 0.08)
+                )
         settings = Button(
-    (width * 0.21, height * 0.69), (width * 0.22, height * 0.08)
-)
+                (width * 0.21, height * 0.69), (width * 0.22, height * 0.08)
+                )
         quit_game = Button(
-    (width * 0.21, height * 0.78), (width * 0.22, height * 0.08)
-)
+                (width * 0.21, height * 0.78), (width * 0.22, height * 0.08)
+                )
 
         def draw_buttons() -> dict[str, bool]:
             return {
@@ -92,6 +88,5 @@ class Screens:
                 "top scores": achievements.draw(screen),
                 "settings": settings.draw(screen),
                 "quit_game": quit_game.draw(screen),
-                
             }
         return draw_buttons
