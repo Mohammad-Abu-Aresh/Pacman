@@ -4,7 +4,9 @@ from abc import ABC, abstractmethod
 class Creature(ABC):
 
     def __init__(self, spawn_point: tuple[int, int]):
-        self.x: int, self.y: int = spawn_point
+        self.x: int
+        self.y: int
+        self.x, self.y = spawn_point
     
     @abstractmethod
     def move(self) -> None:
@@ -24,7 +26,7 @@ class Creature(ABC):
 
 class Player(Creature):
 
-    def __init__(self, spawn_point, lives: int = 3, super_timer: int):
+    def __init__(self, spawn_point, super_timer: int, lives: int = 3):
         super().__init__(spawn_point)
         self._lives = lives
         self._score: int = 0

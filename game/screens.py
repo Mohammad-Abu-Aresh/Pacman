@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 import pygame
 
 
@@ -8,7 +8,7 @@ class Button:
         self,
         coordinates: tuple[int, int],
         size: tuple[int, int],
-        text: str = None,
+        text: Optional[str] = None,
         font_size: int = 25,
         text_color: str | tuple[int, int, int] = "#000000",
 
@@ -29,7 +29,7 @@ class Button:
             "font/minecraft.ttf", self.font_size
         )
         button_text = button_font.render(
-            self.text, False, self.text_color
+            self.text if self.text is not None else "", False, self.text_color
         )
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
@@ -66,20 +66,25 @@ class Screens:
         height: int
     ) -> Callable[[], dict[str, bool]]:
         play_game = Button(
-                (width * 0.21, height * 0.41), (width * 0.22, height * 0.08)
-                )
+            (int(width * 0.21), int(height * 0.41)),
+            (int(width * 0.22), int(height * 0.08))
+        )
         minecraft_mode = Button(
-                (width * 0.21, height * 0.51), (width * 0.22, height * 0.08)
-                )
+            (int(width * 0.21), int(height * 0.51)),
+            (int(width * 0.22), int(height * 0.08))
+        )
         achievements = Button(
-                (width * 0.21, height * 0.60), (width * 0.22, height * 0.08)
-                )
+            (int(width * 0.21), int(height * 0.60)),
+            (int(width * 0.22), int(height * 0.08))
+        )
         settings = Button(
-                (width * 0.21, height * 0.69), (width * 0.22, height * 0.08)
-                )
+            (int(width * 0.21), int(height * 0.69)),
+            (int(width * 0.22), int(height * 0.08))
+        )
         quit_game = Button(
-                (width * 0.21, height * 0.78), (width * 0.22, height * 0.08)
-                )
+            (int(width * 0.21), int(height * 0.78)),
+            (int(width * 0.22), int(height * 0.08))
+        )
 
         def draw_buttons() -> dict[str, bool]:
             return {
