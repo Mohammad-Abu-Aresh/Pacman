@@ -28,6 +28,6 @@ class Mape():
         for lis in lists:
             arr = []
             for i in lis:
-                arr = arr + Block(i)
+                arr.append(Block(i))
             res.append(arr)
         return res
