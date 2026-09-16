@@ -11,8 +11,8 @@ VENV_PYTHON  := $(VENV)/bin/python
 VENV_PIP     := $(VENV)/bin/pip
 
 # Main Script Configuration
-SCRIPT       := a_maze_ing.py
-CONFIG       := config.txt
+SCRIPT       := pac-man.py
+CONFIG       := config.json
 
 # Default Target
 .PHONY: all

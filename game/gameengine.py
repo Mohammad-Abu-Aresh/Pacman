@@ -18,14 +18,14 @@ class GameEngine:
         )
         pygame.display.set_caption("Pac-Man")
         self.clock = pygame.time.Clock()
-        test_font = pygame.font.Font("font/minecraft.ttf", 50)
-        test_font.set_bold(True)
+        # test_font = pygame.font.Font("font/minecraft.ttf", 50)
+        # test_font.set_bold(True)
         # make it font without test
-        self.start_options = Screens().MAIN_MENU_SCREEN(
+        self.start_options = Screens().main_menu_screen(
                 self.screen, width, height
                 )
         # make the Screen obj sentraliezed what ever the size updated !
-        self.title_game = test_font.render("Pac-Man", False, "#7B00FF")
+        # self.title_game = test_font.render("Pac-Man", False, "#7B00FF")
         # background = pygame.image.load("photos/main_creen.jpg")
 
         background_raw = pygame.image.load("photos/main_creen.jpg")
@@ -43,8 +43,8 @@ class GameEngine:
 
             if self.state_variable == Screens.MAIN_MENU_SCREEN:
                 self.screen.blit(self.background, (0, 0))
-                title_x = self.screen_info.current_w // 2 - self.title_game.get_width() // 2
-                self.screen.blit(self.title_game, (title_x, 20))
+                # title_x = self.screen_info.current_w // 2 - self.title_game.get_width() // 2
+                # self.screen.blit(self.title_game, (title_x, 20))
                 drawing_copy = self.start_options()
                 if drawing_copy["play_game"]:
                     print("PLAY GAME")
