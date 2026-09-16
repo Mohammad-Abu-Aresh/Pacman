@@ -15,9 +15,11 @@ class GameSystem:
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
         self.time_left: float = float(self.level_max_time)
-        self.load_level()
+        self.load_level(self.current_level)
 
-    def load_level(self) -> None:
+
+    def load_level(self, current_phase: int) -> None:
+        
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
         else:
@@ -28,13 +30,23 @@ class GameSystem:
 
         self.time_left = self.level_max_time
 
+    def next_level(self) -> None:
+        if self.current_level < self.max_levels:
+            self.current_level += 1
+        else:
+            self.current_level = 1
+        
+        self.load_level(self.current_level)
     def update(self) -> None:
-        pass
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_s]:
+            self.next_level()
 
     def draw(self) -> None:
         _ = self._draw_maze()
 
     def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
+        
         maze_bool = self.maze_map.every_cell
         cell_size = 25
         view_maze = len(maze_bool[0]) * cell_size
