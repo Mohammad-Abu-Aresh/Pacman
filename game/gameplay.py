@@ -3,10 +3,11 @@ import random
 from typing import Dict, Any
 from mazegenerator import MazeGenerator  # type: ignore[import-untyped]
 from .block import Mape
-
+from . import game_modes
 
 class GameSystem:
     def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
+        
         self.screen = screen
         self.config = config
         self.current_level: int = 1
@@ -15,36 +16,43 @@ class GameSystem:
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
         self.time_left: float = float(self.level_max_time)
-        self.load_level(self.current_level)
+        self.load_level()
+        pygame.font.init()
+        self.font = pygame.font.SysFont("font/minecraft.ttf", 36)
 
 
-    def load_level(self, current_phase: int) -> None:
+    def load_level(self) -> None:
         
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
         else:
             self.seed = random.randint(1, 2004)
-
         maze = MazeGenerator(seed=self.seed)
         self.maze_map = Mape(maze)
-
         self.time_left = self.level_max_time
 
     def next_level(self) -> None:
         if self.current_level < self.max_levels:
             self.current_level += 1
         else:
-            self.current_level = 1
+            self.current_level = 1   
+        if self.current_level == 10:
+            game_modes.state_variable = game_modes.MAIN_MENU_SCREEN
+        self.load_level()
+
+    def update(self, tame) -> None:
         
-        self.load_level(self.current_level)
-    def update(self) -> None:
+        if self.time_left > 0:
+            self.time_left -= tame
+        else:
+            game_modes.state_variable = game_modes.MAIN_MENU_SCREEN
         keys = pygame.key.get_pressed()
         if keys[pygame.K_s]:
             self.next_level()
 
     def draw(self) -> None:
         _ = self._draw_maze()
-
+        self._draw_timer()
     def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
         
         maze_bool = self.maze_map.every_cell
@@ -70,6 +78,10 @@ class GameSystem:
             lis.append(ls)
 
         return lis
+    
+    def _draw_timer(self) -> None:
+        text_surface = self.font.render(f"{int(self.time_left)}", True, (255, 255, 255))
+        self.screen.blit(text_surface, (20, 20))
 
     def _draw_entities(self) -> None:
         pass

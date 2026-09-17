@@ -54,12 +54,7 @@ class Button:
 
 
 class Screens:
-    MAIN_MENU_SCREEN = 1
-    GAME_SCREEN = 2
-    SETTINGS_SCREEN = 3
-    HIGHSCORE_SCREEN = 4
-    GAME_OVER_SCREEN = 5
-    VICTORY_SCREEN = 6
+
 
     def main_menu_screen(
         self, screen: pygame.Surface, width: int,
