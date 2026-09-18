@@ -5,3 +5,4 @@ test*
 */*.pyc
 __pycache__/
 .*.swp
+poetry.lock
