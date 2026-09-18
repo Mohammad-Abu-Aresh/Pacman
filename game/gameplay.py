@@ -5,9 +5,10 @@ from mazegenerator import MazeGenerator  # type: ignore[import-untyped]
 from .block import Mape
 from . import game_modes
 
+
 class GameSystem:
     def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
-        
+
         self.screen = screen
         self.config = config
         self.current_level: int = 1
@@ -20,9 +21,7 @@ class GameSystem:
         pygame.font.init()
         self.font = pygame.font.SysFont("font/minecraft.ttf", 36)
 
-
     def load_level(self) -> None:
-        
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
         else:
@@ -35,15 +34,14 @@ class GameSystem:
         if self.current_level < self.max_levels:
             self.current_level += 1
         else:
-            self.current_level = 1   
+            self.current_level = 1
         if self.current_level == 10:
             game_modes.state_variable = game_modes.MAIN_MENU_SCREEN
         self.load_level()
 
-    def update(self, tame) -> None:
-        
+    def update(self, time: float) -> None:
         if self.time_left > 0:
-            self.time_left -= tame
+            self.time_left -= time
         else:
             game_modes.state_variable = game_modes.MAIN_MENU_SCREEN
         keys = pygame.key.get_pressed()
@@ -53,8 +51,8 @@ class GameSystem:
     def draw(self) -> None:
         _ = self._draw_maze()
         self._draw_timer()
+
     def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
-        
         maze_bool = self.maze_map.every_cell
         cell_size = 25
         view_maze = len(maze_bool[0]) * cell_size
@@ -78,9 +76,11 @@ class GameSystem:
             lis.append(ls)
 
         return lis
-    
+
     def _draw_timer(self) -> None:
-        text_surface = self.font.render(f"{int(self.time_left)}", True, (255, 255, 255))
+        text_surface = self.font.render(
+                f"{int(self.time_left)}", True, (255, 255, 255)
+                )
         self.screen.blit(text_surface, (20, 20))
 
     def _draw_entities(self) -> None:

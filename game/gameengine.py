@@ -8,7 +8,7 @@ from .configLoader import ConfigLoader
 
 class GameEngine:
     def __init__(self) -> None:
-        
+
         # make it str or any to know what screen is this... and rename it
         pygame.init()
         self.screen_info = pygame.display.Info()

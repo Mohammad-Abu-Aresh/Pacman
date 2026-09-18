@@ -6,7 +6,7 @@ class Creature(ABC):
     def __init__(self, spawn_point: tuple[int, int]):
         self.x: int = spawn_point[0]
         self.y: int = spawn_point[1]
-    
+
     @abstractmethod
     def move(self) -> None:
         pass
@@ -25,7 +25,10 @@ class Creature(ABC):
 
 class Player(Creature):
 
-    def __init__(self, spawn_point, lives: int = 3, super_timer: int = 15):
+    def __init__(
+            self, spawn_point: tuple[int, int],
+            lives: int = 3, super_timer: int = 15
+            ) -> None:
         super().__init__(spawn_point)
         self._lives = lives
         self._score: int = 0
@@ -39,10 +42,11 @@ class Player(Creature):
     def draw(self) -> None:
         pass
 
-    def handle_input(keys: list) -> None:
+    def handle_input(self, keys: list[str]) -> None:
         pass
 
     def eat(self, item_type: str) -> int:
+        return 0
         pass
 
     def respawn(self) -> None:

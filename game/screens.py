@@ -55,7 +55,6 @@ class Button:
 
 class Screens:
 
-
     def main_menu_screen(
         self, screen: pygame.Surface, width: int,
         height: int
