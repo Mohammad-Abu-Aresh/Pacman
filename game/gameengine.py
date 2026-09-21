@@ -44,6 +44,7 @@ class GameEngine:
             self.screen.fill((0, 0, 0))
 
             if game_modes.state_variable == game_modes.MAIN_MENU_SCREEN:
+                self.game_session = None
                 self.screen.blit(self.background, (0, 0))
                 drawing_copy = self.start_options()
                 if drawing_copy["play_game"]:

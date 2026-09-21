@@ -12,30 +12,37 @@ class GameSystem:
         self.screen = screen
         self.config = config
         self.current_level: int = 1
-        self.max_levels: int = 10
+        self.max_levels: int = config["max_levels"]
         self.score: int = 0
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
+        self.row = 7
+        self.column = 7
         self.time_left: float = float(self.level_max_time)
         self.load_level()
         pygame.font.init()
         self.font = pygame.font.SysFont("font/minecraft.ttf", 36)
 
     def load_level(self) -> None:
+
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
+            self.row = 7
+            self.column = 7
         else:
             self.seed = random.randint(1, 2004)
-        maze = MazeGenerator(seed=self.seed)
+            self.row += 1
+            self.column += 1
+        maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
         self.maze_map = Mape(maze)
         self.time_left = self.level_max_time
 
     def next_level(self) -> None:
-        if self.current_level < self.max_levels:
+        if self.current_level <= self.max_levels:
             self.current_level += 1
         else:
             self.current_level = 1
-        if self.current_level == 10:
+        if self.current_level > self.config["max_levels"]:
             game_modes.state_variable = game_modes.MAIN_MENU_SCREEN
         self.load_level()
 
@@ -54,9 +61,13 @@ class GameSystem:
 
     def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
         maze_bool = self.maze_map.every_cell
-        cell_size = 25
-        view_maze = len(maze_bool[0]) * cell_size
-        length_maze = len(maze_bool) * cell_size
+        width = self.screen.get_width()
+        height = self.screen.get_height()
+        columns = len(maze_bool[0])
+        rows = len(maze_bool)
+        cell_size = (width // columns + height // rows) // 3
+        view_maze = columns * cell_size
+        length_maze = rows * cell_size
         starting_point_x = (self.screen.get_width() - view_maze) // 2
         starting_point_y = (self.screen.get_height() - length_maze) // 2
         lis = []

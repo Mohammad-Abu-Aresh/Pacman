@@ -14,7 +14,8 @@ class ConfigLoader:
             "points_per_super_pacgum": 50,
             "points_per_ghost": 200,
             "seed": 42,
-            "level_max_time": 90
+            "level_max_time": 90,
+            "max_levels": 10
         }
         self.data: dict[str, Any] = {}
 
@@ -33,6 +34,11 @@ class ConfigLoader:
                     print(f"Error: '{k}' must be an int, not a string!")
                     continue
                 config[k] = v
+        if config["max_levels"] < 3 or config["max_levels"] > 15:
+            raise ValueError(
+                f"Error: 'max_levels' must be between 3 and 15, "
+                f"got {config['max_levels']}"
+            )
         return config
 
     def __parse_line(self, line: str) -> str:
