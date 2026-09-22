@@ -3,6 +3,7 @@ from mazegenerator import MazeGenerator  # type: ignore[import-untyped]
 
 
 class Block:
+    size : int = 0
     def __init__(self, wall: int) -> None:
         self.left: bool = True if wall >= 8 else False
         if self.left:
@@ -19,10 +20,24 @@ class Block:
         if wall > 0:
             raise ValueError("walles have value more than it shuld be")
 
+    @classmethod
+    def size_update(cls, width: int, height: int, columns: int, rows: int) -> int:
+        cell_size = (width // columns + height // rows) // 3
+        cls.size = cell_size
+        return cell_size
+
 
 class Mape:
-    def __init__(self, maze: Any = MazeGenerator) -> None:
+    def __init__(
+            self, maze: MazeGenerator,
+              width: int, height: int
+              ) -> None:
+        self.width = width
+        self.height = height
         self.mape: list[list[Block]] = self.blocks(maze.maze)
+        self.columns = len(self.mape[0])
+        self.rows = len(self.mape)
+        Block.size_update(self.width, self.height, self.columns, self.rows)
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:
         res: list[list[Block]] = []

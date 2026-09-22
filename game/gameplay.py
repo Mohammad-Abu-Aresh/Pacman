@@ -2,7 +2,7 @@ import pygame
 import random
 from typing import Dict, Any
 from mazegenerator import MazeGenerator  # type: ignore[import-untyped]
-from .block import Mape
+from .block import Mape, Block
 from . import game_modes
 
 
@@ -34,7 +34,9 @@ class GameSystem:
             self.row += 1
             self.column += 1
         maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
-        self.maze_map = Mape(maze)
+        self.maze_map = Mape(
+            maze, self.screen.get_width(), self.screen.get_height()
+            )
         self.time_left = self.level_max_time
 
     def next_level(self) -> None:
@@ -61,13 +63,14 @@ class GameSystem:
 
     def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
         maze_bool = self.maze_map.every_cell
-        width = self.screen.get_width()
-        height = self.screen.get_height()
-        columns = len(maze_bool[0])
-        rows = len(maze_bool)
-        cell_size = (width // columns + height // rows) // 3
+
+        columns = self.maze_map.columns
+        rows = self.maze_map.rows
+        cell_size = Block.size
+        print(cell_size)
         view_maze = columns * cell_size
         length_maze = rows * cell_size
+
         starting_point_x = (self.screen.get_width() - view_maze) // 2
         starting_point_y = (self.screen.get_height() - length_maze) // 2
         lis = []

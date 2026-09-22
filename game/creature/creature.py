@@ -6,6 +6,7 @@ class Creature(ABC):
     def __init__(self, spawn_point: tuple[int, int]):
         self.x: int = spawn_point[0]
         self.y: int = spawn_point[1]
+        # self.image
 
     @abstractmethod
     def move(self) -> None:
@@ -30,6 +31,7 @@ class Player(Creature):
             lives: int = 3, super_timer: int = 15
             ) -> None:
         super().__init__(spawn_point)
+        # self._image = pygame.image.load("photos/player/steve...")
         self._lives = lives
         self._score: int = 0
         self._speed: int = 100
