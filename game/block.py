@@ -22,9 +22,10 @@ class Block:
 
     @classmethod
     def size_update(cls, width: int, height: int, columns: int, rows: int) -> int:
-        cell_size = (width // columns + height // rows) // 3
-        cls.size = cell_size
-        return cell_size
+        cell_width: int = ((width - (width * 0.2)) // columns)
+        cell_height: int = ((height - (height * 0.1)) // rows)
+        cls.size = cell_width if cell_width < cell_height else cell_height
+        return cls.size
 
 
 class Mape:
@@ -35,8 +36,8 @@ class Mape:
         self.width = width
         self.height = height
         self.mape: list[list[Block]] = self.blocks(maze.maze)
-        self.columns = len(self.mape[0])
-        self.rows = len(self.mape)
+        self.columns = len(self.mape[0]) * 2 + 1
+        self.rows = len(self.mape) * 2 + 1
         Block.size_update(self.width, self.height, self.columns, self.rows)
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:

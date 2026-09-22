@@ -28,7 +28,7 @@ class GameEngine:
         )
         # background = pygame.image.load("photos/main_creen.jpg")
 
-        background_raw = pygame.image.load("photos/main_creen.jpg")
+        background_raw = pygame.image.load("photos/screens/main_creen.jpg")
 
         background = pygame.transform.scale(
             background_raw, (self.width, self.height)

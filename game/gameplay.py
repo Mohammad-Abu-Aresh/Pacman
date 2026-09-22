@@ -28,7 +28,7 @@ class GameSystem:
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
             self.row = 7
-            self.column = 7
+            self.column = 15
         else:
             self.seed = random.randint(1, 2004)
             self.row += 1
