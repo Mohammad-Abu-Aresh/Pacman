@@ -25,7 +25,7 @@ class ConfigLoader:
             content = "".join([self.__parse_line(line) for line in f])
         user_data = json.loads(content)
 
-        config = self.default_config.copy()
+        config = self.default_config.copy() # rename key, value
         for k, v in user_data.items():
             if k in config:
                 if isinstance(self.default_config[k], int) and isinstance(

@@ -8,5 +8,5 @@
   "points_per_ghost": 200,
   "seed": 90,
   "level_max_time": 90,
-  "max_levels": 5
+  "max_levels": 15
 }

@@ -1,6 +1,6 @@
 import sys
 import pygame
-from . import game_modes
+from .game_modes import Mod
 from .screens import Screens
 from .gameplay import GameSystem
 from .configLoader import ConfigLoader
@@ -18,15 +18,14 @@ class GameEngine:
         self.screen = pygame.display.set_mode(
             (self.width, self.height)
         )
-        pygame.display.set_caption("Pac-Man")
+        # pygame.display.set_caption("Pac-Man")
         self.clock = pygame.time.Clock()
-        self.test_font = pygame.font.Font("font/minecraft.ttf", 50)
+        self.test_font = pygame.font.Font(None, 50)
         self.test_font.set_bold(True)
         # make it font without test
         self.start_options = Screens().main_menu_screen(
             self.screen, self.width, self.height
         )
-        # background = pygame.image.load("photos/main_creen.jpg")
 
         background_raw = pygame.image.load("photos/screens/main_creen.jpg")
 
@@ -41,15 +40,14 @@ class GameEngine:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            self.screen.fill((0, 0, 0))
 
-            if game_modes.state_variable == game_modes.MAIN_MENU_SCREEN:
+            if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
                 self.screen.blit(self.background, (0, 0))
                 drawing_copy = self.start_options()
                 if drawing_copy["play_game"]:
                     print("PLAY GAME")
-                    game_modes.state_variable = game_modes.GAME_SCREEN
+                    Mod.updatemod(Mod.GAME_SCREEN)
                 elif drawing_copy["minecraft_mode"]:
                     print("minecraft_mode")
                 elif drawing_copy["top scores"]:
@@ -62,7 +60,7 @@ class GameEngine:
                     print("QUIT GAME")
                     pygame.quit()
                     sys.exit(0)
-            elif game_modes.state_variable == game_modes.GAME_SCREEN:
+            elif Mod.state_variable == Mod.GAME_SCREEN:
                 if not hasattr(self, 'game_session') or not self.game_session:
                     self.game_session = GameSystem(self.screen, self.config)
                 x = self.clock.tick(60) / 1000.0
@@ -70,4 +68,3 @@ class GameEngine:
                 self.game_session.draw()
 
             pygame.display.update()
-            self.clock.tick(60)

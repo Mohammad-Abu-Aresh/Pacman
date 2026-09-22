@@ -26,7 +26,7 @@ class Button:
     def draw(self, screen: pygame.Surface) -> bool:
         action = False
         button_font = pygame.font.Font(
-            "font/minecraft.ttf", self.font_size
+            None, self.font_size
         )
         button_text = button_font.render(
             self.text if self.text is not None else "", False, self.text_color
