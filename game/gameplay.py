@@ -25,6 +25,8 @@ class GameSystem:
         self.load_level()
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
+        # self.wall_photo = pygame.image.load("photos/blocks/block.png")
+        self.wall_photo = pygame.image.load("photos/blocks/test.png")
 
     def load_level(self) -> None:
 
@@ -86,6 +88,7 @@ class GameSystem:
         height = self.screen.get_height()
 
         self.screen.blit(self.background, (0, 0))
+        self.wall = pygame.transform.scale(self.wall_photo, (Block.size * 3.5, Block.size * 2))
 
         starting_point_x = (width - view_maze) // 2 - 10
         starting_point_y = (height - length_maze * 1.05) // 2 
@@ -100,7 +103,8 @@ class GameSystem:
                     location_x, location_y, cell_size, cell_size
                 )
                 if cell:
-                    pygame.draw.rect(self.screen, (30, 50, 160), rect)
+                #    pygame.draw.rect(self.screen, (30, 50, 160), rect)
+                    self.screen.blit(self.wall, (location_x, location_y))
                 else:
                     continue
             lis.append(ls)
