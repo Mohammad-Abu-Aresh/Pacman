@@ -1,7 +1,8 @@
 import math
 import random
 from abc import ABC, abstractmethod
-from .creature import Creature, Player
+from .creature import Creature
+from .player import Player
 from ..block import Mape
 
 

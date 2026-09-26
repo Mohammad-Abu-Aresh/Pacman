@@ -21,7 +21,7 @@ class GameEngine:
         pygame.display.set_caption("Pac-Man")
         self.clock = pygame.time.Clock()
         self.test_font = pygame.font.Font(None, 50)
-        self.test_font.set_bold(True)
+        # self.test_font.set_bold(True)
         # make it font without test
         self.start_options = Screens().main_menu_screen(
             self.screen, self.width, self.height

@@ -1,6 +1,7 @@
 import pygame
 import random
 from typing import Dict, Any
+from .creature.player import Player
 from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
@@ -12,12 +13,10 @@ class GameSystem:
         2:pygame.image.load("photos/background/background2.jpg"),
         }
     def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
-
         self.screen = screen
         self.config = config
         self.current_level: int = 1
         self.max_levels: int = config["max_levels"]
-        self.score: int = 0
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
         self.row = 7
@@ -27,6 +26,11 @@ class GameSystem:
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
         # self.wall_photo = pygame.image.load("photos/blocks/block.png")
+        self.player = Player(
+            maze_map=self.maze_map,
+            lives=3,
+            super_timer=15
+            )
         self.wall_photo = pygame.image.load("photos/blocks/test.png")
 
     def load_level(self) -> None:

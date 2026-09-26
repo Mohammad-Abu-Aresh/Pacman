@@ -1,4 +1,5 @@
-from .creature import Creature, Player
+from .creature import Creature
+from .player import Player
 from .monster import (
         Arrow, EnderPearl, SlowPotion,
         BabyZombie, Skeleton,
