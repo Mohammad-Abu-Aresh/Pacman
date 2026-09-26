@@ -8,7 +8,8 @@ from .game_modes import Mod
 
 class GameSystem:
     backphoto: dict[int, any] = {
-        1:pygame.image.load("photos/background/background1.jpg")
+        1:pygame.image.load("photos/background/background1.jpg"),
+        2:pygame.image.load("photos/background/background2.jpg"),
         }
     def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
 
@@ -33,8 +34,8 @@ class GameSystem:
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
             self.row = 11
-            self.column = 5
-            self.backimage = self.backphoto[self.current_level]
+            self.column = 7
+            self.backimage = self.backphoto[self.current_level + 1]
             self.background = pygame.transform.scale(
                     self.backimage,
                       (
@@ -88,10 +89,10 @@ class GameSystem:
         height = self.screen.get_height()
 
         self.screen.blit(self.background, (0, 0))
-        self.wall = pygame.transform.scale(self.wall_photo, (Block.size * 3.5, Block.size * 2))
+        self.wall = pygame.transform.scale(self.wall_photo, (Block.size * 2.1, Block.size * 1.85))
 
-        starting_point_x = (width - view_maze) // 2 - 10
-        starting_point_y = (height - length_maze * 1.05) // 2 
+        starting_point_x = (width - view_maze) // 2 - 10 - 260
+        starting_point_y = (height - length_maze * 1.05) // 2 - 15
         lis = []
         for y, row in enumerate(maze_bool):
             ls = []

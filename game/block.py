@@ -22,7 +22,7 @@ class Block:
 
     @classmethod
     def size_update(cls, width: int, height: int, columns: int, rows: int) -> int:
-        cell_width: int = ((width - (width * 0.1)) // columns)
+        cell_width: int = ((width - (width * 0.28)) // columns)
         cell_height: int = ((height - (height * 0.1)) // rows)
         cls.size = cell_width if cell_width < cell_height else cell_height
         return cls.size
