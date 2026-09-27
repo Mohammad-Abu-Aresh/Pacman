@@ -1,5 +1,4 @@
 import math
-import random
 from abc import ABC, abstractmethod
 from .creature import Creature
 from .player import Player
@@ -34,52 +33,6 @@ class Monster(Creature, ABC):
         self.live = False
         self.is_following = False
         self.target_point = self.spawn_point
-
-
-# ===============================================
-# hardcore objects (only used in hardcore mode)
-# ===============================================
-
-class Arrow:
-
-    def __init__(
-        self, spawn_point: tuple[int, int],
-        direction: int, speed: int = 300
-    ) -> None:
-        self.x: int = spawn_point[0]
-        self.y: int = spawn_point[1]
-        self.direction: int = direction
-        self.speed: int = speed  # 300% of player speed
-
-    def move(self) -> None:
-        pass
-
-    def draw(self) -> None:
-        pass
-
-
-class EnderPearl:
-
-    def __init__(self, target_point: tuple[int, int]) -> None:
-        self.target_x: int = target_point[0]
-        self.target_y: int = target_point[1]
-
-    def draw(self) -> None:
-        pass
-
-
-class SlowPotion:
-
-    def __init__(self, position: tuple[int, int], duration: int = 5) -> None:
-        self.x: int = position[0]
-        self.y: int = position[1]
-        self.duration: int = duration  # slowdown duration in seconds
-
-    def apply_effect(self, player: Player) -> None:
-        player.update_speed(35, self.duration)  # slow down the player
-
-    def draw(self) -> None:
-        pass
 
 
 # ========================
@@ -170,43 +123,6 @@ class Skeleton(Monster):
         if self.has_line_of_sight(player, mape):
             arrow = Arrow((self.x, self.y), self.direction)
             self.active_arrows.append(arrow)
-
-    def move(self) -> None:
-        pass
-
-    def draw(self) -> None:
-        pass
-
-    def follow(self, player: Player) -> None:
-        if self.live:
-            self.target_point = (player.x, player.y)
-        else:
-            self.target_point = self.spawn_point
-
-
-class Enderman(Monster):
-
-    def __init__(
-        self, spawn_point: tuple[int, int], is_hardcore: bool = False
-    ) -> None:
-        super().__init__(spawn_point, is_hardcore)
-        self.teleport_cooldown: float = 20.0  # every 20 seconds
-        self.current_pearl: EnderPearl | None = None
-
-    def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
-        """
-        teleports the enderman using an enderpearl
-        if alive and in hardcore mode
-        """
-        if not self.is_hardcore or not self.live:
-            return
-
-        rand_x = random.randint(0, maze_bounds[0])
-        rand_y = random.randint(0, maze_bounds[1])
-
-        self.current_pearl = EnderPearl((rand_x, rand_y))
-        self.x = rand_x
-        self.y = rand_y
 
     def move(self) -> None:
         pass
