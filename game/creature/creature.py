@@ -39,7 +39,7 @@ class Control_creature:
             super_timer,
             is_hardcore,
             )
-        self.Skeleton = Skeleton()
-        self.BabyZombie = BabyZombie()
-        self.Enderman = Enderman()
+        # self.Skeleton = Skeleton()
+        # self.BabyZombie = BabyZombie()
+        # self.Enderman = Enderman()
         

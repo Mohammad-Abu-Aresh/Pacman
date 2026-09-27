@@ -7,7 +7,8 @@ class Player(Creature):
 
     def __init__(
             self, maze_map: Mape,
-            lives: int, super_timer: int
+            lives: int, super_timer: int,
+            is_hardcore: bool,
             ) -> None:
         super().__init__(maze_map)
         self._image = pygame.image.load("photos/player/steve.png")

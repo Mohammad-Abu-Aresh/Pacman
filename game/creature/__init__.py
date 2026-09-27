@@ -1,4 +1,4 @@
-from .creature import Creature
+from .creature import Creature,Control_creature
 from .player import Player
 from .monster import (
         Arrow, EnderPearl, SlowPotion,

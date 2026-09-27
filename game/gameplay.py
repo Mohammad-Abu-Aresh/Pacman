@@ -1,7 +1,7 @@
 import pygame
 import random
 from typing import Dict, Any
-from .creature.player import Player
+from .creature import Player, Control_creature
 from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
@@ -26,7 +26,7 @@ class GameSystem:
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
         # self.wall_photo = pygame.image.load("photos/blocks/block.png")
-        self.player = Player(
+        self.player = Control_creature(
             maze_map=self.maze_map,
             lives=3,
             super_timer=15
@@ -73,7 +73,7 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_s]:
+        if keys[pygame.K_n]:
             self.next_level()
 
     def draw(self) -> None:
