@@ -21,3 +21,25 @@ class Creature(ABC):
 
     # def check_wall_collision() -> None:
     #    pass
+
+class Control_creature:
+    def __init__(self,
+            maze_map: Mape,
+            lives: int = 3,
+            super_timer: int = 15,
+            is_hardcore: bool = False
+                 ) -> None:
+        from .player import Player
+        from .monster import (
+                Skeleton, Enderman, BabyZombie, Witch
+            )
+        self.Player = Player(
+            maze_map,
+            lives,
+            super_timer,
+            is_hardcore,
+            )
+        self.Skeleton = Skeleton()
+        self.BabyZombie = BabyZombie()
+        self.Enderman = Enderman()
+        

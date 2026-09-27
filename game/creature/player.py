@@ -1,3 +1,4 @@
+import time
 from .creature import Creature
 from ..block import Mape,Block
 import pygame
@@ -6,7 +7,7 @@ class Player(Creature):
 
     def __init__(
             self, maze_map: Mape,
-            lives: int = 3, super_timer: int = 15
+            lives: int, super_timer: int
             ) -> None:
         super().__init__(maze_map)
         self._image = pygame.image.load("photos/player/steve.png")
@@ -29,7 +30,9 @@ class Player(Creature):
         pass
 
     def die(self) -> None:
-        ...
+        self.telport((800,800))
+        time.sleep(3)
+        self.respawn
 
     def draw(self) -> None:
         pass
@@ -42,7 +45,11 @@ class Player(Creature):
         pass
 
     def respawn(self) -> None:
-        pass
+        self.telport(self.spown_point)
+        self._lives -= 1
+
+    def telport(self, point: tuple[int,int]) -> None:
+        ...
 
     def update_speed(self, new_speed: int, time: int) -> None:
         self._speed = new_speed
