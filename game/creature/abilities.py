@@ -1,11 +1,25 @@
 from .player import Player
-
+from abc import ABC, abstractmethod
 
 
 # ===============================================
 # hardcore objects (only used in hardcore mode)
 # ===============================================
-class Arrow:
+
+class Abilities(ABC):
+    def __init__(self) -> None:
+        pass
+
+    @abstractmethod
+    def move(self) -> None:
+        pass
+
+    @abstractmethod
+    def draw(self) -> None:
+        pass
+
+
+class Arrow(Abilities):
 
     def __init__(
         self, spawn_point: tuple[int, int],
@@ -23,7 +37,7 @@ class Arrow:
         pass
 
 
-class EnderPearl:
+class EnderPearl(Abilities):
 
     def __init__(self, target_point: tuple[int, int]) -> None:
         self.target_x: int = target_point[0]
@@ -33,7 +47,7 @@ class EnderPearl:
         pass
 
 
-class SlowPotion:
+class SlowPotion(Abilities):
 
     def __init__(self, position: tuple[int, int], duration: int = 5) -> None:
         self.x: int = position[0]
