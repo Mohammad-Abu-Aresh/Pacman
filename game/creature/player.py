@@ -22,6 +22,8 @@ class Player(Creature):
             float(self.spown_point[0]),
             float(self.spown_point[1]),
             )
+        self.x: float = self.locaion[0]
+        self.y: float = self.locaion[1]
         self._lives = lives
         self._score: int = 0
         self._speed: int = 100 * Block.size

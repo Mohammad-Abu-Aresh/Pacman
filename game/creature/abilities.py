@@ -1,3 +1,7 @@
+from .player import Player
+
+
+
 # ===============================================
 # hardcore objects (only used in hardcore mode)
 # ===============================================

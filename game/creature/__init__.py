@@ -1,9 +1,11 @@
 from .creature import Creature, Control_creature
 from .player import Player
-from .monster import (
+from .babyzombie import BabyZombie
+from .enderman import Enderman
+from .skeleton import Skeleton
+from .witch import Witch
+from .abilities import (
         Arrow, EnderPearl, SlowPotion,
-        BabyZombie, Skeleton,
-        Enderman, Witch
         )
 
 
