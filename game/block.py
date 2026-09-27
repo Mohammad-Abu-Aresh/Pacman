@@ -1,9 +1,10 @@
 from typing import Any
-from mazegenerator import MazeGenerator  # type: ignore[import-untyped]
+from mazegenerator import MazeGenerator
 
 
 class Block:
-    size : int = 0
+    size: int = 0
+
     def __init__(self, wall: int) -> None:
         self.left: bool = True if wall >= 8 else False
         if self.left:
@@ -21,9 +22,11 @@ class Block:
             raise ValueError("walles have value more than it shuld be")
 
     @classmethod
-    def size_update(cls, width: int, height: int, columns: int, rows: int) -> int:
-        cell_width: int = ((width - (width * 0.28)) // columns)
-        cell_height: int = ((height - (height * 0.1)) // rows)
+    def size_update(
+            cls, width: int, height: int, columns: int, rows: int
+            ) -> int:
+        cell_width: int = int(((width - (width * 0.28)) // columns))
+        cell_height: int = int(((height - (height * 0.1)) // rows))
         cls.size = cell_width if cell_width < cell_height else cell_height
         return cls.size
 
@@ -31,8 +34,8 @@ class Block:
 class Mape:
     def __init__(
             self, maze: MazeGenerator,
-              width: int, height: int
-              ) -> None:
+            width: int, height: int,
+            ) -> None:
         self.width = width
         self.height = height
         self.mape: list[list[Block]] = self.blocks(maze.maze)

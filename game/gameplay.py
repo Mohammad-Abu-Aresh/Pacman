@@ -1,17 +1,18 @@
 import pygame
 import random
 from typing import Dict, Any
-from .creature import Player, Control_creature
+from .creature import Control_creature
 from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
 
 
 class GameSystem:
-    backphoto: dict[int, any] = {
-        1:pygame.image.load("photos/background/background1.jpg"),
-        2:pygame.image.load("photos/background/background2.jpg"),
+    backphoto: dict[int, Any] = {
+        1: pygame.image.load("photos/background/background1.jpg"),
+        2: pygame.image.load("photos/background/background2.jpg"),
         }
+
     def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
         self.screen = screen
         self.config = config
@@ -41,12 +42,12 @@ class GameSystem:
             self.column = 7
             self.backimage = self.backphoto[self.current_level + 1]
             self.background = pygame.transform.scale(
-                    self.backimage,
-                      (
-                          self.screen.get_width(),
-                          self.screen.get_height()
-                          )
-                )
+                self.backimage,
+                (
+                    self.screen.get_width(),
+                    self.screen.get_height(),
+                ),
+            )
         else:
             self.seed = random.randint(1, 2004)
             self.row += 2
@@ -93,7 +94,10 @@ class GameSystem:
         height = self.screen.get_height()
 
         self.screen.blit(self.background, (0, 0))
-        self.wall = pygame.transform.scale(self.wall_photo, (Block.size * 2.1, Block.size * 1.85))
+        self.wall = pygame.transform.scale(
+            self.wall_photo,
+            (Block.size * 2.1, Block.size * 1.85)
+            )
 
         starting_point_x = (width - view_maze) // 2 - 10 - 260
         starting_point_y = (height - length_maze * 1.05) // 2 - 15
@@ -104,12 +108,12 @@ class GameSystem:
                 location_x = starting_point_x + (x * cell_size)
                 location_y = starting_point_y + (y * cell_size)
                 ls.append(((location_x, location_y), cell))
-                rect = pygame.Rect(
-                    location_x, location_y, cell_size, cell_size
-                )
+                # rect = pygame.Rect(  # i comment it becose it never used
+                #    location_x, location_y, cell_size, cell_size
+                # )
                 if cell:
-                #    pygame.draw.rect(self.screen, (30, 50, 160), rect)
                     self.screen.blit(self.wall, (location_x, location_y))
+                #   pygame.draw.rect(self.screen, (30, 50, 160), rect)
                 else:
                     continue
             lis.append(ls)

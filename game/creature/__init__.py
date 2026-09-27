@@ -1,4 +1,4 @@
-from .creature import Creature,Control_creature
+from .creature import Creature, Control_creature
 from .player import Player
 from .monster import (
         Arrow, EnderPearl, SlowPotion,
@@ -6,9 +6,11 @@ from .monster import (
         Enderman, Witch
         )
 
+
 __all__ = [
         "Creature", "Player",
-        "Arrow", "EnderPearl", "SlowPotion",
-        "BabyZombie", "Skeleton",
-        "Enderman", "Witch"
+        "Arrow", "EnderPearl",
+        "SlowPotion", "BabyZombie",
+        "Skeleton", "Enderman",
+        "Witch", "Control_creature"
         ]
