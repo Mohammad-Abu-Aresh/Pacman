@@ -1,5 +1,6 @@
 import sys
 import pygame
+from photos.loderimages import Images
 from .game_modes import Mod
 from .screens import Screens
 from .gameplay import GameSystem
@@ -10,29 +11,19 @@ class GameEngine:
     def __init__(self) -> None:
 
         # make it str or any to know what screen is this... and rename it
-        pygame.init()
         self.screen_info = pygame.display.Info()
         self.config = ConfigLoader().load_config
-        self.width = self.screen_info.current_w
-        self.height = self.screen_info.current_h
-        self.screen = pygame.display.set_mode(
-            (self.width, self.height)
-        )
         pygame.display.set_caption("Pac-Man")
-        self.clock = pygame.time.Clock()
         self.test_font = pygame.font.Font(None, 50)
         # self.test_font.set_bold(True)
         # make it font without test
         self.start_options = Screens().main_menu_screen(
-            self.screen, self.width, self.height
+            Images.screen, Images.width, Images.height
         )
 
-        background_raw = pygame.image.load("photos/screens/main_creen.jpg")
-
-        background = pygame.transform.scale(
-            background_raw, (self.width, self.height)
+        self.background = pygame.transform.scale(
+            Images.Home, (Images.width, Images.height)
         )
-        self.background = background
 
     def run(self) -> None:
         while True:
@@ -43,9 +34,10 @@ class GameEngine:
 
             if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
-                self.screen.blit(self.background, (0, 0))
+                Images.screen.blit(self.background, (0, 0))
                 drawing_copy = self.start_options()
                 if drawing_copy["play_game"]:
+                    self.clock = pygame.time.Clock()
                     print("PLAY GAME")
                     Mod.updatemod(Mod.GAME_SCREEN)
                 elif drawing_copy["minecraft_mode"]:
@@ -62,7 +54,7 @@ class GameEngine:
                     sys.exit(0)
             elif Mod.state_variable == Mod.GAME_SCREEN:
                 if not hasattr(self, 'game_session') or not self.game_session:
-                    self.game_session = GameSystem(self.screen, self.config)
+                    self.game_session = GameSystem(self.config)
                 x = self.clock.tick(60) / 1000.0
                 self.game_session.update(x)
                 self.game_session.draw()

@@ -1,5 +1,6 @@
 import pygame
 import random
+from photos.loderimages import Images
 from typing import Dict, Any
 from .creature import Control_creature
 from mazegenerator import MazeGenerator
@@ -9,12 +10,12 @@ from .game_modes import Mod
 
 class GameSystem:
     backphoto: dict[int, Any] = {
-        1: pygame.image.load("photos/background/background1.jpg"),
-        2: pygame.image.load("photos/background/background2.jpg"),
+        1: Images.level_1,
+        2: Images.level_2,
         }
 
-    def __init__(self, screen: pygame.Surface, config: Dict[str, Any]) -> None:
-        self.screen = screen
+    def __init__(self, config: Dict[str, Any]) -> None:
+        # self.screen = Images.screen
         self.config = config
         self.current_level: int = 1
         self.max_levels: int = config["max_levels"]
@@ -32,7 +33,7 @@ class GameSystem:
             lives=3,
             super_timer=15
             )
-        self.wall_photo = pygame.image.load("photos/blocks/test.png")
+        self.wall_photo = Images.wall
 
     def load_level(self) -> None:
 
@@ -44,8 +45,8 @@ class GameSystem:
             self.background = pygame.transform.scale(
                 self.backimage,
                 (
-                    self.screen.get_width(),
-                    self.screen.get_height(),
+                    Images.width,
+                    Images.height,
                 ),
             )
         else:
@@ -54,9 +55,7 @@ class GameSystem:
             self.column += 1
             # self.background = background(self.current_level)
         maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
-        self.maze_map = Mape(
-            maze, self.screen.get_width(), self.screen.get_height()
-            )
+        self.maze_map = Mape(maze)
         self.time_left = self.level_max_time
 
     def next_level(self) -> None:
@@ -90,10 +89,10 @@ class GameSystem:
         view_maze = row * cell_size
         length_maze = columns * cell_size
 
-        width = self.screen.get_width()
-        height = self.screen.get_height()
+        width = Images.width
+        height = Images.height
 
-        self.screen.blit(self.background, (0, 0))
+        Images.screen.blit(self.background, (0, 0))
         self.wall = pygame.transform.scale(
             self.wall_photo,
             (Block.size * 2.1, Block.size * 1.85)
@@ -112,7 +111,7 @@ class GameSystem:
                 #    location_x, location_y, cell_size, cell_size
                 # )
                 if cell:
-                    self.screen.blit(self.wall, (location_x, location_y))
+                    Images.screen.blit(self.wall, (location_x, location_y))
                 #   pygame.draw.rect(self.screen, (30, 50, 160), rect)
                 else:
                     continue
@@ -124,7 +123,7 @@ class GameSystem:
         text_surface = self.font.render(
                 f"{int(self.time_left)}", True, (255, 255, 255)
                 )
-        self.screen.blit(text_surface, (20, 20))
+        Images.screen.blit(text_surface, (20, 20))
 
     def _draw_entities(self) -> None:
         pass

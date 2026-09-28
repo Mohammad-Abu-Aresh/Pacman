@@ -1,5 +1,6 @@
 from .player import Player
 from abc import ABC, abstractmethod
+import pygame
 
 
 # ===============================================
@@ -15,7 +16,7 @@ class Abilities(ABC):
         pass
 
     @abstractmethod
-    def draw(self) -> None:
+    def draw(self, image: pygame.Surface) -> None:
         pass
 
 
@@ -33,18 +34,12 @@ class Arrow(Abilities):
     def move(self) -> None:
         pass
 
-    def draw(self) -> None:
-        pass
-
 
 class EnderPearl(Abilities):
 
     def __init__(self, target_point: tuple[int, int]) -> None:
         self.target_x: int = target_point[0]
         self.target_y: int = target_point[1]
-
-    def draw(self) -> None:
-        pass
 
 
 class SlowPotion(Abilities):
@@ -56,6 +51,3 @@ class SlowPotion(Abilities):
 
     def apply_effect(self, player: Player) -> None:
         player.update_speed(35, self.duration)  # slow down the player
-
-    def draw(self) -> None:
-        pass

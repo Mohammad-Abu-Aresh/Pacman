@@ -1,5 +1,6 @@
 from typing import Any
 from mazegenerator import MazeGenerator
+from photos.loderimages import Images
 
 
 class Block:
@@ -34,10 +35,9 @@ class Block:
 class Mape:
     def __init__(
             self, maze: MazeGenerator,
-            width: int, height: int,
             ) -> None:
-        self.width = width
-        self.height = height
+        self.width = Images.width
+        self.height = Images.height
         self.mape: list[list[Block]] = self.blocks(maze.maze)
         self.columns = len(self.mape[0]) * 2 + 1
         self.rows = len(self.mape) * 2 + 1
