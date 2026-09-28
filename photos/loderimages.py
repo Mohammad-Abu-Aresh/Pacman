@@ -14,7 +14,7 @@ class Images:
     level_2 = pygame.image.load("photos/background/background2.jpg")
 
     # wall image
-    wall = pygame.image.load("photos/blocks/test.png")
+    wall = pygame.image.load("photos/blocks/block.png")
     screen = pygame.display.set_mode(
         (width, height)
     )

@@ -71,7 +71,7 @@ class GameSystem:
         if self.time_left > 0:
             self.time_left -= time
         else:
-            Mod.updatemod(Mod.MAIN_MENU_SCREEN)
+            Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_n]:
             self.next_level()
