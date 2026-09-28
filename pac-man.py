@@ -1,10 +1,10 @@
-from game import GameEngine
+from game import GameEngine, ConfigLoader
 from sys import stderr
 
 
 if __name__ == "__main__":
-
-    game = GameEngine()
+    config = ConfigLoader().load_config
+    game = GameEngine(config)
     game.run()
     try:
         ...

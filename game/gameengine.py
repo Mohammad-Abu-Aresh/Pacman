@@ -1,5 +1,6 @@
 import sys
 import pygame
+from typing import Any
 from photos.loderimages import Images
 from .game_modes import Mod
 from .screens import Screens
@@ -8,11 +9,11 @@ from .configLoader import ConfigLoader
 
 
 class GameEngine:
-    def __init__(self) -> None:
+    def __init__(self, config: dict[str, Any]) -> None:
 
         # make it str or any to know what screen is this... and rename it
         self.screen_info = pygame.display.Info()
-        self.config = ConfigLoader().load_config
+        self.config = config # config
         pygame.display.set_caption("Pac-Man")
         self.test_font = pygame.font.Font(None, 50)
         # self.test_font.set_bold(True)
