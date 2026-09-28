@@ -1,6 +1,7 @@
 import sys
 from typing import Callable, Dict, Optional
 import pygame
+from typing import Any
 from photos.loderimages import Images
 from .game_modes import Mod
 from .screens import Screens
@@ -9,9 +10,9 @@ from .configLoader import ConfigLoader
 
 
 class GameEngine:
-    def __init__(self) -> None:
-        self.screen_info = pygame.display.Info()
-        self.config = ConfigLoader().load_config
+    def __init__(self, config: dict[str, Any]) -> None:
+        # make it str or any to know what screen is this... and rename it
+        self.config = config # config
         pygame.display.set_caption("Pac-Man")
         self.screen = Images.screen
         self.screens = Screens(self.screen, Images.width, Images.height)
