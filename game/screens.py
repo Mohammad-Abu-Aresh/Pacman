@@ -238,19 +238,19 @@ class Screens:
             )
 
         return draw_game_over
-    def addjson(self, name = None, score = 0, file = "highscores.json"):
-        if not name :
-            return
 
+    def addjson(self, name=None, score=0, file="highscores.json"):
+        if not name:
+            return
 
         with open(file, "r") as f:
             data = json.load(f)
-        
+
         name_score = {
             "name": name,
             "score": score
         }
         data.append(name_score)
-        
+
         with open(file, "w") as f:
             json.dump(data, f)

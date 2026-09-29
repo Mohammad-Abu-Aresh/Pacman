@@ -17,10 +17,10 @@ __all__ = [
         "Player",  # my player
 
         "Arrow", "EnderPearl",
-        "SlowPotion", # Abilities
+        "SlowPotion",  # Abilities
 
         "BabyZombie", "Skeleton",
-        "Enderman", "Witch", # fore Monster try to kill you
-        
-        "Control_creature" # how the game control every Creature
+        "Enderman", "Witch",  # fore Monster try to kill you
+
+        "Control_creature"  # how the game control every Creature
         ]
