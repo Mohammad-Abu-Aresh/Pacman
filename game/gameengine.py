@@ -11,7 +11,7 @@ from .gameplay import GameSystem
 class GameEngine:
     def __init__(self, config: dict[str, Any]) -> None:
         # make it str or any to know what screen is this... and rename it
-        self.config = config # config
+        self.config = config  # config
         pygame.display.set_caption("Pac-Man")
         self.screen = Images.screen
         self.screens = Screens(self.screen, Images.width, Images.height)
@@ -44,6 +44,10 @@ class GameEngine:
                                 self.screens.user_text[:-1]
                             )
                         elif event.key == pygame.K_RETURN:
+                            self.screens.addjson(
+                                self.screens.user_text, 880,
+                                self.config["highscore_filename"]
+                                )
                             self.screens.user_text = ""
                             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
                         else:
