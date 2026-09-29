@@ -8,6 +8,7 @@ class ConfigLoader:
     def __init__(self) -> None:
         self.fileName: str = sys.argv[1]
         self.default_config = {
+            "highscore_filename": "highscores.json",
             "lives": 3,
             "pacgum": 42,
             "points_per_pacgum": 10,

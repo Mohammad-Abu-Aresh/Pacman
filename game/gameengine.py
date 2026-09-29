@@ -44,6 +44,7 @@ class GameEngine:
                                 self.screens.user_text[:-1]
                             )
                         elif event.key == pygame.K_RETURN:
+                            self.screens.addjson(self.screens.user_text, 880, self.config["highscore_filename"])
                             self.screens.user_text = ""
                             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
                         else:
