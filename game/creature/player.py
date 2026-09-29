@@ -37,7 +37,8 @@ class Player(Creature):
             float(self.spown_point[0]),
             float(self.spown_point[1]),
             )
-        self.direction: tuple[int, int] = Direction.right  # we can make it empty temp
+        self.direction: tuple[int, int] = Direction.right
+        # we can make it empty temp
 
         self.x: float = self.locaion[0]
         self.y: float = self.locaion[1]
@@ -49,7 +50,7 @@ class Player(Creature):
 
         self._is_super = False
         self._super_timer = super_timer
-        
+
         if is_hardcore:
             ...
 
@@ -80,4 +81,3 @@ class Player(Creature):
 
     def update_speed(self, new_speed: int, time: int) -> None:
         self._speed = new_speed
-
