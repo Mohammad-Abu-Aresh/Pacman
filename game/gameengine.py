@@ -6,7 +6,6 @@ from photos.loderimages import Images
 from .game_modes import Mod
 from .screens import Screens
 from .gameplay import GameSystem
-from .configLoader import ConfigLoader
 
 
 class GameEngine:

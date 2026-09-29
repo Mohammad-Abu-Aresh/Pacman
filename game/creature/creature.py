@@ -32,9 +32,14 @@ class Control_creature:
             is_hardcore: bool = False,
                  ) -> None:
         from .player import Player
-        # from .monster import (
-        #         Skeleton, Enderman, BabyZombie, Witch
-        #     )
+        from .algo_monster import AlgoMonster
+
+        # import mobs
+        from .skeleton import Skeleton
+        from .enderman import Enderman
+        from .babyzombie import BabyZombie
+        from .witch import Witch
+
         self.Player = Player(
             maze_map,
             lives,

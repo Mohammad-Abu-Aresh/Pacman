@@ -15,6 +15,8 @@ class Images:
 
     # wall image
     wall = pygame.image.load("photos/blocks/block.png")
+
+    player = pygame.image.load("photos/player/steve.png")
     screen = pygame.display.set_mode(
         (width, height)
     )
