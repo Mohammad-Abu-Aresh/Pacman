@@ -155,7 +155,7 @@ class Screens:
         data = sorted(data, key=lambda x: x["score"], reverse=True)
 
         def draw_higscore() -> None:
-            self.screen.fill((0, 0, 0))
+            self.screen.fill((0, 0, 0))  # (R, G, B) "coller" Max= 255
             self.screen.blit(title_surf, title_rect)
 
             start_y = int(self.height * 0.28)
