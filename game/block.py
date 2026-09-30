@@ -59,16 +59,16 @@ class Mape:
         y = 2 * len(mape2[0]) + 1
         lis: list[list[bool]] = []
         for i in range(x):
-            r: Any = []
+            row: Any = []
             for j in range(y):
-                r.append(True)
-            lis.append(r)
+                row.append(True)
+            lis.append(row)
 
-        for r in range(len(mape2)):
-            for c in range(len(mape2[r])):
-                call = mape2[r][c]
-                x = 2 * r + 1
-                y = 2 * c + 1
+        for row in range(len(mape2)):
+            for column in range(len(mape2[row])):
+                call = mape2[row][column]
+                x = 2 * row + 1
+                y = 2 * column + 1
                 lis[x][y] = False
                 if not call.top:
                     lis[x - 1][y] = False

@@ -27,10 +27,6 @@ class Images:
     def _drow(cls, image: pygame.Surface, location: tuple[int, int]) -> None:
         Images.screen.blit(image, location)
 
-    # @classmethod
-    # def _update_size(cls, image: pygame.Surface, size: tuple[int,int]) -> None:
-    #     cls.image = pygame.transform.scale(image, size)
-
     @classmethod
     def _update_size(cls, image_name: str, size: tuple[int,int]) -> None:
         #new_image_name = f"{image_name}_new"

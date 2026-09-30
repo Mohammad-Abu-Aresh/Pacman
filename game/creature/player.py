@@ -6,8 +6,8 @@ from photos.loderimages import Images
 
 class Direction:
     """
-    if x 1 meen he going the positave x so he is going like this ->
-    if x -1 meen he going the nigative x so he is going like this <-
+    if x 1, meen he going the positave x so he is going like this ->
+    if x -1, meen he going the nigative x so he is going like this <-
     same for y
     the tuple is (x, y)
     the y start from 0 and if we get down we have to incres y...
@@ -26,13 +26,20 @@ class Player(Creature):
             is_hardcore: bool,
             ) -> None:
         self.maze = maze_map
+        self._lives = lives
+        self._super_timer = super_timer
+
         self._image = Images.player
         self.spown_point: tuple[int, int] = (
             maze_map.width // 2,
             maze_map.height // 2,
         )
 
-        self.size: int = Block.size * 2
+        Images._update_size(
+            Images.player,
+            size=(Block.size * 1.8, Block.size)
+            )
+        
         self.locaion: tuple[float, float] = (
             float(self.spown_point[0]),
             float(self.spown_point[1]),
@@ -42,14 +49,12 @@ class Player(Creature):
 
         self.x: float = self.locaion[0]
         self.y: float = self.locaion[1]
-
-        self._lives = lives
+        # must be update when i move 
 
         self._score: int = 0
-        self._speed: int = 100 * Block.size
+        self._speed: int = 100 * Block.size // 33
 
         self._is_super = False
-        self._super_timer = super_timer
 
         if is_hardcore:
             ...
@@ -59,7 +64,7 @@ class Player(Creature):
 
     def die(self) -> None:
         self.telport((800, 800))
-        time.sleep(3)
+        # time.sleep(3) # timer . tic + 3000
         self.respawn
 
     def draw(self) -> None:

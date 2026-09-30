@@ -15,13 +15,11 @@ class GameSystem:
         }
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        # self.screen = Images.screen
         self.config = config
         self.current_level: int = 1
         self.max_levels: int = config["max_levels"]
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
-        # self.wall_photo = Images.wall
         self.row = 7
         self.column = 7
         self.time_left: float = float(self.level_max_time)
@@ -52,7 +50,6 @@ class GameSystem:
             self.seed = random.randint(1, 2004)
             self.row += 2
             self.column += 1
-            # self.background = background(self.current_level)
         maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
         self.maze_map = Mape(maze)
         Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
@@ -104,7 +101,6 @@ class GameSystem:
                 location_y = starting_point_y + (y * cell_size)
                 ls.append(((location_x, location_y), cell))
                 if cell:
-                    # Images.screen.blit(self.wall, (location_x, location_y))
                     Images._drow(Images.wall, location=(location_x, location_y))
                 else:
                     continue

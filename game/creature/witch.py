@@ -11,7 +11,8 @@ class Witch(Monster):
     ) -> None:
         super().__init__(spawn_point, is_hardcore)
         self.potion_cooldown: float = 30.0  # cooldown in seconds
-        self.radius_check: int = 5  # 5-block radius
+        # i need to define the potion in a hardcore fun
+        self.radius_check: int = 4  # 4-block radius
 
     def throw_slow_potion(self, player: Player) -> None:
         """
@@ -32,6 +33,10 @@ class Witch(Monster):
         pass
 
     def draw(self) -> None:
+        # loid
+        # resize 
+        # drow
+        # drow the 2 block under the monster or player
         pass
 
     def follow(self, player: Player) -> None:
@@ -39,3 +44,4 @@ class Witch(Monster):
             self.target_point = (player.x, player.y)
         else:
             self.target_point = self.spawn_point
+            # i need to edit it
