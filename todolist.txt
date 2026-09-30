@@ -1,9 +1,9 @@
-clean the code from ane thing not nessissary 
-display monster to a many file...
-display the block we have and use it in screen
-fix and go with monster logic and photos
+clean the code from ane thing not nessissary .
+fix and go with monster photos and control
+display score and info
+get some background
 make a cheet mod
 refactoring again
 testing
-README.md
+# README.md
 make sure make lint --strict is pass
