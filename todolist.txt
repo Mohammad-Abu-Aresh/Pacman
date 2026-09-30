@@ -1,6 +1,7 @@
 clean the code from ane thing not nessissary .
 fix and go with monster photos and control
 display score and info
+***********display sittings and how to play
 get some background
 make a cheet mod
 refactoring again
