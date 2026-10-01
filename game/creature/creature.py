@@ -34,11 +34,11 @@ class Control_creature:
         from .player import Player
         # from .algo_monster import AlgoMonster
 
-        # # import mobs
-        # from .skeleton import Skeleton
-        # from .enderman import Enderman
-        # from .babyzombie import BabyZombie
-        # from .witch import Witch
+        # import mobs
+        from .skeleton import Skeleton
+        from .enderman import Enderman
+        from .babyzombie import BabyZombie
+        from .witch import Witch
 
         self.Player = Player(
             maze_map,
@@ -47,6 +47,7 @@ class Control_creature:
             is_hardcore,
             )
         self.size: int = Block.size * 2
-        # self.Skeleton = Skeleton()
-        # self.BabyZombie = BabyZombie()
-        # self.Enderman = Enderman()
+        self.witch = Witch(maze_map.spawn_point["witch"])
+        self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
+        self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
+        self.Enderman = Enderman(maze_map.spawn_point["enderman"])
