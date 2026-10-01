@@ -45,7 +45,7 @@ class Mape:
         Block.size_update(self.width, self.height, self.columns, self.rows)
         self.spawn_point: dict[str, tuple[int, int]] = {
             "zombie": (0, 0),
-            "skeleton": (len(self.mape[0], 0)),
+            "skeleton": (len(self.mape[0]), 0),
             "enderman": (0, len(self.mape)),
             "witch": (len(self.mape[0]), len(self.mape)),
         }

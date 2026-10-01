@@ -19,8 +19,6 @@ class BabyZombie(Monster):
     def move(self) -> None:
         pass
 
-    def draw(self) -> None:
-        pass
 
     def follow(self, player: Player) -> None:
         if self.live:

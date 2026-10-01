@@ -11,7 +11,7 @@ class Creature(ABC):
     def move(self) -> None:
         pass
 
-    @abstractmethod
+    # @abstractmethod
     def draw(self) -> None:
         pass
 
