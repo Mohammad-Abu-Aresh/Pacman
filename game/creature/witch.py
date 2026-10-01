@@ -34,7 +34,7 @@ class Witch(Monster):
 
     def draw(self) -> None:
         # loid
-        # resize 
+        # resize
         # drow
         # drow the 2 block under the monster or player
         pass

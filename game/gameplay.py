@@ -101,7 +101,10 @@ class GameSystem:
                 location_y = starting_point_y + (y * cell_size)
                 ls.append(((location_x, location_y), cell))
                 if cell:
-                    Images._drow(Images.wall, location=(location_x, location_y))
+                    Images._drow(
+                        Images.wall,
+                        location=(location_x, location_y)
+                        )
                 else:
                     continue
             lis.append(ls)

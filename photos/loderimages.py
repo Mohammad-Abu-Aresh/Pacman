@@ -28,8 +28,8 @@ class Images:
         Images.screen.blit(image, location)
 
     @classmethod
-    def _update_size(cls, image_name: str, size: tuple[int,int]) -> None:
-        #new_image_name = f"{image_name}_new"
+    def _update_size(cls, image_name: str, size: tuple[int, int]) -> None:
+        # new_image_name = f"{image_name}_new"
         setattr(
             cls,
             image_name,

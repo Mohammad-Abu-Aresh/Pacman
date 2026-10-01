@@ -1,4 +1,4 @@
-import time
+# import time
 from .creature import Creature
 from ..block import Mape, Block
 from photos.loderimages import Images
@@ -39,7 +39,7 @@ class Player(Creature):
             "player",
             size=(Block.size * 1.8, Block.size * 0.8)
             )
-        
+
         self.locaion: tuple[float, float] = (
             float(self.spown_point[0]),
             float(self.spown_point[1]),
@@ -49,7 +49,7 @@ class Player(Creature):
 
         self.x: float = self.locaion[0]
         self.y: float = self.locaion[1]
-        # must be update when i move 
+        # must be update when i move
 
         self._score: int = 0
         self._speed: int = 100 * Block.size // 33
