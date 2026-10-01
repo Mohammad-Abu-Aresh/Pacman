@@ -10,6 +10,7 @@ from .gameplay import GameSystem
 
 class GameEngine:
     def __init__(self, config: dict[str, Any]) -> None:
+        
         # make it str or any to know what screen is this... and rename it
         self.config = config  # config
         pygame.display.set_caption("Pac-Man")
@@ -28,6 +29,9 @@ class GameEngine:
         self.clock = pygame.time.Clock()
 
     def run(self) -> None:
+        cheating: bool = False # The special variable in cheat mode
+        provisional_time: int = 0
+        font = pygame.font.SysFont(None, 36)
         while True:
             fps = self.clock.tick(60)
             for event in pygame.event.get():
@@ -57,6 +61,13 @@ class GameEngine:
                                 and event.unicode.isprintable()
                             ):
                                 self.screens.user_text += event.unicode
+                    if event.key == pygame.K_c:
+                        if Mod.state_variable == Mod.GAME_SCREEN:
+                            cheating = not cheating
+                            provisional_time = 120
+                            print("Cheating:", cheating)
+                        
+
 
             if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
@@ -83,11 +94,21 @@ class GameEngine:
                     pygame.quit()
                     sys.exit(0)
             elif Mod.state_variable == Mod.GAME_SCREEN:
+
                 if not self.game_session:
                     self.game_session = GameSystem(self.config)
                 time_tic = fps / 1000.0
                 self.game_session.update(time_tic)
                 self.game_session.draw()
+                if provisional_time > 0:
+                    provisional_time -= 1
+                    if cheating:
+                        font_o = font.render("Cheat Mode Activated!", True, (255, 0, 0))
+                    else:
+                        font_o = font.render("Cheat Mode Deactivated!", True, (255, 0, 0))
+                    
+                    Images.screen.blit(font_o, (Images.width - font_o.get_width() - 20, 20))
+
             elif Mod.state_variable == Mod.SETTINGS_SCREEN:
                 if not self.settings_callable:
                     self.settings_callable = self.screens.settings_screen()
