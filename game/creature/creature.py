@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from ..block import Mape, Block
-
+from ..block import Mape
+from photos.loderimages import Images
 
 class Creature(ABC):
     @abstractmethod
@@ -16,8 +16,8 @@ class Creature(ABC):
         pass
 
     @abstractmethod
-    def die(self) -> None:
-        ...
+    def die(self, image) -> None:
+        Images._drow(self.locaion)
 
     # def check_wall_collision() -> None:
     #    pass
@@ -46,8 +46,9 @@ class Control_creature:
             super_timer,
             is_hardcore,
             )
-        self.size: int = Block.size * 2
         self.witch = Witch(maze_map.spawn_point["witch"])
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
         self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
         self.Enderman = Enderman(maze_map.spawn_point["enderman"])
+        # while True:
+        #     BabyZombie.draw(Images.zombie)

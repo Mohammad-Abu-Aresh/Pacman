@@ -30,7 +30,7 @@ class Player(Creature):
         self._super_timer = super_timer
 
         self._image = Images.player
-        self.spown_point: tuple[int, int] = (
+        self.spawn_point: tuple[int, int] = (
             maze_map.width // 2,
             maze_map.height // 2,
         )
@@ -41,8 +41,8 @@ class Player(Creature):
             )
 
         self.locaion: tuple[float, float] = (
-            float(self.spown_point[0]),
-            float(self.spown_point[1]),
+            float(self.spawn_point[0]),
+            float(self.spawn_point[1]),
             )
         self.direction: tuple[int, int] = Direction.right
         # we can make it empty temp
@@ -78,7 +78,7 @@ class Player(Creature):
         pass
 
     def respawn(self) -> None:
-        self.telport(self.spown_point)
+        self.telport(self.spawn_point)
         self._lives -= 1
 
     def telport(self, point: tuple[int, int]) -> None:
