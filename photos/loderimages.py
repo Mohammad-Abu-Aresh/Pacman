@@ -30,10 +30,10 @@ class Images:
     @classmethod
     def _update_size(cls, image_name: str, size: tuple[int, int]) -> None:
         setattr(
-        cls,
-        f"{image_name}_new",
-        pygame.transform.scale(
-            getattr(cls, image_name),
-            size
+            cls,
+            f"{image_name}_new",
+            pygame.transform.scale(
+                getattr(cls, image_name),
+                size
+            )
         )
-    )

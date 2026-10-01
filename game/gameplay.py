@@ -102,7 +102,7 @@ class GameSystem:
                 ls.append(((location_x, location_y), cell))
                 if cell:
                     Images._drow(
-                        Images.wall,
+                        Images.wall_new,
                         location=(location_x, location_y)
                         )
                 else:
