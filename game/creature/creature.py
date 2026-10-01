@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ..block import Mape
+from ..block import Mape, Block
 from photos.loderimages import Images
 
 class Creature(ABC):
@@ -11,9 +11,10 @@ class Creature(ABC):
     def move(self) -> None:
         pass
 
-    # @abstractmethod
-    def draw(self) -> None:
-        pass
+    def draw(self, mape: Mape) -> None:
+        px = mape.origin_x + self.x * Block.size
+        py = mape.origin_y + self.y * Block.size
+        Images._drow(Images.zombie, location=(px, py))
 
     @abstractmethod
     def die(self, image) -> None:
