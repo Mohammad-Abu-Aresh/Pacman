@@ -36,8 +36,8 @@ class Player(Creature):
         )
 
         Images._update_size(
-            Images.player,
-            size=(Block.size * 1.8, Block.size)
+            "player",
+            size=(Block.size * 1.8, Block.size * 0.8)
             )
         
         self.locaion: tuple[float, float] = (
