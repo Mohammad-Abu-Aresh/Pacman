@@ -22,8 +22,8 @@ class GameSystem:
         self.level_max_time: int = self.config.get("level_max_time", 90)
         self.row = 7
         self.column = 7
-        self.time_left: float = float(self.level_max_time)
         self.load_level()
+        self.time_left: float = float(self.level_max_time)
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
         self.player = Control_creature(
@@ -33,7 +33,6 @@ class GameSystem:
             )
 
     def load_level(self) -> None:
-
         if self.current_level == 1:
             self.seed = self.config.get("seed", 42)
             self.row = 11

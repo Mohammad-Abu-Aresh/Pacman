@@ -29,6 +29,7 @@ class GameEngine:
 
     def run(self) -> None:
         while True:
+            fps = self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -84,8 +85,8 @@ class GameEngine:
             elif Mod.state_variable == Mod.GAME_SCREEN:
                 if not self.game_session:
                     self.game_session = GameSystem(self.config)
-                x = self.clock.tick(60) / 1000.0
-                self.game_session.update(x)
+                time_tic = fps / 1000.0
+                self.game_session.update(time_tic)
                 self.game_session.draw()
             elif Mod.state_variable == Mod.SETTINGS_SCREEN:
                 if not self.settings_callable:
@@ -99,5 +100,4 @@ class GameEngine:
                 if not self.loss_callable:
                     self.loss_callable = self.screens.game_over_screen()
                 self.loss_callable()
-
             pygame.display.update()
