@@ -19,6 +19,8 @@ class Images:
     wall = pygame.image.load("photos/blocks/block.png")
 
     player = pygame.image.load("photos/player/steve.png")
+
+    zombie = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     screen = pygame.display.set_mode(
         (width, height)
     )
@@ -28,14 +30,15 @@ class Images:
         Images.screen.blit(image, location)
 
     @classmethod
-    def _update_size(cls, image_name: str, size: tuple[int, int]) -> None:
-        # new_image_name = f"{image_name}_new"
+    def _update_size(
+        cls, image_name: str,
+        size: tuple[int | float, int | float]
+        ) -> None:
         setattr(
             cls,
-            image_name,
-
+            f"{image_name}_new",
             pygame.transform.scale(
-                getattr(cls, image_name),  # check if the str is in a cls
+                getattr(cls, image_name),
                 size
-            )  # chnenge size
+            )
         )

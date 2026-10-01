@@ -32,12 +32,12 @@ class Witch(Monster):
     def move(self) -> None:
         pass
 
-    def draw(self) -> None:
-        # loid
-        # resize
-        # drow
-        # drow the 2 block under the monster or player
-        pass
+    #def draw(self) -> None:
+    #    # loid
+    #    # resize
+    #    # drow
+    #    # drow the 2 block under the monster or player
+    #    pass
 
     def follow(self, player: Player) -> None:
         if self.live:

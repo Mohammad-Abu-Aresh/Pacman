@@ -40,8 +40,18 @@ class Mape:
         self.height = Images.height
         self.mape: list[list[Block]] = self.blocks(maze.maze)
         self.columns = len(self.mape[0]) * 2 + 1
+        # columns == x in a nother file's
         self.rows = len(self.mape) * 2 + 1
         Block.size_update(self.width, self.height, self.columns, self.rows)
+        self.spawn_point = {
+            "zombie":   (1, 1),
+            "skeleton": (2 * len(self.mape[0]) - 1, 1),
+            "enderman": (1, 2 * len(self.mape) - 1),
+            "witch":    (2 * len(self.mape[0]) - 1, 2 * len(self.mape) - 1),
+        }
+        self.grid = self.every_cell
+        self.origin_x = (Images.width  - self.columns * Block.size) // 2 - 270
+        self.origin_y = (Images.height - self.rows    * Block.size) // 2 - 15
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:
         res: list[list[Block]] = []

@@ -73,10 +73,17 @@ class GameSystem:
             self.next_level()
 
     def draw(self) -> None:
-        _ = self._draw_maze()
+        _ = self._draw_maze(
+            self.maze_map.origin_x,
+            self.maze_map.origin_y
+            )
         self._draw_timer()
 
-    def _draw_maze(self) -> list[list[tuple[tuple[int, int], bool]]]:
+    def _draw_maze(
+            self,
+            origin_x: int,
+            origin_y: int
+            ) -> list[list[tuple[tuple[int, int], bool]]]:
         maze_bool = self.maze_map.every_cell
 
         row = self.maze_map.columns
@@ -90,18 +97,16 @@ class GameSystem:
 
         Images.screen.blit(self.background, (0, 0))
 
-        starting_point_x = (width - view_maze) // 2 - 10 - 260
-        starting_point_y = (height - length_maze * 1.05) // 2 - 15
         lis = []
         for y, row in enumerate(maze_bool):
             ls = []
             for x, cell in enumerate(row):
-                location_x = starting_point_x + (x * cell_size)
-                location_y = starting_point_y + (y * cell_size)
+                location_x = origin_x + (x * cell_size)
+                location_y = origin_y + (y * cell_size)
                 ls.append(((location_x, location_y), cell))
                 if cell:
                     Images._drow(
-                        Images.wall,
+                        Images.wall_new,
                         location=(location_x, location_y)
                         )
                 else:
