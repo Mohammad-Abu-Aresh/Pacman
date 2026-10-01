@@ -26,7 +26,7 @@ class GameSystem:
         self.time_left: float = float(self.level_max_time)
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
-        self.player = Control_creature(
+        self.player_creature = Control_creature(
             maze_map=self.maze_map,
             lives=3,
             super_timer=15
@@ -69,6 +69,7 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
+        # self.player_creatures.update(time)
         if keys[pygame.K_n]:
             self.next_level()
 
@@ -77,6 +78,7 @@ class GameSystem:
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
+        # self.player_creatures.draw() drow mobs after block
         self._draw_timer()
 
     def _draw_maze(

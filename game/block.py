@@ -50,8 +50,8 @@ class Mape:
             "witch":    (2 * len(self.mape[0]) - 1, 2 * len(self.mape) - 1),
         }
         self.grid = self.every_cell
-        self.origin_x = (Images.width  - self.columns * Block.size) // 2 - 270
-        self.origin_y = (Images.height - self.rows    * Block.size) // 2 - 15
+        self.origin_x = (Images.width  - (self.columns * Block.size * 1.4)) // 2
+        self.origin_y = (Images.height - (self.rows    * Block.size * 1.1)) // 2
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:
         res: list[list[Block]] = []
