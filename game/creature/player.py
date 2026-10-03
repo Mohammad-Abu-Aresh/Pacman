@@ -35,11 +35,6 @@ class Player(Creature):
             maze_map.height // 2,
         )
 
-        Images._update_size(
-            "player",
-            size=(Block.size * 1.8, Block.size * 0.8)
-            )
-
         self.locaion: tuple[float, float] = (
             float(self.spawn_point[0]),
             float(self.spawn_point[1]),
@@ -56,8 +51,15 @@ class Player(Creature):
 
         self._is_super = False
 
+        self.load_size()
         if is_hardcore:
             ...
+
+    def load_size(self) -> None:
+        Images._update_size(
+            "player",
+            size=(Block.size * 1.8, Block.size * 0.8)
+        )
 
     def move(self) -> None:
         pass

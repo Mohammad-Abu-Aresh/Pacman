@@ -1,6 +1,8 @@
 from .abilities import EnderPearl
 from .monster import Monster
 from .player import Player
+from ..block import Block
+from photos import Images
 import random
 
 
@@ -12,6 +14,13 @@ class Enderman(Monster):
         super().__init__(spawn_point, is_hardcore)
         self.teleport_cooldown: float = 20.0  # every 20 seconds
         self.current_pearl: EnderPearl | None = None
+        self.load_size()
+
+    def load_size(self) -> None:
+        self.image = Images._update_size(
+            "witch",
+            (Block.size * 0.9, Block.size * 0.5)
+        )
 
     def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
         """

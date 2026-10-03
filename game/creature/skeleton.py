@@ -1,4 +1,6 @@
 from .monster import Monster
+from ..block import Block
+from photos import Images
 from .player import Player
 from .abilities import Arrow
 from ..block import Mape
@@ -13,7 +15,15 @@ class Skeleton(Monster):
         self.shoot_cooldown: float = 3.0  # cooldown between shots in seconds
         self.active_arrows: list[Arrow] = []  # if len(arr) > 0 dont shot again
         self.direction: int = 0
+        self.load_size()
+
         # tempr = 0 becose ge is not folowing a target yet
+
+    def load_size(self) -> None:
+            self.image = Images._update_size(
+                "skeleton",
+                (Block.size * 1.8, Block.size * 0.5)
+                )
 
     def has_line_of_sight(
         self, player: Player, mape: Mape

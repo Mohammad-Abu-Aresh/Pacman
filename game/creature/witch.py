@@ -2,6 +2,8 @@ import math
 from .monster import Monster
 from .abilities import SlowPotion
 from .player import Player
+from ..block import Block
+from photos import Images
 
 
 class Witch(Monster):
@@ -13,6 +15,14 @@ class Witch(Monster):
         self.potion_cooldown: float = 30.0  # cooldown in seconds
         # i need to define the potion in a hardcore fun
         self.radius_check: int = 4  # 4-block radius
+        self.load_size()
+
+    def load_size(self) -> None:
+        self.image = Images._update_size(
+            "witch",
+            (Block.size * 0.9, Block.size * 0.5)
+        )
+        
 
     def throw_slow_potion(self, player: Player) -> None:
         """

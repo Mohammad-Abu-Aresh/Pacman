@@ -21,10 +21,10 @@ class BabyZombie(Monster):
 
     # @classmethod
     def load_size(self) -> None:
-        Images._update_size(
+        self.image = Images._update_size(
             "zombie",
             (Block.size * 0.9, Block.size * 0.5)
-            )
+        )
     
     def set_hardcore_mode(self, enabled: bool) -> None:
         super().set_hardcore_mode(enabled)

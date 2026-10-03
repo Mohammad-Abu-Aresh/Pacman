@@ -21,6 +21,10 @@ class Images:
     player = pygame.image.load("photos/player/steve.png")
 
     zombie = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+    witch = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+    skeleton = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+    enderman = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+
     screen = pygame.display.set_mode(
         (width, height)
     )

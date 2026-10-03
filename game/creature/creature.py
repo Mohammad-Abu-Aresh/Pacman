@@ -17,8 +17,8 @@ class Creature(ABC):
         Images._drow(Images.zombie, location=(px, py))
 
     @abstractmethod
-    def die(self, image) -> None:
-        Images._drow(self.locaion)
+    def die(self) -> None:
+        self.image._drow(self.locaion)
 
     # def check_wall_collision() -> None:
     #    pass
