@@ -12,9 +12,9 @@ class Creature(ABC):
         pass
 
     def draw(self, mape: Mape) -> None:
-        px = mape.origin_x + self.x * Block.size
-        py = mape.origin_y + self.y * Block.size
-        Images._drow(Images.zombie, location=(px, py))
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y - 0.5) * Block.size
+        Images._drow(self.image, location=(px, py))
 
     @abstractmethod
     def die(self) -> None:
@@ -41,11 +41,12 @@ class Control_creature:
         from .babyzombie import BabyZombie
         from .witch import Witch
 
-        self.Player = Player(
+        self.player = Player(
             maze_map,
             lives,
             super_timer,
             is_hardcore,
+            maze_map.spawn_point["player"]
             )
         self.witch = Witch(maze_map.spawn_point["witch"])
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])

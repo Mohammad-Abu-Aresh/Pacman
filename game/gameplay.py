@@ -73,12 +73,27 @@ class GameSystem:
         if keys[pygame.K_n]:
             self.next_level()
 
+    #def draw(self) -> None:
+    #    _ = self._draw_maze(
+    #        self.maze_map.origin_x,
+    #        self.maze_map.origin_y
+    #        )
+    #    # self.player_creatures.draw() drow mobs after block
+    #    self._draw_timer()
+
     def draw(self) -> None:
         _ = self._draw_maze(
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
-        # self.player_creatures.draw() drow mobs after block
+        for mob in (
+                self.player_creature.player,
+                self.player_creature.BabyZombie,
+                self.player_creature.Skeleton,
+                self.player_creature.Enderman,
+                self.player_creature.witch,
+                ):
+            mob.draw(self.maze_map)
         self._draw_timer()
 
     def _draw_maze(

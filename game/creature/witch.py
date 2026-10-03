@@ -18,10 +18,12 @@ class Witch(Monster):
         self.load_size()
 
     def load_size(self) -> None:
-        self.image = Images._update_size(
+        Images._update_size(
             "witch",
-            (Block.size * 0.9, Block.size * 0.5)
+            (Block.size * 0.6, Block.size * 1.8)
         )
+        self.image = Images.witch_new
+        
         
 
     def throw_slow_potion(self, player: Player) -> None:

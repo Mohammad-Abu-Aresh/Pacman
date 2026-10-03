@@ -1,7 +1,7 @@
 from .abilities import EnderPearl
 from .monster import Monster
 from .player import Player
-from ..block import Block
+from ..block import Mape, Block
 from photos import Images
 import random
 
@@ -17,10 +17,16 @@ class Enderman(Monster):
         self.load_size()
 
     def load_size(self) -> None:
-        self.image = Images._update_size(
-            "witch",
-            (Block.size * 0.9, Block.size * 0.5)
+        Images._update_size(
+            "enderman",
+            (Block.size * 0.6, Block.size * 2.8)
         )
+        self.image = Images.enderman_new
+
+    def draw(self, mape: Mape) -> None:
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y - 1) * Block.size
+        Images._drow(self.image, location=(px, py))
 
     def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
         """

@@ -8,6 +8,7 @@ class BabyZombie(Monster):
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
+        super().__init__(spawn_point, is_hardcore)
         self.spawn_point = spawn_point
         self.locaion: tuple[float, float] = (
                 float(self.spawn_point[0]),
@@ -19,12 +20,17 @@ class BabyZombie(Monster):
         self.is_hardcore: bool = is_hardcore
         self.load_size()
 
-    # @classmethod
     def load_size(self) -> None:
-        self.image = Images._update_size(
+        Images._update_size(
             "zombie",
-            (Block.size * 0.9, Block.size * 0.5)
+            (Block.size * 0.6, Block.size * 0.9)
         )
+        self.image = Images.zombie_new
+
+    def draw(self, mape: Mape) -> None:
+            px = mape.origin_x + (self.x + 0.7) * Block.size
+            py = mape.origin_y + (self.y + 0.2) * Block.size
+            Images._drow(self.image, location=(px, py))
     
     def set_hardcore_mode(self, enabled: bool) -> None:
         super().set_hardcore_mode(enabled)

@@ -44,6 +44,7 @@ class Mape:
         self.rows = len(self.mape) * 2 + 1
         Block.size_update(self.width, self.height, self.columns, self.rows)
         self.spawn_point = {
+            "player":   (len(self.mape[0]), len(self.mape)),
             "zombie":   (1, 1),
             "skeleton": (2 * len(self.mape[0]) - 1, 1),
             "enderman": (1, 2 * len(self.mape) - 1),

@@ -24,16 +24,13 @@ class Player(Creature):
             self, maze_map: Mape,
             lives: int, super_timer: int,
             is_hardcore: bool,
+            spawn_point
             ) -> None:
         self.maze = maze_map
         self._lives = lives
         self._super_timer = super_timer
 
-        self._image = Images.player
-        self.spawn_point: tuple[int, int] = (
-            maze_map.width // 2,
-            maze_map.height // 2,
-        )
+        self.spawn_point: tuple[int, int] = spawn_point
 
         self.locaion: tuple[float, float] = (
             float(self.spawn_point[0]),
@@ -58,8 +55,9 @@ class Player(Creature):
     def load_size(self) -> None:
         Images._update_size(
             "player",
-            size=(Block.size * 1.8, Block.size * 0.8)
+            size=(Block.size * 0.7, Block.size * 1.8)
         )
+        self.image = Images.player_new
 
     def move(self) -> None:
         pass
@@ -69,11 +67,8 @@ class Player(Creature):
         # time.sleep(3) # timer . tic + 3000
         self.respawn
 
-    def draw(self) -> None:
+    def handle_input(self, keys: list[str]) -> None:
         pass
-
-    # def handle_input(self, keys: list[str]) -> None:
-    #     pass
 
     def eat(self, item_type: str) -> int:
         return 0

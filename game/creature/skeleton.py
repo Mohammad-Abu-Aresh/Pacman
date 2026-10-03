@@ -20,10 +20,12 @@ class Skeleton(Monster):
         # tempr = 0 becose ge is not folowing a target yet
 
     def load_size(self) -> None:
-            self.image = Images._update_size(
-                "skeleton",
-                (Block.size * 1.8, Block.size * 0.5)
-                )
+        Images._update_size(
+            "skeleton",
+            (Block.size * 0.6, Block.size * 1.8)
+        )
+        self.image = Images.skeleton_new
+            
 
     def has_line_of_sight(
         self, player: Player, mape: Mape
