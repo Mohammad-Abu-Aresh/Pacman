@@ -1,6 +1,6 @@
 from .monster import Monster
 from .player import Player
-from ..block import Block
+from ..block import Block, Mape
 from photos.loderimages import Images
 
 class BabyZombie(Monster):

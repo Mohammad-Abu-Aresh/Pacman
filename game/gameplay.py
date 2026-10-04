@@ -31,6 +31,13 @@ class GameSystem:
             lives=3,
             super_timer=15
             )
+        self.mobs: tuple[object] = (
+                self.player_creature.player,
+                self.player_creature.BabyZombie,
+                self.player_creature.Skeleton,
+                self.player_creature.Enderman,
+                self.player_creature.witch,
+                )
 
     def load_level(self) -> None:
         if self.current_level == 1:
@@ -62,6 +69,7 @@ class GameSystem:
         if self.current_level > self.config["max_levels"]:
             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
         self.load_level()
+        self.player_creature.refresh(self.maze_map)
 
     def update(self, time: float) -> None:
         if self.time_left > 0:
@@ -73,26 +81,12 @@ class GameSystem:
         if keys[pygame.K_n]:
             self.next_level()
 
-    #def draw(self) -> None:
-    #    _ = self._draw_maze(
-    #        self.maze_map.origin_x,
-    #        self.maze_map.origin_y
-    #        )
-    #    # self.player_creatures.draw() drow mobs after block
-    #    self._draw_timer()
-
     def draw(self) -> None:
         _ = self._draw_maze(
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
-        for mob in (
-                self.player_creature.player,
-                self.player_creature.BabyZombie,
-                self.player_creature.Skeleton,
-                self.player_creature.Enderman,
-                self.player_creature.witch,
-                ):
+        for mob in self.mobs:
             mob.draw(self.maze_map)
         self._draw_timer()
 

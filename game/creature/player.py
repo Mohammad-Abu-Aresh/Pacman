@@ -49,13 +49,13 @@ class Player(Creature):
         self._is_super = False
 
         self.load_size()
-        if is_hardcore:
-            ...
+        # if is_hardcore:
+        #     ...
 
     def load_size(self) -> None:
         Images._update_size(
             "player",
-            size=(Block.size * 0.7, Block.size * 1.8)
+            size=(Block.size * 0.7, Block.size * 2.8) # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = Images.player_new
 

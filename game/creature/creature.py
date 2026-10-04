@@ -40,6 +40,7 @@ class Control_creature:
         from .enderman import Enderman
         from .babyzombie import BabyZombie
         from .witch import Witch
+        self.maze_mape = maze_map
 
         self.player = Player(
             maze_map,
@@ -52,5 +53,27 @@ class Control_creature:
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
         self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
         self.Enderman = Enderman(maze_map.spawn_point["enderman"])
-        # while True:
-        #     BabyZombie.draw(Images.zombie)
+        self.mobs: tuple[object] = (
+            self.player,
+            self.witch,
+            self.Skeleton,
+            self.BabyZombie,
+            self.Enderman,
+        )
+
+
+    def refresh(self, mape: Mape) -> None:
+        self.maze_mape = mape
+        self.player.maze = mape
+        self.player.spawn_point = mape.spawn_point["player"]
+        self.witch.spawn_point = mape.spawn_point["witch"]
+        self.Skeleton.spawn_point = mape.spawn_point["skeleton"]
+        self.BabyZombie.spawn_point = mape.spawn_point["zombie"]
+        self.Enderman.spawn_point = mape.spawn_point["enderman"]
+        for mob in self.mobs:
+            mob.load_size()
+            mob.x, mob.y = mob.spawn_point
+
+
+        # def update_spown_point(obj: str) -> None:
+
