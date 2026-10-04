@@ -15,6 +15,7 @@ class GameSystem:
         }
 
     def __init__(self, config: Dict[str, Any]) -> None:
+        self.num = 0
         self.config = config
         self.current_level: int = 1
         self.max_levels: int = config["max_levels"]
@@ -40,7 +41,9 @@ class GameSystem:
                 )
 
     def load_level(self) -> None:
+        
         if self.current_level == 1:
+            self.num += 1
             self.seed = self.config.get("seed", 42)
             self.row = 11
             self.column = 7
@@ -53,9 +56,11 @@ class GameSystem:
                 ),
             )
         else:
+            self.num += 1
             self.seed = random.randint(1, 2004)
-            self.row += 2
-            self.column += 1
+            if self.num == 3 or self.num == 6 or self.num == 9 or self.num == 12:
+                self.row += 2
+                self.column += 1
         maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
         self.maze_map = Mape(maze)
         Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
