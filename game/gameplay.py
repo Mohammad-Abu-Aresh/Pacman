@@ -61,6 +61,8 @@ class GameSystem:
             if self.num == 3 or self.num == 6 or self.num == 9 or self.num == 12:
                 self.row += 2
                 self.column += 1
+            else:
+                self.mobs[0]._super_timer -= 2
         maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
         self.maze_map = Mape(maze)
         Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
