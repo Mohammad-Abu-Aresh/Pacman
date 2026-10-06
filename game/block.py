@@ -90,3 +90,4 @@ class Mape:
                 if not call.right:
                     lis[x][y + 1] = False
         return lis
+

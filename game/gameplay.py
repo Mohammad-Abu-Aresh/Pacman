@@ -1,5 +1,6 @@
 import pygame
 import random
+from .creature import Diamond, Netherite
 from photos.loderimages import Images
 from typing import Dict, Any
 from .creature import Control_creature
@@ -68,6 +69,19 @@ class GameSystem:
         Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
         self.time_left = self.level_max_time
 
+
+        super_options: list[bool] = [False] * 20 + [True]
+        self.collectibles = []
+
+        for y, row in enumerate(self.maze_map.every_cell):
+            for x, cell in enumerate(row):
+                if not cell:
+                    is_super = random.choice(super_options)
+                    if is_super:
+                        self.collectibles.append(Netherite(Images.screen, self.config, x, y))
+                    else:
+                        self.collectibles.append(Diamond(Images.screen, self.config, x, y))
+
     def next_level(self) -> None:
         if self.current_level <= self.max_levels:
             self.current_level += 1
@@ -93,8 +107,13 @@ class GameSystem:
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
+
+        for item in self.collectibles:
+            item.draw(self.maze_map)
+    
         for mob in self.mobs:
             mob.draw(self.maze_map)
+        
         self._draw_timer()
 
     def _draw_maze(
@@ -105,16 +124,11 @@ class GameSystem:
         maze_bool = self.maze_map.every_cell
 
         row = self.maze_map.columns
-        columns = self.maze_map.rows
         cell_size = Block.size
-        view_maze = row * cell_size
-        length_maze = columns * cell_size
-
-        width = Images.width
-        height = Images.height
+        for item in self.collectibles:
+            item.draw(self.maze_map)
 
         Images.screen.blit(self.background, (0, 0))
-
         lis = []
         for y, row in enumerate(maze_bool):
             ls = []
