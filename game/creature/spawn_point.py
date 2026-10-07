@@ -31,8 +31,8 @@ class Diamond(pacgum):
         if self.is_eaten:
             return
         
-        shift_x = 15  
-        shift_y = 15  
+        shift_x = 15
+        shift_y = 15
 
         px = int(mape.origin_x + (self.x * Block.size) + (Block.size // 2) + shift_x)
         py = int(mape.origin_y + (self.y * Block.size) + (Block.size // 2) + shift_y)

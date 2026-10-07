@@ -6,6 +6,7 @@ class Mod:
     HIGHSCORE_SCREEN = 4
     GAME_OVER_SCREEN = 5
     VICTORY_SCREEN = 6
+    HARDCORE_MODE = 7
     state_variable: int = MAIN_MENU_SCREEN
 
     @classmethod

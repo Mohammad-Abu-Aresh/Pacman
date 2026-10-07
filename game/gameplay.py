@@ -15,13 +15,15 @@ class GameSystem:
         2: Images.level_2,
         }
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], hardcore_mode: bool = False, cheating: bool = False) -> None:
         self.num = 0
         self.config = config
         self.current_level: int = 1
         self.max_levels: int = config["max_levels"]
         self.lives: int = self.config.get("lives", 3)
         self.level_max_time: int = self.config.get("level_max_time", 90)
+        self.hardcore_mode = hardcore_mode
+        self.cheating = cheating
         self.row = 7
         self.column = 7
         self.load_level()
@@ -69,18 +71,24 @@ class GameSystem:
         Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
         self.time_left = self.level_max_time
 
-
-        super_options: list[bool] = [False] * 20 + [True]
-        self.collectibles = []
-
+        self.collectibles: list[Diamond | Netherite] = []
+        height = len(self.maze_map.every_cell)
+        max_y = height - 1
+        max_x = len(self.maze_map.every_cell[0]) - 1 if height > 0 else 0
+        corners = {
+            (1, 1),
+            (max_x - 1, 1),
+            (1, max_y - 1),
+            (max_x - 1, max_y - 1)
+            }
         for y, row in enumerate(self.maze_map.every_cell):
             for x, cell in enumerate(row):
                 if not cell:
-                    is_super = random.choice(super_options)
-                    if is_super:
+                    if (x, y) in corners:
                         self.collectibles.append(Netherite(Images.screen, self.config, x, y))
                     else:
                         self.collectibles.append(Diamond(Images.screen, self.config, x, y))
+
 
     def next_level(self) -> None:
         if self.current_level <= self.max_levels:
@@ -92,28 +100,30 @@ class GameSystem:
         self.load_level()
         self.player_creature.refresh(self.maze_map)
 
-    def update(self, time: float) -> None:
+    def update(self, time: float, cheating: bool = False) -> None:
         if self.time_left > 0:
             self.time_left -= time
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
-        # self.player_creatures.update(time)
-        if keys[pygame.K_n]:
+        self.player_creature.player.move()
+        if keys[pygame.K_n] and cheating:
             self.next_level()
 
     def draw(self) -> None:
+
         _ = self._draw_maze(
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
 
+
         for item in self.collectibles:
             item.draw(self.maze_map)
-    
+
         for mob in self.mobs:
             mob.draw(self.maze_map)
-        
+
         self._draw_timer()
 
     def _draw_maze(
@@ -153,5 +163,4 @@ class GameSystem:
                 )
         Images.screen.blit(text_surface, (20, 20))
 
-    def _draw_entities(self) -> None:
-        pass
+
