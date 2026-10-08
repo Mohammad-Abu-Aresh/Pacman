@@ -69,9 +69,9 @@ class Mape:
         x = 2 * len(mape2) + 1
         y = 2 * len(mape2[0]) + 1
         lis: list[list[bool]] = []
-        for i in range(x):
+        for _ in range(x):
             row: Any = []
-            for j in range(y):
+            for _ in range(y):
                 row.append(True)
             lis.append(row)
 
@@ -90,4 +90,36 @@ class Mape:
                 if not call.right:
                     lis[x][y + 1] = False
         return lis
+
+    @property
+    def coordination_42(self) -> list[list[bool]]:
+        mape2 = self.mape
+        x = 2 * len(mape2) + 1
+        y = 2 * len(mape2[0]) + 1
+        lis: list[list[bool]] = []
+        for _ in range(x):
+            row: Any = []
+            for _ in range(y):
+                row.append(True)
+            lis.append(row)
+
+        for row in range(len(mape2)):
+            for column in range(len(mape2[row])):
+                call = mape2[row][column]
+                x = 2 * row + 1
+                y = 2 * column + 1
+                if  call.top and  call.bottom and  call.left and  call.right:
+                    lis[x][y] = True
+                else:
+                    lis[x][y] = False
+                if not call.top:
+                    lis[x - 1][y] = False
+                if not call.bottom:
+                    lis[x + 1][y] = False
+                if not call.left:
+                    lis[x][y - 1] = False
+                if not call.right:
+                    lis[x][y + 1] = False
+        return lis
+        
 

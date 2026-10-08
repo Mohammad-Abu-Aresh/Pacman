@@ -72,6 +72,7 @@ class Player(Creature):
     def move(self) -> None:
         self.velx = 0
         self.vely = 0
+        lis = self.maze.every_cell
         if movement.move == Direction.right:
             self.velx = self._speed
         elif movement.move == Direction.left:
@@ -80,10 +81,9 @@ class Player(Creature):
             self.vely = -self._speed
         elif movement.move == Direction.down:
             self.vely = self._speed
+
         self.x += self.velx
         self.y += self.vely
-
-        
         self.rect = pygame.Rect(
             int(self.x),
             int(self.y),

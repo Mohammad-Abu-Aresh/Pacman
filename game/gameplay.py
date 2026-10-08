@@ -1,5 +1,9 @@
+from time import time
+
 import pygame
 import random
+
+from game.creature.player import Direction, movement
 from .creature import Diamond, Netherite
 from photos.loderimages import Images
 from typing import Dict, Any
@@ -81,12 +85,13 @@ class GameSystem:
             (1, max_y - 1),
             (max_x - 1, max_y - 1)
             }
-        for y, row in enumerate(self.maze_map.every_cell):
+        for y, row in enumerate(self.maze_map.coordination_42):
             for x, cell in enumerate(row):
                 if not cell:
                     if (x, y) in corners:
                         self.collectibles.append(Netherite(Images.screen, self.config, x, y))
                     else:
+
                         self.collectibles.append(Diamond(Images.screen, self.config, x, y))
 
 
@@ -98,6 +103,7 @@ class GameSystem:
         if self.current_level > self.config["max_levels"]:
             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
         self.load_level()
+        movement.traffic_update(None)
         self.player_creature.refresh(self.maze_map)
 
     def update(self, time: float, cheating: bool = False) -> None:
