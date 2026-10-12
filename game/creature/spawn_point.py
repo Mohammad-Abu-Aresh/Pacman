@@ -25,7 +25,7 @@ class pacgum(ABC):
 class Diamond(pacgum):
     def __init__(self, screen: pygame.Surface, config: dict, x: int, y: int) -> None:
         super().__init__(screen, config, x, y)
-        self.points = config.get("points_per_pacgum", 100)
+        self.points = config.get("points_per_pacgum", 10)
 
     def draw(self, mape: Mape) -> None:
         if self.is_eaten:
@@ -43,7 +43,7 @@ class Diamond(pacgum):
 class Netherite(pacgum):
     def __init__(self, screen: pygame.Surface, config: dict, x: int, y: int) -> None:
         super().__init__(screen, config, x, y)
-        self.points = config.get("points_per_super_pacgum", 500)
+        self.points = config.get("points_per_super_pacgum", 50)
 
     def draw(self, mape: Mape) -> None:
         if self.is_eaten:

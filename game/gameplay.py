@@ -12,7 +12,6 @@ from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
 
-
 class GameSystem:
     backphoto: dict[int, Any] = {
         1: Images.level_1,
@@ -113,30 +112,28 @@ class GameSystem:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
         self.player_creature.player.move()
+        self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()
 
     def draw(self) -> None:
 
-        _ = self._draw_maze(
+        self._draw_maze(
             self.maze_map.origin_x,
             self.maze_map.origin_y
             )
-
-
         for item in self.collectibles:
             item.draw(self.maze_map)
-
         for mob in self.mobs:
             mob.draw(self.maze_map)
-
         self._draw_timer()
+        self._draw_score()
 
     def _draw_maze(
             self,
             origin_x: int,
             origin_y: int
-            ) -> list[list[tuple[tuple[int, int], bool]]]:
+            ) -> None:
         maze_bool = self.maze_map.every_cell
 
         row = self.maze_map.columns
@@ -145,13 +142,10 @@ class GameSystem:
             item.draw(self.maze_map)
 
         Images.screen.blit(self.background, (0, 0))
-        lis = []
         for y, row in enumerate(maze_bool):
-            ls = []
             for x, cell in enumerate(row):
                 location_x = origin_x + (x * cell_size)
                 location_y = origin_y + (y * cell_size)
-                ls.append(((location_x, location_y), cell))
                 if cell:
                     Images._drow(
                         Images.wall_new,
@@ -159,14 +153,36 @@ class GameSystem:
                         )
                 else:
                     continue
-            lis.append(ls)
-
-        return lis
 
     def _draw_timer(self) -> None:
         text_surface = self.font.render(
                 f"{int(self.time_left)}", True, (255, 255, 255)
                 )
         Images.screen.blit(text_surface, (20, 20))
+    def _eat_pacgums(self) -> None:
+        player = self.player_creature.player
+
+        player_x = int(player.x + 0.5)
+        player_y = int(player.y + 0.5)
+
+        for item in self.collectibles:
+            if item.is_eaten:
+                continue
+
+            if item.x == player_x and item.y == player_y:
+                print(item.points)
+                print(player.eat(item.points))
+                item.eaten()
+    
+    def _draw_score(self) -> None:
+        score = self.player_creature.player.score
+
+        text_surface = self.font.render(
+            f"Score: {score}",
+            True,
+            (255, 255, 255)
+        )
+
+        Images.screen.blit(text_surface, (20, 60))
 
 

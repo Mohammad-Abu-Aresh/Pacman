@@ -6,7 +6,6 @@ from photos.loderimages import Images
 import pygame
 
 
-
 class Direction(Enum):
     """
     if x 1, meen he going the positave x so he is going like this ->
@@ -68,28 +67,43 @@ class Player(Creature):
             size=(Block.size * 0.7, Block.size * 2.8) # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = Images.player_new
+    def _can_move_to(self, x: float, y: float) -> bool:
+        grid = self.maze.every_cell
+        cell_x = int(x + 0.5)
+        cell_y = int(y + 0.5)
+        if not (0 <= cell_y < len(grid)):
+            return False
+        if not (0 <= cell_x < len(grid[cell_y])):
+            return False
+        return not grid[cell_y][cell_x]
 
     def move(self) -> None:
-        self.velx = 0
-        self.vely = 0
-        lis = self.maze.every_cell
+        dx = 0
+        dy = 0
         if movement.move == Direction.right:
-            self.velx = self._speed
+            dx = 1
         elif movement.move == Direction.left:
-            self.velx = -self._speed
+            dx = -1
         elif movement.move == Direction.up:
-            self.vely = -self._speed
+            dy = -1
         elif movement.move == Direction.down:
-            self.vely = self._speed
+            dy = 1
+        if dx == 0 and dy == 0:
+            return
+        cell_x = int(self.x + 0.5)
+        cell_y = int(self.y + 0.5)
+        next_cell_x = cell_x + dx
+        next_cell_y = cell_y + dy
 
-        self.x += self.velx
-        self.y += self.vely
-        self.rect = pygame.Rect(
-            int(self.x),
-            int(self.y),
-            self.image.get_width(),
-            self.image.get_height()
-        )
+        if not self._can_move_to(next_cell_x, next_cell_y):
+            self.x = float(cell_x)
+            self.y = float(cell_y)
+            self.locaion = (self.x, self.y)
+            return
+        self.x += dx * self._speed
+        self.y += dy * self._speed
+        self.locaion = (self.x, self.y)
+
 
 
 
@@ -107,10 +121,13 @@ class Player(Creature):
             self.direction = Direction.up
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.direction = Direction.down
-
-    def eat(self, item_type: str) -> int:
-        return 0
-        pass
+    @property
+    def score(self) -> int:
+        return self._score
+    
+    def eat(self, points: int) -> int:
+        self._score += points
+        return self._score
 
     def respawn(self) -> None:
         self.telport(self.spawn_point)
