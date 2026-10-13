@@ -10,7 +10,7 @@ class Monster(Creature, ABC):
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
         self.spawn_point: tuple[int, int] = spawn_point
-        self.x, self.y = spawn_point
+        self.x, self.y = float(spawn_point[0]), float(spawn_point[1])
         self.target_point: tuple[int, int] = None
         self.live: bool = True
         self.speed: int = 65  # 65% of player speed
