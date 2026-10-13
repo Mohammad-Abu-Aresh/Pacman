@@ -107,11 +107,6 @@ class GameSystem:
         row = self.maze_map.columns
         columns = self.maze_map.rows
         cell_size = Block.size
-        view_maze = row * cell_size
-        length_maze = columns * cell_size
-
-        width = Images.width
-        height = Images.height
 
         Images.screen.blit(self.background, (0, 0))
 
