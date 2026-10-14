@@ -6,7 +6,7 @@ from photos.loderimages import Images
 import pygame
 
 
-class Direction(Enum):
+class Direction():
     """
     if x 1, meen he going the positave x so he is going like this ->
     if x -1, meen he going the nigative x so he is going like this <-
@@ -21,11 +21,15 @@ class Direction(Enum):
 
 
 class movement:
-    move = None
+    move: tuple[int, int] = (0, 0) # none
+    new_dir: tuple[int, int] = None
     @classmethod
     def traffic_update(cls, new_move: Direction) -> None:
         cls.move = new_move
 
+    @classmethod
+    def musle_memory(cls, new_move: Direction | None) -> None | Direction:
+        cls.new_dir = new_move
 
 class Player(Creature):
 
@@ -52,8 +56,8 @@ class Player(Creature):
         self.y: float = self.locaion[1]
         # must be update when i move
 
-        self._score: int = 0
-        self._speed: int = Block.size / 700
+        self.score: int = 0
+        self.speed: int = Block.size / 150
 
         self._is_super = False
 
@@ -67,10 +71,22 @@ class Player(Creature):
             size=(Block.size * 0.7, Block.size * 2.8) # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = Images.player_new
-    def _can_move_to(self, x: float, y: float) -> bool:
+
+    def change_diric(self) -> bool:
+        if movement.new_dir is None:
+            return
+        print (movement.new_dir)
+        cell_x = round(self.x) + movement.new_dir[0]
+        cell_y = round(self.y) + movement.new_dir[1]
+        if self.can_move_to(cell_x, cell_y):
+            movement.traffic_update(movement.new_dir)
+            movement.musle_memory(None)
+            return
+        else:
+            return False
+
+    def can_move_to(self, cell_x: int, cell_y: int) -> bool:
         grid = self.maze.every_cell
-        cell_x = int(x + 0.5)
-        cell_y = int(y + 0.5)
         if not (0 <= cell_y < len(grid)):
             return False
         if not (0 <= cell_x < len(grid[cell_y])):
@@ -78,34 +94,20 @@ class Player(Creature):
         return not grid[cell_y][cell_x]
 
     def move(self) -> None:
-        dx = 0
-        dy = 0
-        if movement.move == Direction.right:
-            dx = 1
-        elif movement.move == Direction.left:
-            dx = -1
-        elif movement.move == Direction.up:
-            dy = -1
-        elif movement.move == Direction.down:
-            dy = 1
+        dx = movement.move[0]
+        dy = movement.move[1]
         if dx == 0 and dy == 0:
             return
-        cell_x = int(self.x + 0.5)
-        cell_y = int(self.y + 0.5)
-        next_cell_x = cell_x + dx
-        next_cell_y = cell_y + dy
+        cell_x = round(self.x)
+        cell_y = round(self.y)
 
-        if not self._can_move_to(next_cell_x, next_cell_y):
-            self.x = float(cell_x)
-            self.y = float(cell_y)
-            self.locaion = (self.x, self.y)
+        if not self.can_move_to(cell_x, cell_y):
+            self.x 
+            self.locaion = (cell_x, cell_x)
             return
-        self.x += dx * self._speed
-        self.y += dy * self._speed
+        self.x += dx * self.speed
+        self.y += dy * self.speed
         self.locaion = (self.x, self.y)
-
-
-
 
     def die(self) -> None:
         self.telport((800, 800))
@@ -121,13 +123,11 @@ class Player(Creature):
             self.direction = Direction.up
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.direction = Direction.down
-    @property
-    def score(self) -> int:
-        return self._score
+
     
     def eat(self, points: int) -> int:
-        self._score += points
-        return self._score
+        self.score += points
+        return self.score
 
     def respawn(self) -> None:
         self.telport(self.spawn_point)

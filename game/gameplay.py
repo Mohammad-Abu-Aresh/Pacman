@@ -3,7 +3,7 @@ from time import time
 import pygame
 import random
 
-from game.creature.player import Direction, movement
+from game.creature.player import movement
 from .creature import Diamond, Netherite
 from photos.loderimages import Images
 from typing import Dict, Any
@@ -111,6 +111,7 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
+        self.player_creature.player.change_diric()
         self.player_creature.player.move()
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
@@ -170,8 +171,6 @@ class GameSystem:
                 continue
 
             if item.x == player_x and item.y == player_y:
-                print(item.points)
-                print(player.eat(item.points))
                 item.eaten()
     
     def _draw_score(self) -> None:

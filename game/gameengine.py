@@ -62,20 +62,19 @@ class GameEngine:
                         self.cheating = not self.cheating
                         print("Cheating:", self.cheating)
                 if event.key == pygame.K_RIGHT:
-                    move = movement.traffic_update(Direction.right)
+                    movement.musle_memory(Direction.right)
                 elif event.key == pygame.K_LEFT:
-                    move = movement.traffic_update(Direction.left)
+                    movement.musle_memory(Direction.left)
                 elif event.key == pygame.K_UP:
-                    move = movement.traffic_update(Direction.up)
+                    movement.musle_memory(Direction.up)
                 elif event.key == pygame.K_DOWN:
-                    move = movement.traffic_update(Direction.down)
-                else:
-                    move = None
+                    movement.musle_memory(Direction.down)
+
 
     def run(self) -> None:
         font = pygame.font.SysFont(None, 36)
         while True:
-            fps = self.clock.tick(60)
+            
             self.button_management()
             if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
@@ -132,3 +131,4 @@ class GameEngine:
                     self.loss_callable = self.screens.game_over_screen()
                 self.loss_callable()
             pygame.display.update()
+            fps = self.clock.tick(60)
