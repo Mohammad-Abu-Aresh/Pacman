@@ -27,14 +27,14 @@ class ConfigLoader:
         user_data = json.loads(content)
 
         config = self.default_config.copy()  # rename key, value
-        for k, v in user_data.items():
-            if k in config:
-                if isinstance(self.default_config[k], int) and isinstance(
+        for key, v in user_data.items():
+            if key in config:
+                if isinstance(self.default_config[key], int) and isinstance(
                         v, str
                         ):
-                    print(f"Error: '{k}' must be an int, not a string!")
+                    print(f"Error: '{key}' must be an int, not a string!")
                     continue
-                config[k] = v
+                config[key] = v
         if config["max_levels"] < 3 or config["max_levels"] > 15:
             raise ValueError(
                 f"Error: 'max_levels' must be between 3 and 15, "
