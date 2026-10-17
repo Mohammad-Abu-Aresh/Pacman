@@ -20,7 +20,10 @@ class Creature(ABC):
         lower_int = math.floor(self.x / 2)  # Rounds down
         upper_int = math.ceil(self.x)  # Rounds up
 
-        if mape.mape[int(self.y // 2)][lower_int // 2].bottom:
+        if (
+            0 <= upper_int // 2 < len(mape.mape[int(self.y // 2)])
+            and mape.mape[int(self.y // 2)][upper_int // 2].bottom
+            ):
             Images._drow(
                 image=Images.wall_new,
                 location=(
@@ -29,7 +32,10 @@ class Creature(ABC):
                 )
             )
 
-        if mape.mape[int(self.y // 2)][upper_int // 2].bottom:
+        if (
+            0 <= upper_int // 2 < len(mape.mape[int(self.y // 2)])
+            and mape.mape[int(self.y // 2)][upper_int // 2].bottom
+            ):
             Images._drow(
                 image=Images.wall_new,
                 location=(
