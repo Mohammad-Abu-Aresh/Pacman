@@ -1,5 +1,4 @@
 # import time
-from enum import Enum
 from .creature import Creature
 from ..block import Mape, Block
 from photos.loderimages import Images
@@ -22,7 +21,7 @@ class Direction():
 
 class movement:
     move: tuple[int, int] = (0, 0) # none
-    new_dir: tuple[int, int] = None
+    new_dir: tuple[int, int] | None = None
     @classmethod
     def traffic_update(cls, new_move: Direction) -> None:
         cls.move = new_move
@@ -57,7 +56,7 @@ class Player(Creature):
         # must be update when i move
 
         self.score: int = 0
-        self.speed: int = Block.size / 150
+        self.speed: int = Block.size / 700
 
         self._is_super = False
 
@@ -99,10 +98,12 @@ class Player(Creature):
             return
         cell_x = round(self.x)
         cell_y = round(self.y)
-
-        if not self.can_move_to(cell_x, cell_y):
-            self.x 
-            self.locaion = (cell_x, cell_x)
+        next_x = cell_x + dx
+        next_y = cell_y + dy
+        if not self.can_move_to(next_x, next_y):
+            self.x = float(cell_x)
+            self.y = float(cell_y)
+            self.locaion = (self.x, self.y)
             return
         self.x += dx * self.speed
         self.y += dy * self.speed
@@ -144,4 +145,4 @@ class Player(Creature):
 
         )
     def update_speed(self, new_speed: int, time: int) -> None:
-        self._speed = new_speed
+        self.speed = new_speed
