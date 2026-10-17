@@ -94,19 +94,16 @@ class Player(Creature):
         return not grid[cell_y][cell_x]
 
     def move(self) -> None:
-        dx = movement.move[0]
-        dy = movement.move[1]
-        if dx == 0 and dy == 0:
+        dx, dy = movement.move
+        if movement.move == Direction.none:
             return
-        cell_x = round(self.x)
-        cell_y = round(self.y)
-
-        if not self.can_move_to(cell_x, cell_y):
-            self.x
-            self.locaion = (cell_x, cell_x)
+        next_x = self.x + dx * self.speed
+        next_y = self.y + dy * self.speed
+        if not self.can_move_to(round(next_x), round(next_y)):
+            movement.traffic_update(Direction.none)
             return
-        self.x += dx * self.speed
-        self.y += dy * self.speed
+        self.x = next_x
+        self.y = next_y
         self.locaion = (self.x, self.y)
 
     def die(self) -> None:
