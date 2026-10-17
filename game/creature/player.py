@@ -73,17 +73,35 @@ class Player(Creature):
         )
         self.image = Images.player_new
 
+#    def change_diric(self) -> bool:
+#        if movement.new_dir is None:
+#            return
+#        cell_x = round(self.x) + movement.new_dir[0]
+#        cell_y = round(self.y) + movement.new_dir[1]
+#        if self.can_move_to(cell_x, cell_y):
+#            movement.traffic_update(movement.new_dir)
+#            movement.musle_memory(None)
+#            return
+#        else:
+#            return False
     def change_diric(self) -> bool:
         if movement.new_dir is None:
             return
+
         cell_x = round(self.x) + movement.new_dir[0]
         cell_y = round(self.y) + movement.new_dir[1]
+
         if self.can_move_to(cell_x, cell_y):
+            if movement.new_dir[0] != 0:
+                self.y = round(self.y)
+            else:
+                self.x = round(self.x)
+
+            self.locaion = (self.x, self.y)
             movement.traffic_update(movement.new_dir)
             movement.musle_memory(None)
             return
-        else:
-            return False
+        return False
 
     def can_move_to(self, cell_x: int, cell_y: int) -> bool:
         grid = self.maze.every_cell

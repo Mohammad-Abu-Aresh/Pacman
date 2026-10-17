@@ -177,6 +177,7 @@ class GameSystem:
                 f"{int(self.time_left)}", True, (255, 255, 255)
                 )
         Images.screen.blit(text_surface, (20, 20))
+
     def _eat_pacgums(self) -> None:
         player = self.player_creature.player
 
