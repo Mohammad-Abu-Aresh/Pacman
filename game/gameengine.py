@@ -11,7 +11,7 @@ from .gameplay import GameSystem
 
 class GameEngine:
     def __init__(self, config: dict[str, Any]) -> None:
-        
+
         # make it str or any to know what screen is this... and rename it
         self.config = config  # config
         pygame.display.set_caption("Pac-Man")
@@ -70,11 +70,10 @@ class GameEngine:
                 elif event.key == pygame.K_DOWN:
                     movement.musle_memory(Direction.down)
 
-
     def run(self) -> None:
         font = pygame.font.SysFont(None, 36)
         while True:
-            
+
             self.button_management()
             if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
@@ -86,12 +85,12 @@ class GameEngine:
 
                 if drawing_copy["play_game"]:
                     print("PLAY GAME")
-                    self.cheating = False # The special variable in cheat mode
+                    self.cheating = False  # The special variable in cheat mode
                     self.hardcore_mode = False
                     Mod.updatemod(Mod.GAME_SCREEN)
                 elif drawing_copy["minecraft_mode"]:
                     print("minecraft_mode")
-                    self.cheating = False 
+                    self.cheating = False
                     self.hardcore_mode = True
                     Mod.updatemod(Mod.GAME_SCREEN)
                 elif drawing_copy["top scores"]:
@@ -108,15 +107,21 @@ class GameEngine:
             elif Mod.state_variable == Mod.GAME_SCREEN:
 
                 if not self.game_session:
-                    self.game_session = GameSystem(self.config, hardcore_mode=self.hardcore_mode)
+                    self.game_session = GameSystem(
+                        self.config, hardcore_mode=self.hardcore_mode
+                        )
                 time_tic = fps / 1000.0
                 self.game_session.update(time_tic, cheating=self.cheating)
                 self.game_session.draw()
 
                 if self.cheating:
-                    font_o = font.render("Cheat Mode Activated!", True, (255, 0, 0))
+                    font_o = font.render(
+                        "Cheat Mode Activated!", True, (255, 0, 0)
+                        )
 
-                    Images.screen.blit(font_o, (Images.width - font_o.get_width() - 20, 20))
+                    Images.screen.blit(
+                        font_o, (Images.width - font_o.get_width() - 20, 20)
+                        )
 
             elif Mod.state_variable == Mod.SETTINGS_SCREEN:
                 if not self.settings_callable:

@@ -3,7 +3,7 @@ from time import time
 import pygame
 import random
 
-from game.creature.player import movement
+from game.creature.player import movement, Direction
 from .creature import Diamond, Netherite
 from photos.loderimages import Images
 from typing import Dict, Any
@@ -18,7 +18,11 @@ class GameSystem:
         2: Images.level_2,
         }
 
-    def __init__(self, config: Dict[str, Any], hardcore_mode: bool = False, cheating: bool = False) -> None:
+    def __init__(
+            self, config: Dict[str, Any],
+            hardcore_mode: bool = False,
+            cheating: bool = False
+            ) -> None:
         self.num = 0
         self.config = config
         self.current_level: int = 1
@@ -47,7 +51,7 @@ class GameSystem:
                 )
 
     def load_level(self) -> None:
-        
+
         if self.current_level == 1:
             self.num += 1
             self.seed = self.config.get("seed", 42)
@@ -64,15 +68,26 @@ class GameSystem:
         else:
             self.num += 1
             self.seed = random.randint(1, 2004)
-            if self.num == 3 or self.num == 6 or self.num == 9 or self.num == 12:
+            if (
+                self.num == 3 or
+                self.num == 6 or
+                self.num == 9 or
+                self.num == 12
+                ):
+
                 self.row += 2
                 self.column += 1
             else:
                 self.mobs[0]._super_timer -= 2
-        maze = MazeGenerator(size=(self.row, self.column), seed=self.seed)
+        maze = MazeGenerator(
+            size=(self.row, self.column), seed=self.seed
+            )
         self.maze_map = Mape(maze)
-        Images._update_size("wall", size=(Block.size * 2.1, Block.size * 1.85))
+        Images._update_size(
+            "wall", size=(Block.size * 2.1, Block.size * 1.85)
+            )
         self.time_left = self.level_max_time
+        movement.traffic_update(Direction.none)
 
         self.collectibles: list[Diamond | Netherite] = []
         height = len(self.maze_map.every_cell)
@@ -88,11 +103,13 @@ class GameSystem:
             for x, cell in enumerate(row):
                 if not cell:
                     if (x, y) in corners:
-                        self.collectibles.append(Netherite(Images.screen, self.config, x, y))
+                        self.collectibles.append(
+                            Netherite(Images.screen, self.config, x, y)
+                            )
                     else:
-
-                        self.collectibles.append(Diamond(Images.screen, self.config, x, y))
-
+                        self.collectibles.append(
+                            Diamond(Images.screen, self.config, x, y)
+                            )
 
     def next_level(self) -> None:
         if self.current_level <= self.max_levels:
@@ -172,6 +189,10 @@ class GameSystem:
 
             if item.x == player_x and item.y == player_y:
                 item.eaten()
+        if self.collectibles and all(
+            item.is_eaten for item in self.collectibles
+        ):
+            self.next_level()
     
     def _draw_score(self) -> None:
         score = self.player_creature.player.score
@@ -183,5 +204,3 @@ class GameSystem:
         )
 
         Images.screen.blit(text_surface, (20, 60))
-
-

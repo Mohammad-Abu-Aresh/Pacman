@@ -40,7 +40,7 @@ class Enderman(Monster):
                     mape.origin_y + ((self.y + 1) * Block.size),
                     )
             )
-        
+
         if mape.mape[int(self.y // 2)][upper_int // 2].bottom:
             Images._drow(
                 image=Images.wall_new,

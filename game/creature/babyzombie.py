@@ -3,6 +3,7 @@ from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
 
+
 class BabyZombie(Monster):
 
     def __init__(
@@ -28,10 +29,10 @@ class BabyZombie(Monster):
         self.image = Images.zombie_new
 
     def draw(self, mape: Mape) -> None:
-            px = mape.origin_x + (self.x + 0.7) * Block.size
-            py = mape.origin_y + (self.y + 0.2) * Block.size
-            Images._drow(self.image, location=(px, py))
-    
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y + 0.2) * Block.size
+        Images._drow(self.image, location=(px, py))
+
     def set_hardcore_mode(self, enabled: bool) -> None:
         super().set_hardcore_mode(enabled)
         if self.live:

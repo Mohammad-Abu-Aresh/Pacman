@@ -19,14 +19,14 @@ class Creature(ABC):
         Images._drow(self.image, location=(px, py))
         lower_int = math.floor(self.x / 2)  # Rounds down
         upper_int = math.ceil(self.x)  # Rounds up
-        
+
         if mape.mape[int(self.y // 2)][lower_int // 2].bottom:
-           Images._drow(
-               image=Images.wall_new,
-               location=(
-                   mape.origin_x + (lower_int * Block.size),
-                   mape.origin_y + ((self.y + 1) * Block.size),
-                   )
+            Images._drow(
+                image=Images.wall_new,
+                location=(
+                    mape.origin_x + (lower_int * Block.size),
+                    mape.origin_y + ((self.y + 1) * Block.size),
+                )
             )
 
         if mape.mape[int(self.y // 2)][upper_int // 2].bottom:
@@ -37,7 +37,6 @@ class Creature(ABC):
                     mape.origin_y + ((self.y + 1) * Block.size),
                     )
             )
-
 
     @abstractmethod
     def die(self) -> None:
@@ -72,6 +71,7 @@ class Control_creature:
             is_hardcore,
             maze_map.spawn_point["player"]
             )
+
         self.witch = Witch(maze_map.spawn_point["witch"])
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
         self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
@@ -83,7 +83,6 @@ class Control_creature:
             self.BabyZombie,
             self.Enderman,
         )
-
 
     def refresh(self, mape: Mape) -> None:
         self.maze_mape = mape
@@ -97,6 +96,4 @@ class Control_creature:
             mob.load_size()
             mob.x, mob.y = mob.spawn_point
 
-
         # def update_spown_point(obj: str) -> None:
-

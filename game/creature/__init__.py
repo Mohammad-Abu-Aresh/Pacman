@@ -22,8 +22,8 @@ __all__ = [
 
         "BabyZombie", "Skeleton",
         "Enderman", "Witch",  # fore Monster try to kill you
-        
-        "Control_creature", # how the game control every Creature
-         "Diamond", "Netherite" # This class is specific to 
-         #points—whether standard or Super points.
+
+        "Control_creature",  # how the game control every Creature
+        "Diamond", "Netherite"  # This class is specific to
+        # points—whether standard or Super points.
         ]

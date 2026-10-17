@@ -1,5 +1,4 @@
 # import time
-from enum import Enum
 from .creature import Creature
 from ..block import Mape, Block
 from photos.loderimages import Images
@@ -18,11 +17,13 @@ class Direction():
     left = (-1, 0)
     up = (0, -1)
     down = (0, 1)
+    none = (0, 0)
 
 
 class movement:
-    move: tuple[int, int] = (0, 0) # none
+    move: tuple[int, int] = (0, 0)  # none
     new_dir: tuple[int, int] = None
+
     @classmethod
     def traffic_update(cls, new_move: Direction) -> None:
         cls.move = new_move
@@ -30,6 +31,7 @@ class movement:
     @classmethod
     def musle_memory(cls, new_move: Direction | None) -> None | Direction:
         cls.new_dir = new_move
+
 
 class Player(Creature):
 
@@ -49,18 +51,16 @@ class Player(Creature):
             float(self.spawn_point[0]),
             float(self.spawn_point[1]),
             )
+
         self.direction: tuple[int, int] = Direction.right
         # we can make it empty temp
-
         self.x: float = self.locaion[0]
         self.y: float = self.locaion[1]
         # must be update when i move
 
         self.score: int = 0
         self.speed: int = Block.size / 150
-
         self._is_super = False
-
         self.load_size()
         # if is_hardcore:
         #     ...
@@ -68,7 +68,8 @@ class Player(Creature):
     def load_size(self) -> None:
         Images._update_size(
             "player",
-            size=(Block.size * 0.7, Block.size * 2.8) # 2.8 just on this photo so its temp it was 1.8
+            size=(Block.size * 0.7, Block.size * 2.8)
+            # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = Images.player_new
 
@@ -101,7 +102,7 @@ class Player(Creature):
         cell_y = round(self.y)
 
         if not self.can_move_to(cell_x, cell_y):
-            self.x 
+            self.x
             self.locaion = (cell_x, cell_x)
             return
         self.x += dx * self.speed
@@ -123,7 +124,6 @@ class Player(Creature):
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.direction = Direction.down
 
-    
     def eat(self, points: int) -> int:
         self.score += points
         return self.score
@@ -141,7 +141,7 @@ class Player(Creature):
             int(self.y),
             self.image.get_width(),
             self.image.get_height()
-
         )
+
     def update_speed(self, new_speed: int, time: int) -> None:
         self._speed = new_speed

@@ -7,7 +7,6 @@ from photos import Images
 
 
 class Witch(Monster):
-
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
@@ -23,8 +22,6 @@ class Witch(Monster):
             (Block.size * 0.6, Block.size * 1.8)
         )
         self.image = Images.witch_new
-        
-        
 
     def throw_slow_potion(self, player: Player) -> None:
         """
@@ -44,13 +41,12 @@ class Witch(Monster):
     def move(self) -> None:
         pass
 
-    #def draw(self) -> None:
+    # def draw(self) -> None:
     #    # loid
     #    # resize
     #    # drow
     #    # drow the 2 block under the monster or player
     #    pass
-
     def follow(self, player: Player) -> None:
         if self.live:
             self.target_point = (player.x, player.y)

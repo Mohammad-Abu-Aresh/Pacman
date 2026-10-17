@@ -25,7 +25,6 @@ class Skeleton(Monster):
             (Block.size * 0.6, Block.size * 1.8)
         )
         self.image = Images.skeleton_new
-            
 
     def has_line_of_sight(
         self, player: Player, mape: Mape
