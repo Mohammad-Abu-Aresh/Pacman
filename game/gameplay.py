@@ -119,7 +119,7 @@ class GameSystem:
         if self.current_level > self.config["max_levels"]:
             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
         self.load_level()
-        movement.traffic_update(None)
+        movement.traffic_update(Direction.none)
         self.player_creature.refresh(self.maze_map)
 
     def update(self, time: float, cheating: bool = False) -> None:
