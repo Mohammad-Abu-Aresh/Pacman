@@ -75,7 +75,6 @@ class Player(Creature):
     def change_diric(self) -> bool:
         if movement.new_dir is None:
             return
-        print (movement.new_dir)
         cell_x = round(self.x) + movement.new_dir[0]
         cell_y = round(self.y) + movement.new_dir[1]
         if self.can_move_to(cell_x, cell_y):

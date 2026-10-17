@@ -3,6 +3,7 @@ from .monster import Monster
 from .player import Player
 from ..block import Mape, Block
 from photos import Images
+import math
 import random
 
 
@@ -27,6 +28,27 @@ class Enderman(Monster):
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y - 1) * Block.size
         Images._drow(self.image, location=(px, py))
+
+        lower_int = math.floor(self.x / 2)
+        upper_int = math.ceil(self.x)
+
+        if mape.mape[int(self.y // 2)][lower_int // 2].bottom:
+            Images._drow(
+                image=Images.wall_new,
+                location=(
+                    mape.origin_x + (lower_int * Block.size),
+                    mape.origin_y + ((self.y + 1) * Block.size),
+                    )
+            )
+        
+        if mape.mape[int(self.y // 2)][upper_int // 2].bottom:
+            Images._drow(
+                image=Images.wall_new,
+                location=(
+                    mape.origin_x + ((upper_int) * Block.size),
+                    mape.origin_y + ((self.y + 1) * Block.size),
+                    )
+            )
 
     def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
         """
