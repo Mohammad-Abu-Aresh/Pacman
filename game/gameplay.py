@@ -129,6 +129,13 @@ class GameSystem:
         keys = pygame.key.get_pressed()
         self.player_creature.player.change_diric()
         self.player_creature.player.move()
+
+        grid = self.maze_map.every_cell
+        self.player_creature.BabyZombie.follow(
+            self.player_creature.player, grid
+        )
+        self.player_creature.BabyZombie.move(grid)
+
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()

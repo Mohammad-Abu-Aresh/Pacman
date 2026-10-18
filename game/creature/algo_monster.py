@@ -2,7 +2,7 @@ from math import sqrt
 from typing import Callable, Optional
 from .creature import Creature
 from .player import Player
-from .bfs import PathFinder
+# from .bfs import PathFinder
 
 
 # signature shared by every strategy:
@@ -48,7 +48,7 @@ class AlgoMonster:
             chaser: Optional[Creature] = None
             ) -> tuple[int, int]:
         """BabyZombie — straight at the player's current cell."""
-        return (PathFinder.find_path(player.x, player.y))
+        return round(player.x), round(player.y)
 
     @staticmethod
     def target_ahead(

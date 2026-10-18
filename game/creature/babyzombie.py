@@ -2,10 +2,11 @@ from .monster import Monster
 from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
+from .algo_monster import AlgoMonster
+from .bfs import PathFinder
 
 
 class BabyZombie(Monster):
-
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
@@ -16,6 +17,7 @@ class BabyZombie(Monster):
                 float(self.spawn_point[1]),
                 )
         self.live: bool = True
+        self.next_point: tuple[int, int] | None = None
         if is_hardcore and self.live:
             self.speed = 110
         self.is_hardcore: bool = is_hardcore
@@ -39,11 +41,44 @@ class BabyZombie(Monster):
         if self.live:
             self.speed = 110 if enabled else 65
 
-    def move(self) -> None:
-        pass
+    def move(
+        self, grid: list[list[bool]] | None = None
+        ) -> None:
+        if grid is None or self.target_point is None:
+            return
 
-    def follow(self, player: Player) -> None:
-        if self.live:
-            self.target_point = (player.x, player.y)
+        if self.next_point is None:
+            self.next_point = PathFinder.next_step(
+                grid,
+                (round(self.x), round(self.y)),
+                self.target_point
+            )
+        if self.next_point is None:
+            return
+
+        next_x, next_y = self.next_point
+        step = Block.size / 150 * self.speed / 100
+        if next_x != self.x:
+            self.x += max(-step, min(step, next_x - self.x))
         else:
+            self.y += max(-step, min(step, next_y - self.y))
+        self.locaion = (self.x, self.y)
+        if (self.x, self.y) == self.next_point:
+            self.next_point = None
+
+    def follow(
+        self, player: Player,
+        grid: list[list[bool]] | None = None
+    ) -> None:
+        if not self.live:
             self.target_point = self.spawn_point
+
+        elif grid is None:
+            self.target_point = (
+                round(player.x), round(player.y)
+                )
+
+        else:
+            self.target_point = AlgoMonster.get(1)(
+                self, player, grid, None
+            )

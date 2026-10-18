@@ -62,8 +62,8 @@ class PathFinder:
         x, y = cell
         result = []
         for direction in (
-                Direction.UP, Direction.DOWN,
-                Direction.LEFT, Direction.RIGHT
+                Direction.up, Direction.down,
+                Direction.left, Direction.right
                 ):
             nxt = (x + direction[0], y + direction[1])
             if PathFinder._walkable(grid, nxt):
