@@ -1,8 +1,6 @@
 from time import time
-
 import pygame
 import random
-
 from game.creature.player import movement, Direction
 from .creature import Diamond, Netherite
 from photos.loderimages import Images
@@ -39,7 +37,7 @@ class GameSystem:
         self.font = pygame.font.SysFont(None, 36)
         self.player_creature = Control_creature(
             maze_map=self.maze_map,
-            lives=3,
+            lives=self.lives,
             super_timer=15
             )
         self.mobs: tuple[object] = (
@@ -134,11 +132,27 @@ class GameSystem:
         self.player_creature.BabyZombie.follow(
             self.player_creature.player, grid
         )
+
+        if self.player_creature.check_collision():
+            self._handle_player_death()
+            return
+
         self.player_creature.BabyZombie.move(grid)
 
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()
+
+    def _handle_player_death(self) -> None:
+        player = self.player_creature.player
+        player.respawn()
+        self.lives = player._lives
+
+        if self.lives <= 0:
+            Mod.updatemod(Mod.GAME_OVER_SCREEN)
+            return
+
+        self.player_creature.reset_mobs()
 
     def draw(self) -> None:
 

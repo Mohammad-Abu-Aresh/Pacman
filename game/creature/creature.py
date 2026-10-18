@@ -107,3 +107,46 @@ class Control_creature:
             mob.x, mob.y = mob.spawn_point
 
         # def update_spown_point(obj: str) -> None:
+
+    def check_collision(self) -> bool:
+        player_cell = (
+            round(self.player.x),
+            round(self.player.y)
+        )
+
+        for mob in (
+            self.BabyZombie,
+            self.Skeleton,
+            self.Enderman,
+            self.witch
+        ):
+            if not mob.live:
+                continue
+
+            mob_cell = (round(mob.x), round(mob.y))
+            if player_cell == mob_cell:
+                return True
+
+        return False
+
+    def reset_mobs(self) -> None:
+        from .player import Direction, movement
+
+        movement.traffic_update(Direction.none)
+        movement.musle_memory(None)
+        self.player.direction = Direction.none
+
+        for mob in (
+            self.BabyZombie,
+            self.Skeleton,
+            self.Enderman,
+            self.witch
+        ):
+            mob.x = float(mob.spawn_point[0])
+            mob.y = float(mob.spawn_point[1])
+            mob.locaion = (mob.x, mob.y)
+            mob.target_point = None
+            mob.live = True
+            mob.is_following = True
+
+        self.BabyZombie.next_point = None
