@@ -32,6 +32,7 @@ class BabyZombie(Monster):
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y + 0.2) * Block.size
         Images._drow(self.image, location=(px, py))
+        self._draw_front_blocks(mape)
 
     def set_hardcore_mode(self, enabled: bool) -> None:
         super().set_hardcore_mode(enabled)

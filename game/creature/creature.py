@@ -17,31 +17,35 @@ class Creature(ABC):
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y - 0.5) * Block.size
         Images._drow(self.image, location=(px, py))
-        lower_int = math.floor(self.x / 2)  # Rounds down
-        upper_int = math.ceil(self.x)  # Rounds up
+        self._draw_front_blocks(mape)
 
-        if (
-            0 <= upper_int // 2 < len(mape.mape[int(self.y // 2)])
-            and mape.mape[int(self.y // 2)][upper_int // 2].bottom
-            ):
-            Images._drow(
-                image=Images.wall_new,
-                location=(
-                    mape.origin_x + (lower_int * Block.size),
-                    mape.origin_y + ((self.y + 1) * Block.size),
-                )
-            )
+    def _draw_front_blocks(self, mape: Mape) -> None:
+        cell_x = round(self.x)
+        cell_y = round(self.y)
+        row = cell_y // 2
 
-        if (
-            0 <= upper_int // 2 < len(mape.mape[int(self.y // 2)])
-            and mape.mape[int(self.y // 2)][upper_int // 2].bottom
-            ):
+        if not 0 <= row < len(mape.mape):
+            return
+
+        if cell_x % 2 == 0:
+            columns = (cell_x // 2 - 1, cell_x // 2)
+        else:
+            columns = (cell_x // 2,)
+
+        for column in columns:
+            if not 0 <= column < len(mape.mape[row]):
+                continue
+            if not mape.mape[row][column].bottom:
+                continue
+
+            wall_x = column * 2 + 1
+            wall_y = (row + 1) * 2
             Images._drow(
-                image=Images.wall_new,
+                Images.wall_new,
                 location=(
-                    mape.origin_x + ((upper_int) * Block.size),
-                    mape.origin_y + ((self.y + 1) * Block.size),
-                    )
+                    mape.origin_x + wall_x * Block.size,
+                    mape.origin_y + wall_y * Block.size,
+                ),
             )
 
     @abstractmethod

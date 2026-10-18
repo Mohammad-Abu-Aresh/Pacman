@@ -51,7 +51,6 @@ class GameSystem:
                 )
 
     def load_level(self) -> None:
-
         if self.current_level == 1:
             self.num += 1
             self.seed = self.config.get("seed", 42)
@@ -142,10 +141,13 @@ class GameSystem:
             )
         for item in self.collectibles:
             item.draw(self.maze_map)
-        for mob in self.mobs:
+        for mob in sorted(
+            self.mobs,
+            key=lambda mob: int(mob.y + 0.5)
+            ):
             mob.draw(self.maze_map)
-        self._draw_timer()
-        self._draw_score()
+            self._draw_timer()
+            self._draw_score()
 
     def _draw_maze(
             self,
@@ -194,7 +196,7 @@ class GameSystem:
             item.is_eaten for item in self.collectibles
         ):
             self.next_level()
-    
+
     def _draw_score(self) -> None:
         score = self.player_creature.player.score
 
