@@ -70,6 +70,7 @@ class GameEngine:
                 elif event.key == pygame.K_DOWN:
                     movement.musle_memory(Direction.down)
 
+
     def run(self) -> None:
         font = pygame.font.SysFont(None, 36)
         while True:

@@ -142,6 +142,8 @@ class GameSystem:
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()
+        if keys[pygame.K_ESCAPE]:
+            Mod.updatemod(Mod.MAIN_MENU_SCREEN)
 
     def _handle_player_death(self) -> None:
         player = self.player_creature.player
