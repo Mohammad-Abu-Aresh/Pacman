@@ -116,7 +116,7 @@ class GameEngine:
                 self.game_session.update(time_tic, cheating=self.cheating)
                 self.game_session.draw()
                 self.playr_score = self.game_session.points()
-                print(self.playr_score)
+                # print(self.playr_score)
                 if self.cheating:
                     font_o = font.render(
                         "Cheat Mode Activated!", True, (255, 0, 0)

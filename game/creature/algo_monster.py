@@ -55,13 +55,16 @@ class AlgoMonster:
             monster: Creature, player: Player, grid: list[list[bool]],
             chaser: Optional[Creature] = None
             ) -> tuple[int, int]:
-        """Skeleton — AHEAD_TILES cells in front of the player."""
         dx, dy = player.direction
         target = (
-                player.x + dx * AlgoMonster.AHEAD_TILES,
-                player.y + dy * AlgoMonster.AHEAD_TILES
-                )
-        return AlgoMonster._clamp(target, grid)
+            round(player.x + dx * AlgoMonster.AHEAD_TILES),
+            round(player.y + dy * AlgoMonster.AHEAD_TILES)
+            )
+        target = AlgoMonster._clamp(target, grid)
+        x, y = target
+        if grid[y][x]:
+            return AlgoMonster.target_player(monster, player, grid)
+        return target
 
     @staticmethod
     def target_vector(

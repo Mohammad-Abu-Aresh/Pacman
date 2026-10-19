@@ -132,12 +132,16 @@ class GameSystem:
         self.player_creature.BabyZombie.follow(
             self.player_creature.player, grid
         )
+        self.player_creature.BabyZombie.move(grid)
+
+        self.player_creature.Skeleton.follow(
+            self.player_creature.player, grid
+        )
+        self.player_creature.Skeleton.move(grid)
 
         if self.player_creature.check_collision():
             self._handle_player_death()
             return
-
-        self.player_creature.BabyZombie.move(grid)
 
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
