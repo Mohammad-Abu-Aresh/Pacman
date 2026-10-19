@@ -70,7 +70,6 @@ class GameEngine:
                 elif event.key == pygame.K_DOWN:
                     movement.musle_memory(Direction.down)
 
-
     def run(self) -> None:
         font = pygame.font.SysFont(None, 36)
         while True:
@@ -112,6 +111,7 @@ class GameEngine:
                     self.game_session = GameSystem(
                         self.config, hardcore_mode=self.hardcore_mode
                         )
+                fps = self.clock.tick(60)
                 time_tic = fps / 1000.0
                 self.game_session.update(time_tic, cheating=self.cheating)
                 self.game_session.draw()
@@ -136,11 +136,14 @@ class GameEngine:
                 self.highscore_callable()
             elif Mod.state_variable == Mod.GAME_OVER_SCREEN:
                 if not self.loss_callable:
-                    self.loss_callable = self.screens.game_over_screen(self.playr_score)
+                    self.loss_callable = self.screens.game_over_screen(
+                        self.playr_score
+                        )
                 self.loss_callable()
             elif Mod.state_variable == Mod.VICTORY_SCREEN:
                 if not self.victory_screen:
-                    self.victory_screen = self.screens.game_over_screen(self.playr_score, True)
+                    self.victory_screen = self.screens.game_over_screen(
+                        self.playr_score, True
+                        )
                 self.victory_screen()
             pygame.display.update()
-            fps = self.clock.tick(60)

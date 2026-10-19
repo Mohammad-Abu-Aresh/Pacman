@@ -38,7 +38,7 @@ class Images:
     def _update_size(
         cls, image_name: str,
         size: tuple[int | float, int | float]
-        ) -> None:
+    ) -> None:
         setattr(
             cls,
             f"{image_name}_new",

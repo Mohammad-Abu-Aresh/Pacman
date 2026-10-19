@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from ..block import Mape, Block
 from photos.loderimages import Images
-import math
 
 
 class Creature(ABC):

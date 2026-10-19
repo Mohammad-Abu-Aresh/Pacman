@@ -3,7 +3,6 @@ from .monster import Monster
 from .player import Player
 from ..block import Mape, Block
 from photos import Images
-import math
 import random
 
 

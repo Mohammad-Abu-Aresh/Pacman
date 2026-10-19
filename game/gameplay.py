@@ -1,4 +1,3 @@
-from time import time
 import pygame
 import random
 from game.creature.player import movement, Direction
@@ -9,6 +8,7 @@ from .creature import Control_creature
 from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
+
 
 class GameSystem:
     backphoto: dict[int, Any] = {
@@ -66,12 +66,9 @@ class GameSystem:
             self.num += 1
             self.seed = random.randint(1, 2004)
             if (
-                self.num == 3 or
-                self.num == 6 or
-                self.num == 9 or
-                self.num == 12
-                ):
-
+                self.num == 3 or self.num == 6 or
+                self.num == 9 or self.num == 12
+            ):
                 self.row += 2
                 self.column += 1
             else:
@@ -171,7 +168,7 @@ class GameSystem:
         for mob in sorted(
             self.mobs,
             key=lambda mob: int(mob.y + 0.5)
-            ):
+        ):
             mob.draw(self.maze_map)
             self._draw_timer()
             self._draw_score()
@@ -225,6 +222,7 @@ class GameSystem:
             item.is_eaten for item in self.collectibles
         ):
             self.next_level()
+
     def _heart(self):
         """
         https://www.youtube.com/watch?v=WLYEsgYkEvY&t=228s
