@@ -88,6 +88,7 @@ class Player(Creature):
                 self.x = round(self.x)
 
             self.locaion = (self.x, self.y)
+            self.direction = movement.new_dir
             movement.traffic_update(movement.new_dir)
             movement.musle_memory(None)
             return

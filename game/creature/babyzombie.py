@@ -79,6 +79,4 @@ class BabyZombie(Monster):
                 )
 
         else:
-            self.target_point = AlgoMonster.get(1)(
-                self, player, grid, None
-            )
+            self.target_point = AlgoMonster.get(1)(player)

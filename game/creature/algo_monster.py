@@ -43,28 +43,34 @@ class AlgoMonster:
     # ==================== strategies ====================
 
     @staticmethod
-    def target_player(
-            monster: Creature, player: Player, grid: list[list[bool]],
-            chaser: Optional[Creature] = None
-            ) -> tuple[int, int]:
+    def target_player(player: Player) -> tuple[int, int]:
         """BabyZombie — straight at the player's current cell."""
         return round(player.x), round(player.y)
 
     @staticmethod
     def target_ahead(
-            monster: Creature, player: Player, grid: list[list[bool]],
-            chaser: Optional[Creature] = None
-            ) -> tuple[int, int]:
+        monster: Creature,
+        player: Player,
+        grid: list[list[bool]],
+        chaser: Optional[Creature] = None
+    ) -> tuple[int, int]:
         dx, dy = player.direction
-        target = (
-            round(player.x + dx * AlgoMonster.AHEAD_TILES),
-            round(player.y + dy * AlgoMonster.AHEAD_TILES)
-            )
-        target = AlgoMonster._clamp(target, grid)
-        x, y = target
-        if grid[y][x]:
-            return AlgoMonster.target_player(monster, player, grid)
-        return target
+
+        if dx == 0 and dy == 0:
+            return AlgoMonster.target_player(player)
+
+        for distance in range(AlgoMonster.AHEAD_TILES, 0, -1):
+            x = round(player.x + dx * distance)
+            y = round(player.y + dy * distance)
+
+            if not 0 <= y < len(grid):
+                continue
+            if not 0 <= x < len(grid[y]):
+                continue
+            if not grid[y][x]:
+                return x, y
+
+        return AlgoMonster.target_player(player)
 
     @staticmethod
     def target_vector(
@@ -76,7 +82,7 @@ class AlgoMonster:
         Falls back to chasing the player directly if no chaser is given.
         """
         if chaser is None:
-            return AlgoMonster.target_player(monster, player, grid)
+            return AlgoMonster.target_player(player)
         dx, dy = player.direction
         pivot = (
                 player.x + dx * AlgoMonster.VECTOR_TILES,
