@@ -171,6 +171,7 @@ class GameSystem:
             mob.draw(self.maze_map)
             self._draw_timer()
             self._draw_score()
+        self._heart()
 
     def _draw_maze(
             self,
@@ -221,8 +222,20 @@ class GameSystem:
         ):
             self.next_level()
     def _heart(self):
-        heart = self.player_creature.player._lives
-        
+        """
+        https://www.youtube.com/watch?v=WLYEsgYkEvY&t=228s
+
+        """
+        lives = self.player_creature.player._lives
+        max_lives = self.player_creature.player.myx_lives
+        heart_images = Images.player_heart
+        heart_images_kell = Images.pygame_heart_kell
+        for heart in range(max_lives):
+            for heart_yes in range(lives):
+                Images._drow(heart_images, (50, 50))
+            else:
+                Images._drow(heart_images_kell, (60, 60))
+
     def _draw_score(self) -> None:
         score = self.player_creature.player.score
 

@@ -42,6 +42,7 @@ class Player(Creature):
             spawn_point
             ) -> None:
         self.maze = maze_map
+        self.myx_lives = lives
         self._lives = lives
         self._super_timer = super_timer
 

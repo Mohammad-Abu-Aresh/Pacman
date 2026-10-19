@@ -19,7 +19,8 @@ class Images:
     wall = pygame.image.load("photos/blocks/block.png")
 
     player = pygame.image.load("photos/player/steve.png")
-
+    player_heart = pygame.image.load("photos/player/heart/empty_heart.png")
+    pygame_heart_kell = pygame.image.load("photos/player/heart/full_heart.png")
     zombie = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     witch = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     skeleton = pygame.image.load("photos/monsters/babyzombie/red.jpg")
