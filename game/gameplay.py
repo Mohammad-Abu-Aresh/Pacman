@@ -114,7 +114,7 @@ class GameSystem:
         else:
             self.current_level = 1
         if self.current_level > self.config["max_levels"]:
-            Mod.updatemod(Mod.MAIN_MENU_SCREEN)
+            Mod.updatemod(Mod.VICTORY_SCREEN)
         self.load_level()
         movement.traffic_update(Direction.none)
         self.player_creature.refresh(self.maze_map)
@@ -215,11 +215,14 @@ class GameSystem:
 
             if item.x == player_x and item.y == player_y:
                 item.eaten()
+                player.eat(item.points)
         if self.collectibles and all(
             item.is_eaten for item in self.collectibles
         ):
             self.next_level()
-
+    def _heart(self):
+        heart = self.player_creature.player._lives
+        
     def _draw_score(self) -> None:
         score = self.player_creature.player.score
 
@@ -230,3 +233,6 @@ class GameSystem:
         )
 
         Images.screen.blit(text_surface, (20, 60))
+
+    def points(self) -> int:
+        return self.player_creature.player.score

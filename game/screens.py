@@ -239,18 +239,27 @@ class Screens:
 
         return draw_game_over
 
-    def addjson(self, name=None, score=0, file="highscores.json"):
-        if not name:
-            return
+    def addjson(self, name: str, score: int, file: str) -> None:
+        import os
+        data = []
+        if os.path.exists(file):
+            try:
+                with open(file, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        data = json.loads(content)
+            except (json.JSONDecodeError, OSError):
+                data = []
 
-        with open(file, "r") as f:
-            data = json.load(f)
+        if not isinstance(data, list):
+            data = []
 
-        name_score = {
-            "name": name,
-            "score": score
-        }
-        data.append(name_score)
+        data.append({"name": name, "score": score})
 
-        with open(file, "w") as f:
-            json.dump(data, f)
+        data.sort(key=lambda entry: entry.get("score", 0), reverse=True)
+        data = data[:10]
+
+        tmp_file = file + ".tmp"
+        with open(tmp_file, "w") as f:
+            json.dump(data, f, indent=4)
+        os.replace(tmp_file, file)   # atomic على نفس الـ filesystem

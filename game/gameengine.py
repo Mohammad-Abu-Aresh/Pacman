@@ -46,7 +46,7 @@ class GameEngine:
                         )
                     elif event.key == pygame.K_RETURN:
                         self.screens.addjson(
-                            self.screens.user_text, 880,
+                            self.screens.user_text, self.playr_score,
                             self.config["highscore_filename"]
                             )
                         self.screens.user_text = ""
@@ -81,6 +81,7 @@ class GameEngine:
                 self.settings_callable = None
                 self.highscore_callable = None
                 self.loss_callable = None
+                self.victory_screen = None
                 Images.screen.blit(self.background, (0, 0))
                 drawing_copy = self.start_options()
 
@@ -114,7 +115,8 @@ class GameEngine:
                 time_tic = fps / 1000.0
                 self.game_session.update(time_tic, cheating=self.cheating)
                 self.game_session.draw()
-
+                self.playr_score = self.game_session.points()
+                print(self.playr_score)
                 if self.cheating:
                     font_o = font.render(
                         "Cheat Mode Activated!", True, (255, 0, 0)
@@ -134,7 +136,11 @@ class GameEngine:
                 self.highscore_callable()
             elif Mod.state_variable == Mod.GAME_OVER_SCREEN:
                 if not self.loss_callable:
-                    self.loss_callable = self.screens.game_over_screen()
+                    self.loss_callable = self.screens.game_over_screen(self.playr_score)
                 self.loss_callable()
+            elif Mod.state_variable == Mod.VICTORY_SCREEN:
+                if not self.victory_screen:
+                    self.victory_screen = self.screens.game_over_screen(self.playr_score, True)
+                self.victory_screen()
             pygame.display.update()
             fps = self.clock.tick(60)
