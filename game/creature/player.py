@@ -61,7 +61,7 @@ class Player(Creature):
         # must be update when i move
 
         self.score: int = 0
-        self.speed: int = Block.size // 150
+        self.speed: float = Block.size / 150
         self._is_super = False
         self.load_size()
         # if is_hardcore:
