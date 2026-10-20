@@ -18,7 +18,7 @@ class pacgum(ABC):
     def draw(self, mape: Mape) -> None:
         pass
 
-    def eaten(self):
+    def eaten(self) -> None:
         self.is_eaten = True
 
     def get_position(self):

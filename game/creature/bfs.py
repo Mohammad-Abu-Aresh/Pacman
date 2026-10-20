@@ -29,8 +29,13 @@ class PathFinder:
             return [start]
         if not PathFinder._walkable(grid, goal):
             return None
-        queue: deque = deque([start])
-        came_from: dict = {start: None}
+        queue: deque[tuple[int, int]] = deque([start])
+
+        came_from: dict[
+            tuple[int, int],
+            tuple[int, int] | None
+        ] = {start: None}
+
         while queue:
             current = queue.popleft()
             if current == goal:
@@ -81,7 +86,7 @@ class PathFinder:
     def _reconstruct(
             came_from: dict, goal: tuple[int, int]
             ) -> list[tuple[int, int]]:
-        path = []
+        path: list[tuple[int, int]] = []
         node: Optional[tuple[int, int]] = goal
         while node is not None:
             path.append(node)

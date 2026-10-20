@@ -1,16 +1,32 @@
 from abc import ABC, abstractmethod
 from ..block import Mape, Block
 from photos.loderimages import Images
+import pygame
 
 
 class Creature(ABC):
     @abstractmethod
-    def __init__(self) -> None:
-        ...
+    def __init__(
+        self,
+        image: pygame.Surface,
+        spawn_point: tuple[int, int],
+    ) -> None:
+        self.spawn_point = spawn_point
+        self.locaion: tuple[float, float] = (
+            float(spawn_point[0]),
+            float(spawn_point[1]),
+        )
+        self.x: float = self.locaion[0]
+        self.y: float = self.locaion[1]
+        self.image = image
 
     @abstractmethod
     def move(self) -> None:
         pass
+
+    @abstractmethod
+    def load_size(self) -> None:
+        ...
 
     def draw(self, mape: Mape) -> None:
         px = mape.origin_x + (self.x + 0.7) * Block.size
@@ -50,9 +66,7 @@ class Creature(ABC):
     @abstractmethod
     def die(self) -> None:
         self.image._drow(self.locaion)
-
-    # def check_wall_collision() -> None:
-    #    pass
+        ...
 
 
 class Control_creature:
@@ -85,7 +99,7 @@ class Control_creature:
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
         self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
         self.Enderman = Enderman(maze_map.spawn_point["enderman"])
-        self.mobs: tuple[object] = (
+        self.mobs: tuple[Creature, ...] = (
             self.player,
             self.witch,
             self.Skeleton,

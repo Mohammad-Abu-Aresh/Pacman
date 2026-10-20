@@ -34,20 +34,35 @@ class Arrow(Abilities):
     def move(self) -> None:
         pass
 
+    def draw(self, image: pygame.Surface) -> None:
+        pass
+
 
 class EnderPearl(Abilities):
-
     def __init__(self, target_point: tuple[int, int]) -> None:
         self.target_x: int = target_point[0]
         self.target_y: int = target_point[1]
 
+    def move(self) -> None:
+        pass
+
+    def draw(self, image: pygame.Surface) -> None:
+        pass
+
 
 class SlowPotion(Abilities):
-
-    def __init__(self, position: tuple[int, int], duration: int = 5) -> None:
-        self.x: int = position[0]
-        self.y: int = position[1]
+    def __init__(
+            self, position: tuple[float, float], duration: int = 5
+            ) -> None:
+        self.x: float = position[0]
+        self.y: float = position[1]
         self.duration: int = duration  # slowdown duration in seconds
 
     def apply_effect(self, player: Player) -> None:
         player.update_speed(35, self.duration)  # slow down the player
+
+    def move(self) -> None:
+        pass
+
+    def draw(self, image: pygame.Surface) -> None:
+        pass

@@ -72,7 +72,7 @@ class GameSystem:
                 self.row += 2
                 self.column += 1
             else:
-                self.mobs[0]._super_timer -= 2
+                self.player_creature.player._super_timer -= 2
         maze = MazeGenerator(
             size=(self.row, self.column), seed=self.seed
             )
@@ -181,7 +181,6 @@ class GameSystem:
             ) -> None:
         maze_bool = self.maze_map.every_cell
 
-        row = self.maze_map.columns
         cell_size = Block.size
         for item in self.collectibles:
             item.draw(self.maze_map)
@@ -223,7 +222,7 @@ class GameSystem:
         ):
             self.next_level()
 
-    def _heart(self):
+    def _heart(self) -> None:
         """
         https://www.youtube.com/watch?v=WLYEsgYkEvY&t=228s
 

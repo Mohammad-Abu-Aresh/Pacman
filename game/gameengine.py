@@ -23,6 +23,10 @@ class GameEngine:
         self.background = pygame.transform.scale(
             Images.Home, (Images.width, Images.height)
         )
+        self.cheating: bool = False
+        self.hardcore_mode: bool = False
+        self.playr_score: int = 0
+        self.victory_screen: Optional[Callable[[], None]] = None
         self.game_session: Optional[GameSystem] = None
         self.settings_callable: Optional[Callable[[], None]] = None
         self.highscore_callable: Optional[Callable[[], None]] = None

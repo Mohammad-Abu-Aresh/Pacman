@@ -21,15 +21,19 @@ class Direction():
 
 
 class movement:
-    move: tuple[int, int] = (0, 0)  # none
-    new_dir: tuple[int, int] = None
+    move: tuple[int, int] = (0, 0)
+    new_dir: tuple[int, int] | None = None
 
     @classmethod
-    def traffic_update(cls, new_move: Direction) -> None:
+    def traffic_update(
+        cls, new_move: tuple[int, int]
+    ) -> None:
         cls.move = new_move
 
     @classmethod
-    def musle_memory(cls, new_move: Direction | None) -> None | Direction:
+    def musle_memory(
+        cls, new_move: tuple[int, int] | None
+    ) -> None:
         cls.new_dir = new_move
 
 
@@ -39,7 +43,7 @@ class Player(Creature):
             self, maze_map: Mape,
             lives: int, super_timer: int,
             is_hardcore: bool,
-            spawn_point
+            spawn_point: tuple[int, int]
             ) -> None:
         self.maze = maze_map
         self.myx_lives = lives

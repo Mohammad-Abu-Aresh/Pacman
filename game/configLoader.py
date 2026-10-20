@@ -7,7 +7,7 @@ class ConfigLoader:
 
     def __init__(self) -> None:
         self.fileName: str = sys.argv[1]
-        self.default_config = {
+        self.default_config: dict[str, Any] = {
             "highscore_filename": "highscores.json",
             "lives": 3,
             "pacgum": 42,
