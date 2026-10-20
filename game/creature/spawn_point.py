@@ -21,7 +21,7 @@ class pacgum(ABC):
     def eaten(self) -> None:
         self.is_eaten = True
 
-    def get_position(self):
+    def get_position(self) -> tuple[int, int]:
         return self.x, self.y
 
 

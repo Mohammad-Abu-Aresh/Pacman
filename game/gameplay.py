@@ -1,16 +1,22 @@
 import pygame
 import random
 from game.creature.player import movement, Direction
-from .creature import Diamond, Netherite
+from .creature import (
+    Creature,
+    Control_creature,
+    Diamond,
+    Netherite,
+)
 from photos.loderimages import Images
 from typing import Dict, Any
-from .creature import Control_creature
 from mazegenerator import MazeGenerator
 from .block import Mape, Block
 from .game_modes import Mod
 
 
 class GameSystem:
+    maze_map: Mape
+
     backphoto: dict[int, Any] = {
         1: Images.level_1,
         2: Images.level_2,
@@ -40,7 +46,7 @@ class GameSystem:
             lives=self.lives,
             super_timer=15
             )
-        self.mobs: tuple[object] = (
+        self.mobs: tuple[Creature, ...] = (
                 self.player_creature.player,
                 self.player_creature.BabyZombie,
                 self.player_creature.Skeleton,

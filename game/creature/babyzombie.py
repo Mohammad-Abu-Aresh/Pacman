@@ -41,7 +41,9 @@ class BabyZombie(Monster):
         if self.live:
             self.speed = 110 if enabled else 65
 
-    def move(self, grid: list[list[bool]] | None) -> None:
+    def move(
+            self, grid: list[list[bool]] | None = None
+            ) -> None:
         if grid is None or self.target_point is None:
             return
 

@@ -38,7 +38,6 @@ class movement:
 
 
 class Player(Creature):
-
     def __init__(
             self, maze_map: Mape,
             lives: int, super_timer: int,
@@ -49,9 +48,7 @@ class Player(Creature):
         self.myx_lives = lives
         self._lives = lives
         self._super_timer = super_timer
-
         self.spawn_point: tuple[int, int] = spawn_point
-
         self.locaion: tuple[float, float] = (
             float(self.spawn_point[0]),
             float(self.spawn_point[1]),
@@ -64,7 +61,7 @@ class Player(Creature):
         # must be update when i move
 
         self.score: int = 0
-        self.speed: int = Block.size / 150
+        self.speed: int = Block.size // 150
         self._is_super = False
         self.load_size()
         # if is_hardcore:
@@ -78,7 +75,7 @@ class Player(Creature):
         )
         self.image = Images.player_new
 
-    def change_diric(self) -> bool:
+    def change_diric(self) -> None:
         if movement.new_dir is None:
             return
 
@@ -96,7 +93,7 @@ class Player(Creature):
             movement.traffic_update(movement.new_dir)
             movement.musle_memory(None)
             return
-        return False
+        return
 
     def can_move_to(self, cell_x: int, cell_y: int) -> bool:
         grid = self.maze.every_cell

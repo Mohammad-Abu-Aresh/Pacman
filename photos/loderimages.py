@@ -26,6 +26,15 @@ class Images:
     skeleton = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     enderman = pygame.image.load("photos/monsters/babyzombie/red.jpg")
 
+    # for mypy error handeling the _new image
+    wall_new = wall
+
+    player_new = player
+    zombie_new = zombie
+    witch_new = witch
+    skeleton_new = skeleton
+    enderman_new = enderman
+
     screen = pygame.display.set_mode(
         (width, height)
     )

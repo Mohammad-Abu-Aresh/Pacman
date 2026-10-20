@@ -18,7 +18,6 @@ class Skeleton(Monster):
         self.active_arrows: list[Arrow] = []  # if len(arr) > 0 dont shot again
         self.direction: int = 0
         self.load_size()
-        self.direction: int = 0
         self.next_point: tuple[int, int] | None = None
 
         # tempr = 0 becose ge is not folowing a target yet
@@ -43,18 +42,18 @@ class Skeleton(Monster):
         grid = mape.every_cell
 
         # Same column check
-        if self.x == player.x:
+        if round(self.x) == round(player.x):
             min_y, max_y = min(self.y, player.y), max(self.y, player.y)
-            for y in range(min_y + 1, max_y):
-                if grid[y][self.x]:  # true if there is a wall
+            for y in range(round(min_y) + 1, round(max_y)):
+                if grid[y][round(self.x)]:  # true if there is a wall
                     return False
             return True
 
         # Same row check
-        if self.y == player.y:
+        if round(self.y) == round(player.y):
             min_x, max_x = min(self.x, player.x), max(self.x, player.x)
-            for x in range(min_x + 1, max_x):
-                if grid[self.y][x]:  # true if there is a wall
+            for x in range(round(min_x) + 1, round(max_x)):
+                if grid[round(self.y)][x]:  # true if there is a wall
                     return False
             return True
 

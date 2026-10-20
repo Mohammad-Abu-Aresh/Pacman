@@ -23,11 +23,11 @@ class Abilities(ABC):
 class Arrow(Abilities):
 
     def __init__(
-        self, spawn_point: tuple[int, int],
+        self, spawn_point: tuple[float, float],
         direction: int, speed: int = 300
     ) -> None:
-        self.x: int = spawn_point[0]
-        self.y: int = spawn_point[1]
+        self.x: float = spawn_point[0]
+        self.y: float = spawn_point[1]
         self.direction: int = direction
         self.speed: int = speed  # 300% of player speed
 

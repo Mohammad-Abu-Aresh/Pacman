@@ -49,7 +49,9 @@ class Witch(Monster):
     #    pass
     def follow(self, player: Player) -> None:
         if self.live:
-            self.target_point = (player.x, player.y)
+            self.target_point: tuple[int, int] = (
+                round(player.x), round(player.y)
+                )
         else:
             self.target_point = self.spawn_point
             # i need to edit it

@@ -43,9 +43,9 @@ class Creature(ABC):
             return
 
         if cell_x % 2 == 0:
-            columns = (cell_x // 2 - 1, cell_x // 2)
+            columns: tuple[int, int] = (cell_x // 2 - 1, cell_x // 2)
         else:
-            columns = (cell_x // 2,)
+            columns = (cell_x // 2, 0)
 
         for column in columns:
             if not 0 <= column < len(mape.mape[row]):
