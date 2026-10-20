@@ -1,16 +1,18 @@
 from math import sqrt
 from typing import Callable, Optional
-from .creature import Creature
+from .monster import Monster
 from .player import Player
 # from .bfs import PathFinder
 
 
 # signature shared by every strategy:
 # (monster, player, grid, chaser) -> target cell (x, y)
-Strategy = Callable[
-        [Creature, Player, list[list[bool]], Optional[Creature]],
-        tuple[int, int]
-        ]
+# Strategy = Callable[
+#    [Monster, Player, list[list[bool]], Optional[Monster]],
+#    tuple[int, int]
+# ] thats the most usual
+# Strategies can have different signatures.
+Strategy = Callable[..., tuple[int, int]]
 
 
 class AlgoMonster:
@@ -49,10 +51,10 @@ class AlgoMonster:
 
     @staticmethod
     def target_ahead(
-        monster: Creature,
+        monster: Monster,
         player: Player,
         grid: list[list[bool]],
-        chaser: Optional[Creature] = None
+        chaser: Optional[Monster] = None,
     ) -> tuple[int, int]:
         dx, dy = player.direction
 
@@ -74,46 +76,53 @@ class AlgoMonster:
 
     @staticmethod
     def target_vector(
-            monster: Creature, player: Player, grid: list[list[bool]],
-            chaser: Optional[Creature] = None
-            ) -> tuple[int, int]:
+        monster: Monster,
+        player: Player,
+        grid: list[list[bool]],
+        chaser: Optional[Monster] = None,
+    ) -> tuple[int, int]:
         """Enderman — mirror the chaser through a pivot ahead of the player.
 
         Falls back to chasing the player directly if no chaser is given.
         """
         if chaser is None:
             return AlgoMonster.target_player(player)
+
         dx, dy = player.direction
         pivot = (
-                player.x + dx * AlgoMonster.VECTOR_TILES,
-                player.y + dy * AlgoMonster.VECTOR_TILES
-                )
+            player.x + dx * AlgoMonster.VECTOR_TILES,
+            player.y + dy * AlgoMonster.VECTOR_TILES,
+        )
         target = (
-                pivot[0] + (pivot[0] - chaser.x),
-                pivot[1] + (pivot[1] - chaser.y)
-                )
+            round(pivot[0] + (pivot[0] - chaser.x)),
+            round(pivot[1] + (pivot[1] - chaser.y)),
+        )
         return AlgoMonster._clamp(target, grid)
 
     @staticmethod
     def target_shy(
-            monster: Creature, player: Player, grid: list[list[bool]],
-            chaser: Optional[Creature] = None
-            ) -> tuple[int, int]:
+        monster: Monster,
+        player: Player,
+        grid: list[list[bool]],
+        chaser: Optional[Monster] = None,
+    ) -> tuple[int, int]:
         """Witch — chases from afar, but retreats to her corner up close."""
-        distance = sqrt((monster.x - player.x) ** 2
-                        + (monster.y - player.y) ** 2)
+        distance = sqrt(
+            (monster.x - player.x) ** 2
+            + (monster.y - player.y) ** 2
+        )
         if distance > AlgoMonster.SHY_RADIUS:
-            return (player.x, player.y)
+            return round(player.x), round(player.y)
         return (0, len(grid) - 1)  # bottom-left scatter corner
 
     # ==================== registry ====================
 
     STRATEGIES: dict[int, Strategy] = {
-            1: target_player,   # BabyZombie — direct chaser
-            2: target_ahead,    # Skeleton   — comes from ahead
-            3: target_vector,   # Enderman   — comes from the side
-            4: target_shy,      # Witch      — the shy one
-            }
+        1: target_player,   # BabyZombie — direct chaser
+        2: target_ahead,    # Skeleton   — comes from ahead
+        3: target_vector,   # Enderman   — comes from the side
+        4: target_shy,      # Witch      — the shy one
+    }
 
     @classmethod
     def get(cls, strategy_id: int) -> Strategy:
@@ -124,11 +133,12 @@ class AlgoMonster:
 
     @staticmethod
     def _clamp(
-            target: tuple[int, int], grid: list[list[bool]]
-            ) -> tuple[int, int]:
+        target: tuple[int, int],
+        grid: list[list[bool]],
+    ) -> tuple[int, int]:
         """Keep a target inside the maze so BFS never goes out of bounds."""
         x, y = target
         return (
-                min(max(x, 0), len(grid[0]) - 1),
-                min(max(y, 0), len(grid) - 1)
-                )
+            min(max(x, 0), len(grid[0]) - 1),
+            min(max(y, 0), len(grid) - 1),
+        )
