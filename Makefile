@@ -77,12 +77,12 @@ debug:
 .PHONY: lint
 lint:
 	@if [ -d "$(VENV)" ]; then \
-		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV); \
+		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV) && \
 		$(VENV_PYTHON) -m mypy . --warn-return-any --warn-unused-ignores \
 			--ignore-missing-imports --disallow-untyped-defs \
 			--check-untyped-defs --exclude=$(VENV); \
 	else \
-		flake8 . --exclude=$(VENV); \
+		flake8 . --exclude=$(VENV) && \
 		mypy . --warn-return-any --warn-unused-ignores \
 			--ignore-missing-imports --disallow-untyped-defs \
 			--check-untyped-defs --exclude=$(VENV); \
@@ -92,10 +92,10 @@ lint:
 .PHONY: lint-strict
 lint-strict:
 	@if [ -d "$(VENV)" ]; then \
-		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV); \
+		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV)&& \
 		$(VENV_PYTHON) -m mypy . --strict --exclude=$(VENV); \
 	else \
-		flake8 . --exclude=$(VENV); \
+		flake8 . --exclude=$(VENV)&& \
 		mypy . --strict --exclude=$(VENV); \
 	fi
 
