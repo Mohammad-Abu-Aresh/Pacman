@@ -4,6 +4,7 @@ from .abilities import SlowPotion
 from .player import Player
 from ..block import Block
 from photos import Images
+from .algo_monster import AlgoMonster
 
 
 class Witch(Monster):
@@ -38,20 +39,19 @@ class Witch(Monster):
             potion = SlowPotion((self.x, self.y), duration=5)
             potion.apply_effect(player)
 
-    def move(self) -> None:
-        pass
-
-    # def draw(self) -> None:
-    #    # loid
-    #    # resize
-    #    # drow
-    #    # drow the 2 block under the monster or player
-    #    pass
-    def follow(self, player: Player) -> None:
-        if self.live:
-            self.target_point: tuple[int, int] = (
-                round(player.x), round(player.y)
-                )
-        else:
+    def follow(
+        self,
+        player: Player,
+        grid: list[list[bool]] | None = None,
+    ) -> None:
+        if not self.live:
             self.target_point = self.spawn_point
-            # i need to edit it
+        elif grid is None:
+            self.target_point = (
+                round(player.x),
+                round(player.y),
+            )
+        else:
+            self.target_point = AlgoMonster.get(4)(
+                self, player, grid, None
+            )

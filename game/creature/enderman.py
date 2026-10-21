@@ -4,6 +4,7 @@ from .player import Player
 from ..block import Mape, Block
 from photos import Images
 import random
+from .algo_monster import AlgoMonster
 
 
 class Enderman(Monster):
@@ -44,13 +45,20 @@ class Enderman(Monster):
         self.x = rand_x
         self.y = rand_y
 
-    def move(self) -> None:
-        pass
-
-    def follow(self, player: Player) -> None:
-        if self.live:
-            self.target_point: tuple[int, int] = (
-                round(player.x), round(player.y)
-                )
-        else:
+    def follow(
+        self,
+        player: Player,
+        grid: list[list[bool]] | None = None,
+        chaser: Monster | None = None,
+    ) -> None:
+        if not self.live:
             self.target_point = self.spawn_point
+        elif grid is None:
+            self.target_point = (
+                round(player.x),
+                round(player.y),
+            )
+        else:
+            self.target_point = AlgoMonster.get(3)(
+                self, player, grid, chaser
+            )

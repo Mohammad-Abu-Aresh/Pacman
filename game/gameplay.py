@@ -130,12 +130,18 @@ class GameSystem:
         keys = pygame.key.get_pressed()
         self.player_creature.player.change_diric()
         self.player_creature.player.move()
-
         grid = self.maze_map.every_cell
-        self.player_creature.BabyZombie.follow(
-            self.player_creature.player, grid
-        )
-        self.player_creature.BabyZombie.move(grid)
+
+        for mob in (
+            self.mobs[1],
+            self.mobs[2],
+            self.mobs[3],
+            self.mobs[4]
+        ):
+            mob.follow(
+                self.player_creature.player, grid
+            )
+            mob.move(grid)
 
         self.player_creature.Skeleton.follow(
             self.player_creature.player, grid

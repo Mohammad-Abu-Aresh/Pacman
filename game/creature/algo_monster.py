@@ -106,14 +106,18 @@ class AlgoMonster:
         grid: list[list[bool]],
         chaser: Optional[Monster] = None,
     ) -> tuple[int, int]:
-        """Witch — chases from afar, but retreats to her corner up close."""
+        """Witch chases from afar and retreats when close."""
         distance = sqrt(
             (monster.x - player.x) ** 2
             + (monster.y - player.y) ** 2
         )
+
         if distance > AlgoMonster.SHY_RADIUS:
-            return round(player.x), round(player.y)
-        return (0, len(grid) - 1)  # bottom-left scatter corner
+            return AlgoMonster.target_player(player)
+
+        return AlgoMonster._clamp(
+            (0, len(grid) - 1), grid
+        )
 
     # ==================== registry ====================
 
@@ -131,14 +135,36 @@ class AlgoMonster:
 
     # ==================== helpers ====================
 
+
     @staticmethod
     def _clamp(
         target: tuple[int, int],
         grid: list[list[bool]],
     ) -> tuple[int, int]:
-        """Keep a target inside the maze so BFS never goes out of bounds."""
+        """Keep the target in the maze on a walkable cell."""
+        if not grid or not grid[0]:
+            return target
+
         x, y = target
-        return (
-            min(max(x, 0), len(grid[0]) - 1),
-            min(max(y, 0), len(grid) - 1),
+        x = min(max(x, 0), len(grid[0]) - 1)
+        y = min(max(y, 0), len(grid) - 1)
+
+        if not grid[y][x]:
+            return x, y
+
+        walkable_cells = [
+            (cell_x, cell_y)
+            for cell_y, row in enumerate(grid)
+            for cell_x, wall in enumerate(row)
+            if not wall
+        ]
+
+        if not walkable_cells:
+            return x, y
+
+        return min(
+            walkable_cells,
+            key=lambda cell: (
+                abs(cell[0] - x) + abs(cell[1] - y)
+            ),
         )
