@@ -182,9 +182,9 @@ class GameSystem:
             key=lambda mob: int(mob.y + 0.5)
         ):
             mob.draw(self.maze_map)
-            self._draw_timer()
-            self._draw_score()
-        self._heart()
+            
+        # --- هذا هو السطر الوحيد اللي لازم يكون هون ---
+        self._draw_hud() 
 
     def _draw_maze(
             self,
@@ -209,13 +209,6 @@ class GameSystem:
                         )
                 else:
                     continue
-
-    def _draw_timer(self) -> None:
-        text_surface = self.font.render(
-                f"{int(self.time_left)}", True, (255, 255, 255)
-                )
-        Images.screen.blit(text_surface, (20, 20))
-
     def _eat_pacgums(self) -> None:
         player = self.player_creature.player
 
@@ -234,31 +227,47 @@ class GameSystem:
         ):
             self.next_level()
 
-    def _heart(self) -> None:
-        """
-        https://www.youtube.com/watch?v=WLYEsgYkEvY&t=228s
+    def _draw_hud(self) -> None:
+        panel_x = 1480
+        panel_y = 100
+        spacing_y = 50
+        self._draw_timer(panel_x, panel_y)
+        self._draw_score(panel_x, panel_y + spacing_y)
+        self._heart(panel_x, panel_y + (spacing_y * 2))
 
-        """
-        lives = self.player_creature.player._lives
-        max_lives = self.player_creature.player.myx_lives
-        heart_images = Images.player_heart
-        heart_images_kell = Images.pygame_heart_kell
-        for heart in range(max_lives):
-            for heart_yes in range(lives):
-                Images._drow(heart_images, (50, 50))
-            else:
-                Images._drow(heart_images_kell, (60, 60))
+    def _draw_timer(self, x: int, y: int) -> None:
+        shadow_surface = self.font.render(f"Time: {int(self.time_left)}", True, (0, 0, 0))
+        Images.screen.blit(shadow_surface, (x + 2, y + 2))
+        text_surface = self.font.render(f"Time: {int(self.time_left)}", True, (255, 255, 255))
+        Images.screen.blit(text_surface, (x, y))
 
-    def _draw_score(self) -> None:
+    def _draw_score(self, x: int, y: int) -> None:
         score = self.player_creature.player.score
+        shadow_surface = self.font.render(f"Score: {score}", True, (0, 0, 0))
+        Images.screen.blit(shadow_surface, (x + 2, y + 2))
+        text_surface = self.font.render(f"Score: {score}", True, (255, 255, 255))
+        Images.screen.blit(text_surface, (x, y))
 
-        text_surface = self.font.render(
-            f"Score: {score}",
-            True,
-            (255, 255, 255)
-        )
-
-        Images.screen.blit(text_surface, (20, 60))
-
+    def _heart(self, x: int, y: int) -> None:
+        lives = self.player_creature.player._lives
+        heart_alive = Images.player_heart
+        heart_dead = Images.pygame_heart_kell
+        
+        spacing = 45
+        
+        if lives <= 3:
+            for i in range(3):
+                heart_x = x + i * spacing
+                if i < lives:
+                    Images._drow(heart_alive, (heart_x, y))
+                else:
+                    Images._drow(heart_dead, (heart_x, y))
+        else:
+            Images._drow(heart_alive, (x, y))
+            font = pygame.font.SysFont("Arial", 30, bold=True)
+            shadow_surface = font.render(f"x {lives}", True, (0, 0, 0))
+            Images.screen.blit(shadow_surface, (x + 47, y + 7))
+            text_surface = font.render(f"x {lives}", True, (255, 255, 255))
+            Images.screen.blit(text_surface, (x + 45, y + 5))
     def points(self) -> int:
         return self.player_creature.player.score
