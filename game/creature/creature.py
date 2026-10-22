@@ -122,22 +122,19 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def check_collision(self) -> bool:
-        player_cell = (
-            round(self.player.x),
-            round(self.player.y)
-        )
-
+        collision_distance_sq: float = 0.4
         for mob in (
             self.BabyZombie,
             self.Skeleton,
             self.Enderman,
-            self.witch
+            self.witch,
         ):
             if not mob.live:
                 continue
 
-            mob_cell = (round(mob.x), round(mob.y))
-            if player_cell == mob_cell:
+            dx = self.player.x - mob.x
+            dy = self.player.y - mob.y
+            if dx * dx + dy * dy <= collision_distance_sq:
                 return True
 
         return False

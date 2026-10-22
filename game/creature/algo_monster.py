@@ -135,7 +135,6 @@ class AlgoMonster:
 
     # ==================== helpers ====================
 
-
     @staticmethod
     def _clamp(
         target: tuple[int, int],

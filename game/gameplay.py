@@ -143,11 +143,6 @@ class GameSystem:
             )
             mob.move(grid)
 
-        self.player_creature.Skeleton.follow(
-            self.player_creature.player, grid
-        )
-        self.player_creature.Skeleton.move(grid)
-
         if self.player_creature.check_collision():
             self._handle_player_death()
             return
@@ -182,9 +177,7 @@ class GameSystem:
             key=lambda mob: int(mob.y + 0.5)
         ):
             mob.draw(self.maze_map)
-            
-        # --- هذا هو السطر الوحيد اللي لازم يكون هون ---
-        self._draw_hud() 
+        self._draw_hud()
 
     def _draw_maze(
             self,
@@ -209,6 +202,7 @@ class GameSystem:
                         )
                 else:
                     continue
+
     def _eat_pacgums(self) -> None:
         player = self.player_creature.player
 
@@ -236,25 +230,39 @@ class GameSystem:
         self._heart(panel_x, panel_y + (spacing_y * 2))
 
     def _draw_timer(self, x: int, y: int) -> None:
-        shadow_surface = self.font.render(f"Time: {int(self.time_left)}", True, (0, 0, 0))
-        Images.screen.blit(shadow_surface, (x + 2, y + 2))
-        text_surface = self.font.render(f"Time: {int(self.time_left)}", True, (255, 255, 255))
-        Images.screen.blit(text_surface, (x, y))
+        shadow_surface = self.font.render(
+            f"Time: {int(self.time_left)}", True, (0, 0, 0)
+            )
+        Images.screen.blit(
+            shadow_surface, (x + 2, y + 2)
+            )
+        text_surface = self.font.render(
+            f"Time: {int(self.time_left)}", True, (255, 255, 255)
+            )
+        Images.screen.blit(
+            text_surface, (x, y)
+            )
 
     def _draw_score(self, x: int, y: int) -> None:
         score = self.player_creature.player.score
-        shadow_surface = self.font.render(f"Score: {score}", True, (0, 0, 0))
-        Images.screen.blit(shadow_surface, (x + 2, y + 2))
-        text_surface = self.font.render(f"Score: {score}", True, (255, 255, 255))
+        shadow_surface = self.font.render(
+            f"Score: {score}", True, (0, 0, 0)
+            )
+        Images.screen.blit(
+            shadow_surface, (x + 2, y + 2)
+            )
+        text_surface = self.font.render(
+            f"Score: {score}", True, (255, 255, 255)
+            )
         Images.screen.blit(text_surface, (x, y))
 
     def _heart(self, x: int, y: int) -> None:
         lives = self.player_creature.player._lives
         heart_alive = Images.player_heart
         heart_dead = Images.pygame_heart_kell
-        
+
         spacing = 45
-        
+
         if lives <= 3:
             for i in range(3):
                 heart_x = x + i * spacing
@@ -269,5 +277,6 @@ class GameSystem:
             Images.screen.blit(shadow_surface, (x + 47, y + 7))
             text_surface = font.render(f"x {lives}", True, (255, 255, 255))
             Images.screen.blit(text_surface, (x + 45, y + 5))
+
     def points(self) -> int:
         return self.player_creature.player.score
