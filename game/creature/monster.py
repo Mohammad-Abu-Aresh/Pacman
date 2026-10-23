@@ -27,35 +27,51 @@ class Monster(Creature, ABC):
     def follow(self, player: Player) -> None:
         pass
 
+    @staticmethod
+    def _step_towards(
+        current: float,
+        target: float,
+        distance: float,
+    ) -> float:
+        remaining = target - current
+        if abs(remaining) <= distance:
+            return target
+        return current + (
+            distance if remaining > 0 else -distance
+        )
+
     def move(
-        self, grid: list[list[bool]] | None = None
+        self,
+        grid: list[list[bool]] | None = None,
+        delta_time: float = 1 / 60,
     ) -> None:
         if grid is None or self.target_point is None:
             return
 
+        delta_time = min(max(delta_time, 0.0), 0.05)
         if self.next_point is None:
             self.next_point = PathFinder.next_step(
                 grid,
                 (round(self.x), round(self.y)),
                 self.target_point,
             )
-
         if self.next_point is None:
             return
 
         next_x, next_y = self.next_point
-        step = Block.size / 150 * self.speed / 100
+        step = 5.0 * (self.speed / 100.0) * delta_time
 
-        if next_x != round(self.x):
-            self.y = float(round(self.y))
-            self.x += max(-step, min(step, next_x - self.x))
+        if next_y == self.y:
+            self.x = self._step_towards(
+                self.x, next_x, step
+            )
         else:
-            self.x = float(round(self.x))
-            self.y += max(-step, min(step, next_y - self.y))
+            self.y = self._step_towards(
+                self.y, next_y, step
+            )
 
         self.locaion = (self.x, self.y)
-
-        if self.x == next_x and self.y == next_y:
+        if (self.x, self.y) == self.next_point:
             self.next_point = None
 
     def set_hardcore_mode(self, enabled: bool) -> None:
