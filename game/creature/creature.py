@@ -154,9 +154,10 @@ class Control_creature:
         ):
             mob.x = float(mob.spawn_point[0])
             mob.y = float(mob.spawn_point[1])
+
             mob.locaion = (mob.x, mob.y)
             mob.target_point = None
+            mob.next_point = None
+
             mob.live = True
             mob.is_following = True
-
-        self.BabyZombie.next_point = None

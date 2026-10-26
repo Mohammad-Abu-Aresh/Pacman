@@ -49,12 +49,35 @@ class Monster(Creature, ABC):
             return
 
         delta_time = min(max(delta_time, 0.0), 0.05)
+        current_cell = (round(self.x), round(self.y))
+
+        if self.next_point is not None:
+            next_x, next_y = self.next_point
+
+            distance = (
+                abs(next_x - current_cell[0])
+                + abs(next_y - current_cell[1])
+            )
+
+            in_bounds = (
+                0 <= next_y < len(grid)
+                and 0 <= next_x < len(grid[next_y])
+            )
+
+            if (
+                distance > 1
+                or not in_bounds
+                or grid[next_y][next_x]
+            ):
+                self.next_point = None
+
         if self.next_point is None:
             self.next_point = PathFinder.next_step(
                 grid,
-                (round(self.x), round(self.y)),
+                current_cell,
                 self.target_point,
             )
+
         if self.next_point is None:
             return
 
