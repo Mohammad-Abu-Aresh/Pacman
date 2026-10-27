@@ -116,7 +116,7 @@ class GameEngine:
                         self.config, hardcore_mode=self.hardcore_mode
                         )
                 fps = self.clock.tick(60)
-                time_tic = fps / 1000.0
+                time_tic = min(fps / 1000.0, 0.05)
                 self.game_session.update(time_tic, cheating=self.cheating)
                 self.game_session.draw()
                 self.playr_score = self.game_session.points()

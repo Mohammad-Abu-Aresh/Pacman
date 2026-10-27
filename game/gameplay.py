@@ -53,6 +53,8 @@ class GameSystem:
                 self.player_creature.Enderman,
                 self.player_creature.witch,
                 )
+        self.wait_timer: float = 2.0
+        self.pending_action: str | None = None
 
     def load_level(self) -> None:
         if self.current_level == 1:
@@ -118,11 +120,21 @@ class GameSystem:
             self.current_level = 1
         if self.current_level > self.config["max_levels"]:
             Mod.updatemod(Mod.VICTORY_SCREEN)
+            return
         self.load_level()
         movement.traffic_update(Direction.none)
         self.player_creature.refresh(self.maze_map)
+        self.wait_timer = 1.0
+        self.pending_action = "frozen"
 
     def update(self, time: float, cheating: bool = False) -> None:
+        if self.wait_timer > 0:
+            self.wait_timer -= time
+            if self.wait_timer <= 0:
+                self.wait_timer = 0
+                self.pending_action = None
+            return
+
         if self.time_left > 0:
             self.time_left -= time
         else:
@@ -138,15 +150,12 @@ class GameSystem:
             self.mobs[3],
             self.mobs[4]
         ):
-            mob.follow(
-                self.player_creature.player, grid
-            )
+            mob.follow(self.player_creature.player, grid)
             mob.move(grid)
 
-        if self.player_creature.check_collision():
+        if not cheating and self.player_creature.check_collision():
             self._handle_player_death()
             return
-
         self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()
@@ -161,8 +170,9 @@ class GameSystem:
         if self.lives <= 0:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
             return
-
         self.player_creature.reset_mobs()
+        self.wait_timer = 1.0
+        self.pending_action = "frozen"
 
     def draw(self) -> None:
 
