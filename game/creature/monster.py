@@ -4,10 +4,21 @@ from abc import ABC, abstractmethod
 from ..block import Block
 from .bfs import PathFinder
 from .creature import Creature
-from .player import Player
+from .player import Direction, Player
 
 
 class Monster(Creature, ABC):
+    MODE_SCHEDULE: tuple[tuple[str, float], ...] = (
+        ("scatter", 7.0),
+        ("chase", 20.0),
+        ("scatter", 7.0),
+        ("chase", 20.0),
+        ("scatter", 5.0),
+        ("chase", 20.0),
+        ("scatter", 5.0),
+        ("chase", float("inf")),
+    )
+
     def __init__(
         self, spawn_point: tuple[int, int],
         is_hardcore: bool = False
@@ -22,6 +33,10 @@ class Monster(Creature, ABC):
         self.speed: int = 65
         self.is_following: bool = True
         self.is_hardcore: bool = is_hardcore
+        self.movement_direction: tuple[int, int] = Direction.none
+        self.mode_index = 0
+        self.mode, self.mode_timer = self.MODE_SCHEDULE[0]
+        self.reverse_pending = False
 
     @abstractmethod
     def follow(self, player: Player) -> None:
@@ -40,15 +55,61 @@ class Monster(Creature, ABC):
             distance if remaining > 0 else -distance
         )
 
+    def reset_ai(self) -> None:
+        self.target_point = None
+        self.next_point = None
+        self.live = True
+        self.is_following = True
+        self.movement_direction = Direction.none
+        self.mode_index = 0
+        self.mode, self.mode_timer = self.MODE_SCHEDULE[0]
+        self.reverse_pending = False
+
+    def _update_mode(self, delta_time: float) -> None:
+        self.mode_timer -= delta_time
+        while (
+            self.mode_timer <= 0
+            and self.mode_index < len(self.MODE_SCHEDULE) - 1
+        ):
+            previous_timer = self.mode_timer
+            self.mode_index += 1
+            self.mode, duration = self.MODE_SCHEDULE[self.mode_index]
+            self.mode_timer = duration + previous_timer
+            self.reverse_pending = True
+            self.target_point = None
+
+    def _choose_next_point(
+        self,
+        grid: list[list[bool]],
+        current_cell: tuple[int, int],
+    ) -> tuple[int, int] | None:
+        if self.target_point is None:
+            return None
+        if not self.live:
+            return PathFinder.next_step(grid, current_cell, self.target_point)
+        return PathFinder.next_step_towards(
+            grid,
+            current_cell,
+            self.target_point,
+            self.movement_direction,
+            self.reverse_pending,
+        )
+
     def move(
         self,
         grid: list[list[bool]] | None = None,
         delta_time: float = 1 / 60,
     ) -> None:
-        if grid is None or self.target_point is None:
+        if grid is None:
             return
 
-        delta_time = min(max(delta_time, 0.0), 0.05)
+        delta_time = max(delta_time, 0.0)
+        if self.live:
+            self._update_mode(delta_time)
+        if self.target_point is None:
+            return
+
+        delta_time = min(delta_time, 0.05)
         current_cell = (round(self.x), round(self.y))
 
         if self.next_point is not None:
@@ -72,11 +133,13 @@ class Monster(Creature, ABC):
                 self.next_point = None
 
         if self.next_point is None:
-            self.next_point = PathFinder.next_step(
-                grid,
-                current_cell,
-                self.target_point,
-            )
+            self.next_point = self._choose_next_point(grid, current_cell)
+            if self.next_point is not None:
+                self.movement_direction = (
+                    self.next_point[0] - current_cell[0],
+                    self.next_point[1] - current_cell[1],
+                )
+                self.reverse_pending = False
 
         if self.next_point is None:
             return

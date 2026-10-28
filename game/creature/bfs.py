@@ -57,6 +57,64 @@ class PathFinder:
             return None
         return path[1]
 
+    @staticmethod
+    def next_step_towards(
+        grid: list[list[bool]],
+        start: tuple[int, int],
+        target: tuple[int, int],
+        direction: tuple[int, int] = (0, 0),
+        reverse: bool = False,
+    ) -> Optional[tuple[int, int]]:
+        options = PathFinder._ordered_neighbors(grid, start)
+        if not options:
+            return None
+
+        reverse_step = (start[0] - direction[0], start[1] - direction[1])
+        if reverse and direction != (0, 0) and reverse_step in options:
+            return reverse_step
+        if start == target and not reverse:
+            return None
+
+        if direction != (0, 0):
+            forward_options = [
+                cell for cell in options if cell != reverse_step
+            ]
+            if forward_options:
+                options = forward_options
+
+        return min(
+            options,
+            key=lambda cell: (
+                (cell[0] - target[0]) ** 2
+                + (cell[1] - target[1]) ** 2
+            ),
+        )
+
+    @staticmethod
+    def next_step_away(
+        grid: list[list[bool]],
+        start: tuple[int, int],
+        from_cell: tuple[int, int],
+    ) -> Optional[tuple[int, int]]:
+        options = PathFinder._ordered_neighbors(grid, start)
+        if not options:
+            return None
+
+        best_step: Optional[tuple[int, int]] = None
+        best_score: tuple[float, int] | None = None
+        for candidate in options:
+            path = PathFinder.find_path(grid, candidate, from_cell)
+            maze_distance = float(len(path)) if path else float("inf")
+            straight_distance = (
+                (candidate[0] - from_cell[0]) ** 2
+                + (candidate[1] - from_cell[1]) ** 2
+            )
+            score = (maze_distance, straight_distance)
+            if best_score is None or score > best_score:
+                best_step = candidate
+                best_score = score
+        return best_step
+
     # ==================== internals ====================
 
     @staticmethod
@@ -73,6 +131,19 @@ class PathFinder:
             nxt = (x + direction[0], y + direction[1])
             if PathFinder._walkable(grid, nxt):
                 result.append(nxt)
+        return result
+
+    @staticmethod
+    def _ordered_neighbors(
+        grid: list[list[bool]],
+        cell: tuple[int, int],
+    ) -> list[tuple[int, int]]:
+        x, y = cell
+        result = []
+        for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)):
+            candidate = (x + dx, y + dy)
+            if PathFinder._walkable(grid, candidate):
+                result.append(candidate)
         return result
 
     @staticmethod

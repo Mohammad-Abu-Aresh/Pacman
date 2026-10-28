@@ -15,6 +15,7 @@ class Enderman(Monster):
         super().__init__(spawn_point, is_hardcore)
         self.teleport_cooldown: float = 20.0  # every 20 seconds
         self.current_pearl: EnderPearl | None = None
+        self.chaser: Monster | None = None
         self.load_size()
 
     def load_size(self) -> None:
@@ -58,7 +59,10 @@ class Enderman(Monster):
                 round(player.x),
                 round(player.y),
             )
+        elif self.mode == "scatter":
+            self.target_point = (len(grid[0]) - 2, len(grid) - 2)
         else:
+            chaser = chaser or self.chaser
             self.target_point = AlgoMonster.get(3)(
                 self, player, grid, chaser
             )

@@ -113,6 +113,8 @@ class Skeleton(Monster):
             self.target_point = (
                 round(player.x), round(player.y)
             )
+        elif self.mode == "scatter":
+            self.target_point = (1, 1)
         else:
             self.target_point = AlgoMonster.get(2)(
                 self, player, grid, None

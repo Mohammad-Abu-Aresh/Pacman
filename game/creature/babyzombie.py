@@ -78,5 +78,8 @@ class BabyZombie(Monster):
                 round(player.x), round(player.y)
                 )
 
+        elif self.mode == "scatter":
+            self.target_point = (len(grid[0]) - 2, 1)
+
         else:
             self.target_point = AlgoMonster.get(1)(player)

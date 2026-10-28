@@ -99,6 +99,7 @@ class Control_creature:
         self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
         self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
         self.Enderman = Enderman(maze_map.spawn_point["enderman"])
+        self.Enderman.chaser = self.BabyZombie
         self.mobs: tuple[Creature, ...] = (
             self.player,
             self.witch,
@@ -118,6 +119,11 @@ class Control_creature:
         for mob in self.mobs:
             mob.load_size()
             mob.x, mob.y = mob.spawn_point
+            mob.locaion = (float(mob.x), float(mob.y))
+        for mob in (
+            self.witch, self.Skeleton, self.BabyZombie, self.Enderman
+        ):
+            mob.reset_ai()
 
         # def update_spown_point(obj: str) -> None:
 
@@ -156,8 +162,4 @@ class Control_creature:
             mob.y = float(mob.spawn_point[1])
 
             mob.locaion = (mob.x, mob.y)
-            mob.target_point = None
-            mob.next_point = None
-
-            mob.live = True
-            mob.is_following = True
+            mob.reset_ai()

@@ -41,6 +41,7 @@ class AlgoMonster:
     AHEAD_TILES = 4     # Skeleton: how far ahead of the player to aim
     VECTOR_TILES = 2    # Enderman: pivot distance ahead of the player
     SHY_RADIUS = 8      # Witch: chase beyond this distance, flee inside it
+    GRID_SCALE = 2
 
     # ==================== strategies ====================
 
@@ -61,18 +62,18 @@ class AlgoMonster:
         if dx == 0 and dy == 0:
             return AlgoMonster.target_player(player)
 
-        for distance in range(AlgoMonster.AHEAD_TILES, 0, -1):
-            x = round(player.x + dx * distance)
-            y = round(player.y + dy * distance)
-
-            if not 0 <= y < len(grid):
-                continue
-            if not 0 <= x < len(grid[y]):
-                continue
-            if not grid[y][x]:
-                return x, y
-
-        return AlgoMonster.target_player(player)
+        distance = AlgoMonster.AHEAD_TILES * AlgoMonster.GRID_SCALE
+        if dx == 0 and dy == -1:
+            target = (
+                round(player.x - distance),
+                round(player.y - distance),
+            )
+        else:
+            target = (
+                round(player.x + dx * distance),
+                round(player.y + dy * distance),
+            )
+        return AlgoMonster._bound(target, grid)
 
     @staticmethod
     def target_vector(
@@ -89,15 +90,13 @@ class AlgoMonster:
             return AlgoMonster.target_player(player)
 
         dx, dy = player.direction
-        pivot = (
-            player.x + dx * AlgoMonster.VECTOR_TILES,
-            player.y + dy * AlgoMonster.VECTOR_TILES,
-        )
+        distance = AlgoMonster.VECTOR_TILES * AlgoMonster.GRID_SCALE
+        pivot = (player.x + dx * distance, player.y + dy * distance)
         target = (
             round(pivot[0] + (pivot[0] - chaser.x)),
             round(pivot[1] + (pivot[1] - chaser.y)),
         )
-        return AlgoMonster._clamp(target, grid)
+        return AlgoMonster._bound(target, grid)
 
     @staticmethod
     def target_shy(
@@ -112,12 +111,10 @@ class AlgoMonster:
             + (monster.y - player.y) ** 2
         )
 
-        if distance > AlgoMonster.SHY_RADIUS:
+        if distance > AlgoMonster.SHY_RADIUS * AlgoMonster.GRID_SCALE:
             return AlgoMonster.target_player(player)
 
-        return AlgoMonster._clamp(
-            (0, len(grid) - 1), grid
-        )
+        return (1, len(grid) - 2)
 
     # ==================== registry ====================
 
@@ -134,6 +131,19 @@ class AlgoMonster:
         return cls.STRATEGIES[strategy_id]
 
     # ==================== helpers ====================
+
+    @staticmethod
+    def _bound(
+        target: tuple[int, int],
+        grid: list[list[bool]],
+    ) -> tuple[int, int]:
+        if not grid or not grid[0]:
+            return target
+        x, y = target
+        return (
+            min(max(x, 0), len(grid[0]) - 1),
+            min(max(y, 0), len(grid) - 1),
+        )
 
     @staticmethod
     def _clamp(

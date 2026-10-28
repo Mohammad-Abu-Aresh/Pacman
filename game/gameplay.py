@@ -133,15 +133,15 @@ class GameSystem:
         grid = self.maze_map.every_cell
 
         for mob in (
-            self.mobs[1],
-            self.mobs[2],
-            self.mobs[3],
-            self.mobs[4]
+            self.player_creature.BabyZombie,
+            self.player_creature.Skeleton,
+            self.player_creature.Enderman,
+            self.player_creature.witch,
         ):
             mob.follow(
                 self.player_creature.player, grid
             )
-            mob.move(grid)
+            mob.move(grid, time)
 
         if self.player_creature.check_collision():
             self._handle_player_death()
