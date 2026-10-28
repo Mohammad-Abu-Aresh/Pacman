@@ -1,13 +1,12 @@
 
 from abc import ABC, abstractmethod
-
-from ..block import Block
 from .bfs import PathFinder
 from .creature import Creature
 from .player import Direction, Player
 from .ghost_state import (
     MODE_SCHEDULE as GHOST_MODE_SCHEDULE,
     activate_monster_frightened,
+    set_monster_frightened_visual,
     reactivate_monster_at_home,
     reset_monster_ai,
     step_towards,
@@ -97,6 +96,7 @@ class Monster(Creature, ABC):
             if self.frightened_timer <= 0:
                 self.frightened = False
                 self.frightened_timer = 0.0
+                set_monster_frightened_visual(self, False)
                 self.target_point = None
         else:
             self._update_mode(delta_time)

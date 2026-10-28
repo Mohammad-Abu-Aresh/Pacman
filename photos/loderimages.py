@@ -24,6 +24,7 @@ class Images:
         "photos/player/heart/empty_heart.png"
         )
     zombie = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+    blue_ghost = pygame.image.load("photos/monsters/babyzombie/blue.png")
     witch = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     skeleton = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     enderman = pygame.image.load("photos/monsters/babyzombie/red.jpg")

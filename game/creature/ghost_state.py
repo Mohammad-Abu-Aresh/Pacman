@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import pygame
+from photos.loderimages import Images
 
 if TYPE_CHECKING:
     from .creature import Control_creature
@@ -17,6 +19,17 @@ MODE_SCHEDULE: tuple[tuple[str, float], ...] = (
 )
 
 
+def set_monster_frightened_visual(
+    monster: Monster, enabled: bool
+) -> None:
+    if enabled:
+        monster.image = pygame.transform.scale(
+            Images.blue_ghost, monster.image.get_size()
+        )
+    else:
+        monster.load_size()
+
+
 def step_towards(current: float, target: float, distance: float) -> float:
     remaining = target - current
     if abs(remaining) <= distance:
@@ -25,6 +38,7 @@ def step_towards(current: float, target: float, distance: float) -> float:
 
 
 def reset_monster_ai(monster: Monster) -> None:
+    set_monster_frightened_visual(monster, False)
     monster.target_point = None
     monster.next_point = None
     monster.live = True
@@ -40,6 +54,8 @@ def reset_monster_ai(monster: Monster) -> None:
 def activate_monster_frightened(monster: Monster, duration: float) -> None:
     if not monster.live:
         return
+    if not monster.frightened:
+        set_monster_frightened_visual(monster, True)
     monster.frightened = True
     monster.frightened_timer = max(
         monster.frightened_timer, max(duration, 0.0)
