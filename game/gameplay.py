@@ -1,5 +1,4 @@
 import pygame
-import random
 from game.creature.player import movement, Direction
 from .creature import (
     Creature,
@@ -9,9 +8,17 @@ from .creature import (
 )
 from photos.loderimages import Images
 from typing import Dict, Any
-from mazegenerator import MazeGenerator
-from .block import Mape, Block
+from .block import Mape
 from .game_modes import Mod
+from .level_builder import build_level
+from .game_renderer import (
+    draw_game as render_game,
+    draw_heart as render_heart,
+    draw_hud as render_hud,
+    draw_maze as render_maze,
+    draw_score as render_score,
+    draw_timer as render_timer,
+)
 
 
 class GameSystem:
@@ -42,10 +49,9 @@ class GameSystem:
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
         self.player_creature = Control_creature(
-            maze_map=self.maze_map,
-            lives=self.lives,
+            maze_map=self.maze_map, lives=self.lives,
             super_timer=15
-            )
+        )
         self.mobs: tuple[Creature, ...] = (
                 self.player_creature.player,
                 self.player_creature.BabyZombie,
@@ -55,61 +61,7 @@ class GameSystem:
                 )
 
     def load_level(self) -> None:
-        if self.current_level == 1:
-            self.num += 1
-            self.seed = self.config.get("seed", 42)
-            self.row = 11
-            self.column = 7
-            self.backimage = self.backphoto[self.current_level + 1]
-            self.background = pygame.transform.scale(
-                self.backimage,
-                (
-                    Images.width,
-                    Images.height,
-                ),
-            )
-        else:
-            self.num += 1
-            self.seed = random.randint(1, 2004)
-            if (
-                self.num == 3 or self.num == 6 or
-                self.num == 9 or self.num == 12
-            ):
-                self.row += 2
-                self.column += 1
-            else:
-                self.player_creature.player._super_timer -= 2
-        maze = MazeGenerator(
-            size=(self.row, self.column), seed=self.seed
-            )
-        self.maze_map = Mape(maze)
-        Images._update_size(
-            "wall", size=(Block.size * 2.1, Block.size * 1.85)
-            )
-        self.time_left = self.level_max_time
-        movement.traffic_update(Direction.none)
-
-        self.collectibles: list[Diamond | Netherite] = []
-        height = len(self.maze_map.every_cell)
-        max_y = height - 1
-        max_x = len(self.maze_map.every_cell[0]) - 1 if height > 0 else 0
-        corners = {
-            (1, 1),
-            (max_x - 1, 1),
-            (1, max_y - 1),
-            (max_x - 1, max_y - 1)
-            }
-        for y, row in enumerate(self.maze_map.coordination_42):
-            for x, cell in enumerate(row):
-                if not cell:
-                    if (x, y) in corners:
-                        self.collectibles.append(
-                            Netherite(Images.screen, self.config, x, y)
-                            )
-                    else:
-                        self.collectibles.append(
-                            Diamond(Images.screen, self.config, x, y)
-                            )
+        build_level(self)
 
     def next_level(self) -> None:
         if self.current_level <= self.max_levels:
@@ -175,43 +127,14 @@ class GameSystem:
         self.player_creature.reset_mobs()
 
     def draw(self) -> None:
-
-        self._draw_maze(
-            self.maze_map.origin_x,
-            self.maze_map.origin_y
-            )
-        for item in self.collectibles:
-            item.draw(self.maze_map)
-        for mob in sorted(
-            self.mobs,
-            key=lambda mob: int(mob.y + 0.5)
-        ):
-            mob.draw(self.maze_map)
-        self._draw_hud()
+        render_game(self)
 
     def _draw_maze(
             self,
             origin_x: int,
             origin_y: int
             ) -> None:
-        maze_bool = self.maze_map.every_cell
-
-        cell_size = Block.size
-        for item in self.collectibles:
-            item.draw(self.maze_map)
-
-        Images.screen.blit(self.background, (0, 0))
-        for y, row in enumerate(maze_bool):
-            for x, cell in enumerate(row):
-                location_x = origin_x + (x * cell_size)
-                location_y = origin_y + (y * cell_size)
-                if cell:
-                    Images._drow(
-                        Images.wall_new,
-                        location=(location_x, location_y)
-                        )
-                else:
-                    continue
+        render_maze(self, origin_x, origin_y)
 
     def _eat_pacgums(self) -> None:
         player = self.player_creature.player
@@ -236,61 +159,16 @@ class GameSystem:
             self.next_level()
 
     def _draw_hud(self) -> None:
-        panel_x = 1480
-        panel_y = 100
-        spacing_y = 50
-        self._draw_timer(panel_x, panel_y)
-        self._draw_score(panel_x, panel_y + spacing_y)
-        self._heart(panel_x, panel_y + (spacing_y * 2))
+        render_hud(self)
 
     def _draw_timer(self, x: int, y: int) -> None:
-        shadow_surface = self.font.render(
-            f"Time: {int(self.time_left)}", True, (0, 0, 0)
-            )
-        Images.screen.blit(
-            shadow_surface, (x + 2, y + 2)
-            )
-        text_surface = self.font.render(
-            f"Time: {int(self.time_left)}", True, (255, 255, 255)
-            )
-        Images.screen.blit(
-            text_surface, (x, y)
-            )
+        render_timer(self, x, y)
 
     def _draw_score(self, x: int, y: int) -> None:
-        score = self.player_creature.player.score
-        shadow_surface = self.font.render(
-            f"Score: {score}", True, (0, 0, 0)
-            )
-        Images.screen.blit(
-            shadow_surface, (x + 2, y + 2)
-            )
-        text_surface = self.font.render(
-            f"Score: {score}", True, (255, 255, 255)
-            )
-        Images.screen.blit(text_surface, (x, y))
+        render_score(self, x, y)
 
     def _heart(self, x: int, y: int) -> None:
-        lives = self.player_creature.player._lives
-        heart_alive = Images.player_heart
-        heart_dead = Images.pygame_heart_kell
-
-        spacing = 45
-
-        if lives <= 3:
-            for i in range(3):
-                heart_x = x + i * spacing
-                if i < lives:
-                    Images._drow(heart_alive, (heart_x, y))
-                else:
-                    Images._drow(heart_dead, (heart_x, y))
-        else:
-            Images._drow(heart_alive, (x, y))
-            font = pygame.font.SysFont("Arial", 30, bold=True)
-            shadow_surface = font.render(f"x {lives}", True, (0, 0, 0))
-            Images.screen.blit(shadow_surface, (x + 47, y + 7))
-            text_surface = font.render(f"x {lives}", True, (255, 255, 255))
-            Images.screen.blit(text_surface, (x + 45, y + 5))
+        render_heart(self, x, y)
 
     def points(self) -> int:
         return self.player_creature.player.score
