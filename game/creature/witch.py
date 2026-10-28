@@ -46,12 +46,15 @@ class Witch(Monster):
         self,
         grid: list[list[bool]],
         current_cell: tuple[int, int],
+        player_cell: tuple[int, int] | None = None,
     ) -> tuple[int, int] | None:
         if self._is_fleeing and self._player_cell is not None:
             return PathFinder.next_step_away(
                 grid, current_cell, self._player_cell
             )
-        return super()._choose_next_point(grid, current_cell)
+        return super()._choose_next_point(
+            grid, current_cell, player_cell
+        )
 
     def follow(
         self,

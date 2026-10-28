@@ -1,6 +1,11 @@
 from abc import ABC, abstractmethod
 from ..block import Mape, Block
 from photos.loderimages import Images
+from .ghost_state import (
+    activate_group_frightened,
+    reset_group_frightened,
+    update_group_frightened,
+)
 import pygame
 
 
@@ -107,6 +112,13 @@ class Control_creature:
             self.BabyZombie,
             self.Enderman,
         )
+        self.frightened_timer = 0.0
+
+    def activate_frightened(self, duration: float) -> None:
+        activate_group_frightened(self, duration)
+
+    def update_frightened(self, delta_time: float) -> None:
+        update_group_frightened(self, delta_time)
 
     def refresh(self, mape: Mape) -> None:
         self.maze_mape = mape
@@ -124,6 +136,7 @@ class Control_creature:
             self.witch, self.Skeleton, self.BabyZombie, self.Enderman
         ):
             mob.reset_ai()
+        reset_group_frightened(self)
 
         # def update_spown_point(obj: str) -> None:
 
@@ -152,6 +165,7 @@ class Control_creature:
         movement.musle_memory(None)
         self.player.direction = Direction.none
 
+        reset_group_frightened(self)
         for mob in (
             self.BabyZombie,
             self.Skeleton,

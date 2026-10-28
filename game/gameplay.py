@@ -128,6 +128,7 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
+        self.player_creature.update_frightened(time)
         self.player_creature.player.change_diric()
         self.player_creature.player.move()
         grid = self.maze_map.every_cell
@@ -141,7 +142,14 @@ class GameSystem:
             mob.follow(
                 self.player_creature.player, grid
             )
-            mob.move(grid, time)
+            mob.move(
+                grid,
+                time,
+                (
+                    round(self.player_creature.player.x),
+                    round(self.player_creature.player.y),
+                ),
+            )
 
         if self.player_creature.check_collision():
             self._handle_player_death()
@@ -216,6 +224,10 @@ class GameSystem:
             if item.x == player_x and item.y == player_y:
                 item.eaten()
                 player.eat(item.points)
+                if isinstance(item, Netherite):
+                    self.player_creature.activate_frightened(
+                        max(float(player._super_timer), 1.0)
+                    )
         if self.collectibles and all(
             item.is_eaten for item in self.collectibles
         ):

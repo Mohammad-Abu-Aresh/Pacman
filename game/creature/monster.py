@@ -5,19 +5,17 @@ from ..block import Block
 from .bfs import PathFinder
 from .creature import Creature
 from .player import Direction, Player
+from .ghost_state import (
+    MODE_SCHEDULE as GHOST_MODE_SCHEDULE,
+    activate_monster_frightened,
+    reset_monster_ai,
+    step_towards,
+    update_monster_mode,
+)
 
 
 class Monster(Creature, ABC):
-    MODE_SCHEDULE: tuple[tuple[str, float], ...] = (
-        ("scatter", 7.0),
-        ("chase", 20.0),
-        ("scatter", 7.0),
-        ("chase", 20.0),
-        ("scatter", 5.0),
-        ("chase", 20.0),
-        ("scatter", 5.0),
-        ("chase", float("inf")),
-    )
+    MODE_SCHEDULE = GHOST_MODE_SCHEDULE
 
     def __init__(
         self, spawn_point: tuple[int, int],
@@ -37,6 +35,8 @@ class Monster(Creature, ABC):
         self.mode_index = 0
         self.mode, self.mode_timer = self.MODE_SCHEDULE[0]
         self.reverse_pending = False
+        self.frightened = False
+        self.frightened_timer = 0.0
 
     @abstractmethod
     def follow(self, player: Player) -> None:
@@ -48,45 +48,31 @@ class Monster(Creature, ABC):
         target: float,
         distance: float,
     ) -> float:
-        remaining = target - current
-        if abs(remaining) <= distance:
-            return target
-        return current + (
-            distance if remaining > 0 else -distance
-        )
+        return step_towards(current, target, distance)
 
     def reset_ai(self) -> None:
-        self.target_point = None
-        self.next_point = None
-        self.live = True
-        self.is_following = True
-        self.movement_direction = Direction.none
-        self.mode_index = 0
-        self.mode, self.mode_timer = self.MODE_SCHEDULE[0]
-        self.reverse_pending = False
+        reset_monster_ai(self)
+
+    def activate_frightened(self, duration: float) -> None:
+        activate_monster_frightened(self, duration)
 
     def _update_mode(self, delta_time: float) -> None:
-        self.mode_timer -= delta_time
-        while (
-            self.mode_timer <= 0
-            and self.mode_index < len(self.MODE_SCHEDULE) - 1
-        ):
-            previous_timer = self.mode_timer
-            self.mode_index += 1
-            self.mode, duration = self.MODE_SCHEDULE[self.mode_index]
-            self.mode_timer = duration + previous_timer
-            self.reverse_pending = True
-            self.target_point = None
+        update_monster_mode(self, delta_time)
 
     def _choose_next_point(
         self,
         grid: list[list[bool]],
         current_cell: tuple[int, int],
+        player_cell: tuple[int, int] | None = None,
     ) -> tuple[int, int] | None:
         if self.target_point is None:
             return None
         if not self.live:
             return PathFinder.next_step(grid, current_cell, self.target_point)
+        if self.frightened and player_cell is not None:
+            return PathFinder.next_step_away(
+                grid, current_cell, player_cell
+            )
         return PathFinder.next_step_towards(
             grid,
             current_cell,
@@ -99,12 +85,19 @@ class Monster(Creature, ABC):
         self,
         grid: list[list[bool]] | None = None,
         delta_time: float = 1 / 60,
+        player_cell: tuple[int, int] | None = None,
     ) -> None:
         if grid is None:
             return
 
         delta_time = max(delta_time, 0.0)
-        if self.live:
+        if self.live and self.frightened:
+            self.frightened_timer -= delta_time
+            if self.frightened_timer <= 0:
+                self.frightened = False
+                self.frightened_timer = 0.0
+                self.target_point = None
+        elif self.live:
             self._update_mode(delta_time)
         if self.target_point is None:
             return
@@ -133,7 +126,9 @@ class Monster(Creature, ABC):
                 self.next_point = None
 
         if self.next_point is None:
-            self.next_point = self._choose_next_point(grid, current_cell)
+            self.next_point = self._choose_next_point(
+                grid, current_cell, player_cell
+            )
             if self.next_point is not None:
                 self.movement_direction = (
                     self.next_point[0] - current_cell[0],
@@ -146,6 +141,8 @@ class Monster(Creature, ABC):
 
         next_x, next_y = self.next_point
         step = 5.0 * (self.speed / 100.0) * delta_time
+        if self.frightened:
+            step *= 0.5
 
         if next_y == self.y:
             self.x = self._step_towards(

@@ -1,0 +1,92 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .creature import Control_creature
+    from .monster import Monster
+
+MODE_SCHEDULE: tuple[tuple[str, float], ...] = (
+    ("scatter", 7.0),
+    ("chase", 20.0),
+    ("scatter", 7.0),
+    ("chase", 20.0),
+    ("scatter", 5.0),
+    ("chase", 20.0),
+    ("scatter", 5.0),
+    ("chase", float("inf")),
+)
+
+
+def step_towards(current: float, target: float, distance: float) -> float:
+    remaining = target - current
+    if abs(remaining) <= distance:
+        return target
+    return current + (distance if remaining > 0 else -distance)
+
+
+def reset_monster_ai(monster: Monster) -> None:
+    monster.target_point = None
+    monster.next_point = None
+    monster.live = True
+    monster.is_following = True
+    monster.movement_direction = (0, 0)
+    monster.mode_index = 0
+    monster.mode, monster.mode_timer = MODE_SCHEDULE[0]
+    monster.reverse_pending = False
+    monster.frightened = False
+    monster.frightened_timer = 0.0
+
+
+def activate_monster_frightened(monster: Monster, duration: float) -> None:
+    if not monster.live:
+        return
+    monster.frightened = True
+    monster.frightened_timer = max(
+        monster.frightened_timer, max(duration, 0.0)
+    )
+    monster.reverse_pending = True
+    monster.target_point = None
+
+
+def update_monster_mode(monster: Monster, delta_time: float) -> None:
+    monster.mode_timer -= delta_time
+    while (
+        monster.mode_timer <= 0
+        and monster.mode_index < len(MODE_SCHEDULE) - 1
+    ):
+        previous_timer = monster.mode_timer
+        monster.mode_index += 1
+        monster.mode, duration = MODE_SCHEDULE[monster.mode_index]
+        monster.mode_timer = duration + previous_timer
+        monster.reverse_pending = True
+        monster.target_point = None
+
+
+def activate_group_frightened(
+    controller: Control_creature, duration: float
+) -> None:
+    controller.frightened_timer = max(
+        controller.frightened_timer, max(duration, 0.0)
+    )
+    controller.player._is_super = controller.frightened_timer > 0
+    for monster in (
+        controller.BabyZombie, controller.Skeleton,
+        controller.Enderman, controller.witch
+    ):
+        monster.activate_frightened(duration)
+
+
+def update_group_frightened(
+    controller: Control_creature, delta_time: float
+) -> None:
+    if controller.frightened_timer <= 0:
+        return
+    controller.frightened_timer = max(
+        0.0, controller.frightened_timer - max(delta_time, 0.0)
+    )
+    controller.player._is_super = controller.frightened_timer > 0
+
+
+def reset_group_frightened(controller: Control_creature) -> None:
+    controller.frightened_timer = 0.0
+    controller.player._is_super = False
