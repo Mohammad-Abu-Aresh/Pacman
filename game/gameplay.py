@@ -151,7 +151,9 @@ class GameSystem:
                 ),
             )
 
-        if self.player_creature.check_collision():
+        if self.player_creature.check_collision(
+            self.config.get("points_per_ghost", 200)
+        ):
             self._handle_player_death()
             return
 

@@ -8,6 +8,7 @@ from .player import Direction, Player
 from .ghost_state import (
     MODE_SCHEDULE as GHOST_MODE_SCHEDULE,
     activate_monster_frightened,
+    reactivate_monster_at_home,
     reset_monster_ai,
     step_towards,
     update_monster_mode,
@@ -91,19 +92,21 @@ class Monster(Creature, ABC):
             return
 
         delta_time = max(delta_time, 0.0)
-        if self.live and self.frightened:
+        if self.frightened:
             self.frightened_timer -= delta_time
             if self.frightened_timer <= 0:
                 self.frightened = False
                 self.frightened_timer = 0.0
                 self.target_point = None
-        elif self.live:
+        else:
             self._update_mode(delta_time)
-        if self.target_point is None:
-            return
 
         delta_time = min(delta_time, 0.05)
         current_cell = (round(self.x), round(self.y))
+        if reactivate_monster_at_home(self):
+            return
+        if self.target_point is None:
+            return
 
         if self.next_point is not None:
             next_x, next_y = self.next_point

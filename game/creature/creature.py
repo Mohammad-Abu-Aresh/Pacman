@@ -3,6 +3,7 @@ from ..block import Mape, Block
 from photos.loderimages import Images
 from .ghost_state import (
     activate_group_frightened,
+    check_ghost_collisions,
     reset_group_frightened,
     update_group_frightened,
 )
@@ -140,23 +141,8 @@ class Control_creature:
 
         # def update_spown_point(obj: str) -> None:
 
-    def check_collision(self) -> bool:
-        collision_distance_sq: float = 0.4
-        for mob in (
-            self.BabyZombie,
-            self.Skeleton,
-            self.Enderman,
-            self.witch,
-        ):
-            if not mob.live:
-                continue
-
-            dx = self.player.x - mob.x
-            dy = self.player.y - mob.y
-            if dx * dx + dy * dy <= collision_distance_sq:
-                return True
-
-        return False
+    def check_collision(self, points_per_ghost: int = 200) -> bool:
+        return check_ghost_collisions(self, points_per_ghost)
 
     def reset_mobs(self) -> None:
         from .player import Direction, movement

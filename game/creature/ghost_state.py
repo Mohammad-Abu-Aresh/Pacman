@@ -90,3 +90,39 @@ def update_group_frightened(
 def reset_group_frightened(controller: Control_creature) -> None:
     controller.frightened_timer = 0.0
     controller.player._is_super = False
+
+
+def reactivate_monster_at_home(monster: Monster) -> bool:
+    if monster.live or (monster.x, monster.y) != tuple(
+        float(value) for value in monster.spawn_point
+    ):
+        return False
+    monster.live = True
+    monster.is_following = True
+    monster.target_point = None
+    monster.next_point = None
+    monster.movement_direction = (0, 0)
+    monster.reverse_pending = False
+    return True
+
+
+def check_ghost_collisions(
+    controller: Control_creature, points_per_ghost: int
+) -> bool:
+    player_hit = False
+    for monster in (
+        controller.BabyZombie, controller.Skeleton,
+        controller.Enderman, controller.witch
+    ):
+        if not monster.live:
+            continue
+        dx = controller.player.x - monster.x
+        dy = controller.player.y - monster.y
+        if dx * dx + dy * dy > 0.4:
+            continue
+        if monster.frightened:
+            controller.player.eat(points_per_ghost)
+            monster.die()
+        else:
+            player_hit = True
+    return player_hit
