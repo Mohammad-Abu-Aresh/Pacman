@@ -99,45 +99,73 @@ class Screens:
             }
         return draw_buttons
 
-    def settings_screen(self) -> Callable[[], None]:
-        """
-        aabtah
-        ملف اعدادات عشان تعديل ملف json
-        الروابط <https://www.youtube.com/watch?v=Rvcyf4HsWiw>
-        """
-        font = pygame.font.Font(None, 36)
+    def settings_screen(self) -> Callable[[], bool]:
+        font_title = pygame.font.Font(None, 50)
+        font_text = pygame.font.Font(None, 32)
 
-        box_width = int(self.width * 0.35)
-        box_height = 45
-        x = (self.width - box_width) // 2
-        y = int(self.height * 0.45)
+        title_surf = font_title.render("HOW TO PLAY", True, (255, 215, 0))
+        title_rect = title_surf.get_rect(
+            center=(self.width // 2, int(self.height * 0.12))
+        )
 
-        input_rect = pygame.Rect(x, y, box_width, box_height)
-        color = pygame.Color('lightskyblue3')
-        title_surf = font.render("Max Levels:", True, (240, 240, 240))
-        title_rect = title_surf.get_rect(center=(self.width // 2, y - 35))
+        instructions = [
+            "Up Arrow     →  Move Up",
+            "Down Arrow   →  Move Down",
+            "Left Arrow   →  Move Left",
+            "Right Arrow  →  Move Right",
+            "",
+            "Eat all the dots to win the level.",
+            "Avoid the ghosts!",
+            "Eat a Power Pellet to chase ghosts.",
+        ]
+        exit_button = Button(
+            coordinates=(self.width // 2, int(self.height * 0.9)),
+            size=(220, 55),
+            text=None,
+            font_size=32,
+            text_color=(240, 240, 240),
+        )
+        exit_label = pygame.font.Font(None, 32).render(
+            "EXIT", True, (240, 240, 240)
+        )
+        exit_label_rect = exit_label.get_rect(
+            center=(self.width // 2, int(self.height * 0.9))
+        )
 
-        def draw_settings() -> None:
+        def draw_settings() -> bool:
             self.screen.fill((15, 15, 25))
             self.screen.blit(title_surf, title_rect)
+            pygame.draw.line(
+                self.screen, (255, 215, 0),
+                (self.width // 2 - 160, title_rect.bottom + 10),
+                (self.width // 2 + 160, title_rect.bottom + 10),
+                2,
+            )
+            start_y = int(self.height * 0.28)
+            for i, line in enumerate(instructions):
+                if line == "":
+                    continue
+                surf = font_text.render(line, True, (220, 220, 220))
+                rect = surf.get_rect(
+                    center=(self.width // 2, start_y + i * 40)
+                )
+                self.screen.blit(surf, rect)
             pygame.draw.rect(
-                self.screen, (30, 30, 45), input_rect, border_radius=6
+                self.screen, (60, 80, 130),
+                exit_button.rect, border_radius=10
             )
             pygame.draw.rect(
-                self.screen, color, input_rect, 2, border_radius=6
+                self.screen, (160, 180, 230),
+                exit_button.rect, width=2, border_radius=10
             )
-            text_surface = font.render(
-                self.user_text, True, (255, 255, 255)
-            )
-            self.screen.blit(
-                text_surface, (input_rect.x + 12, input_rect.y + 8)
-            )
-
+            self.screen.blit(exit_label, exit_label_rect)
+            return exit_button.draw(self.screen)
         return draw_settings
+
 
     def highscore_screen(
         self, highscore_file: str = "highscores.json"
-    ) -> Callable[[], None]:
+    ) -> Callable[[], bool]:
         """
         aabtah
         اخذ المعلومات من ملف json
@@ -145,40 +173,92 @@ class Screens:
         """
         font_title = pygame.font.Font(None, 50)
         font_item = pygame.font.Font(None, 36)
-        title_surf = font_title.render("TOP 10 SCORES", True, (255, 215, 0))
+
+        title_surf = font_title.render(
+            "TOP 10 SCORES", True, (255, 215, 0)
+        )
         title_rect = title_surf.get_rect(
             center=(self.width // 2, int(self.height * 0.15))
         )
-        data = []
-        with open(highscore_file, "r") as f:
-            data = json.load(f)
+
+        try:
+            with open(highscore_file, "r") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = []
+
         data = sorted(data, key=lambda x: x["score"], reverse=True)
 
-        def draw_higscore() -> None:
-            self.screen.fill((0, 0, 0))  # (R, G, B) "coller" Max= 255
+        exit_button = Button(
+            coordinates=(self.width // 2, int(self.height * 0.9)),
+            size=(220, 55),
+            text=None,
+            font_size=32,
+            text_color=(240, 240, 240),
+        )
+
+        exit_label = pygame.font.Font(None, 32).render(
+            "EXIT", True, (240, 240, 240)
+        )
+        exit_label_rect = exit_label.get_rect(
+            center=(self.width // 2, int(self.height * 0.9))
+        )
+
+        def draw_higscore() -> bool:
+            self.screen.fill((15, 18, 30))
             self.screen.blit(title_surf, title_rect)
 
+            pygame.draw.line(
+                self.screen,
+                (255, 215, 0),
+                (self.width // 2 - 160, title_rect.bottom + 10),
+                (self.width // 2 + 160, title_rect.bottom + 10),
+                2,
+            )
+
             start_y = int(self.height * 0.28)
-            for i, entry in enumerate(data):
+
+            for i, entry in enumerate(data[:10]):
                 name = entry["name"]
                 score = entry["score"]
+
                 text_str = f"{i + 1}. {name} - {score} p"
+                color = (
+                    (255, 215, 0) if i == 0
+                    else (240, 240, 240)
+                )
+
                 item_surf = font_item.render(
-                    text_str, True, (240, 240, 240)
+                    text_str, True, color
                 )
                 item_rect = item_surf.get_rect(
-                    center=(self.width // 2, start_y + (i * 40))
+                    center=(
+                        self.width // 2,
+                        start_y + (i * 40)
+                    )
                 )
                 self.screen.blit(item_surf, item_rect)
-            back_surf = font_item.render(
-                "get out", True, (150, 150, 150)
+
+            pygame.draw.rect(
+                self.screen,
+                (60, 80, 130),
+                exit_button.rect,
+                border_radius=10,
             )
-            back_rect = back_surf.get_rect(
-                center=(self.width // 2, int(self.height * 0.9))
+            pygame.draw.rect(
+                self.screen,
+                (160, 180, 230),
+                exit_button.rect,
+                width=2,
+                border_radius=10,
             )
-            self.screen.blit(back_surf, back_rect)
+
+            self.screen.blit(exit_label, exit_label_rect)
+
+            return exit_button.draw(self.screen)
 
         return draw_higscore
+
 
     def game_over_screen(
         self, final_score: int = 0, winner: bool = False
@@ -262,4 +342,4 @@ class Screens:
         tmp_file = file + ".tmp"
         with open(tmp_file, "w") as f:
             json.dump(data, f, indent=4)
-        os.replace(tmp_file, file)   # atomic على نفس الـ filesystem
+        os.replace(tmp_file, file)
