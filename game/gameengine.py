@@ -74,80 +74,112 @@ class GameEngine:
                 elif event.key == pygame.K_DOWN:
                     movement.musle_memory(Direction.down)
 
+
     def run(self) -> None:
         font = pygame.font.SysFont(None, 36)
-        while True:
 
+        while True:
             self.button_management()
+
             if Mod.state_variable == Mod.MAIN_MENU_SCREEN:
                 self.game_session = None
                 self.settings_callable = None
                 self.highscore_callable = None
                 self.loss_callable = None
                 self.victory_screen = None
+
                 Images.screen.blit(self.background, (0, 0))
                 drawing_copy = self.start_options()
 
                 if drawing_copy["play_game"]:
                     print("PLAY GAME")
-                    self.cheating = False  # The special variable in cheat mode
+                    self.cheating = False
                     self.hardcore_mode = False
                     Mod.updatemod(Mod.GAME_SCREEN)
+
                 elif drawing_copy["minecraft_mode"]:
                     print("minecraft_mode")
                     self.cheating = False
                     self.hardcore_mode = True
                     Mod.updatemod(Mod.GAME_SCREEN)
+
                 elif drawing_copy["top scores"]:
                     print("top scores")
                     Mod.updatemod(Mod.HIGHSCORE_SCREEN)
+
                 elif drawing_copy["settings"]:
                     print("SETTINGS")
-                    set_screen = Mod.SETTINGS_SCREEN
-                    Mod.state_variable = set_screen
+                    Mod.updatemod(Mod.SETTINGS_SCREEN)
+
                 elif drawing_copy["quit_game"]:
                     print("QUIT GAME")
                     pygame.quit()
                     sys.exit(0)
-            elif Mod.state_variable == Mod.GAME_SCREEN:
 
+            elif Mod.state_variable == Mod.GAME_SCREEN:
                 if not self.game_session:
                     self.game_session = GameSystem(
-                        self.config, hardcore_mode=self.hardcore_mode
-                        )
+                        self.config,
+                        hardcore_mode=self.hardcore_mode
+                    )
+
                 fps = self.clock.tick(60)
-                time_tic = fps / 1000.0
-                self.game_session.update(time_tic, cheating=self.cheating)
+                time_tic = min(fps / 1000.0, 0.05)
+
+                self.game_session.update(
+                    time_tic,
+                    cheating=self.cheating
+                )
                 self.game_session.draw()
                 self.playr_score = self.game_session.points()
-                # print(self.playr_score)
+
                 if self.cheating:
                     font_o = font.render(
-                        "Cheat Mode Activated!", True, (255, 0, 0)
-                        )
-
+                        "Cheat Mode Activated!",
+                        True,
+                        (255, 0, 0)
+                    )
                     Images.screen.blit(
-                        font_o, (Images.width - font_o.get_width() - 20, 20)
+                        font_o,
+                        (
+                            Images.width - font_o.get_width() - 20,
+                            20
                         )
+                    )
 
             elif Mod.state_variable == Mod.SETTINGS_SCREEN:
                 if not self.settings_callable:
                     self.settings_callable = self.screens.settings_screen()
-                self.settings_callable()
+
+                exit_requested = self.settings_callable()
+
+                if exit_requested:
+                    Mod.updatemod(Mod.MAIN_MENU_SCREEN)
+
             elif Mod.state_variable == Mod.HIGHSCORE_SCREEN:
                 if not self.highscore_callable:
                     self.highscore_callable = self.screens.highscore_screen()
-                self.highscore_callable()
+
+                exit_requested = self.highscore_callable()
+
+                if exit_requested:
+                    Mod.updatemod(Mod.MAIN_MENU_SCREEN)
+
             elif Mod.state_variable == Mod.GAME_OVER_SCREEN:
                 if not self.loss_callable:
                     self.loss_callable = self.screens.game_over_screen(
                         self.playr_score
-                        )
+                    )
+
                 self.loss_callable()
+
             elif Mod.state_variable == Mod.VICTORY_SCREEN:
                 if not self.victory_screen:
                     self.victory_screen = self.screens.game_over_screen(
-                        self.playr_score, True
-                        )
+                        self.playr_score,
+                        True
+                    )
+
                 self.victory_screen()
+
             pygame.display.update()
