@@ -2,10 +2,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import pygame
 from photos.loderimages import Images
+from .ghost_lifecycle import (
+    mark_monster_eaten,
+    reactivate_eaten_monster,
+    start_power_pellet_cycle,
+    sync_returning_monsters,
+)
 
 if TYPE_CHECKING:
     from .creature import Control_creature
     from .monster import Monster
+
 
 def set_monster_frightened_visual(
     monster: Monster, enabled: bool
@@ -57,6 +64,11 @@ def reset_monster_ai(monster: Monster) -> None:
     monster.reverse_pending = False
     monster.frightened = False
     monster.frightened_timer = 0.0
+    monster.lifecycle.last_eaten_cycle = -1
+    monster.lifecycle.active_cycle = -1
+    monster.lifecycle.pending_cycle = -1
+    monster.lifecycle.pending_timer = 0.0
+    monster.lifecycle.mode_clock_paused = False
 
 
 def activate_monster_frightened(monster: Monster, duration: float) -> None:
@@ -95,8 +107,9 @@ def update_monster_mode(monster: Monster, delta_time: float) -> None:
         monster.mode_index += 1
         monster.mode, duration = monster.MODE_SCHEDULE[monster.mode_index]
         monster.mode_timer = duration + previous_timer
-        monster.reverse_pending = True
-        monster.target_point = None
+        if monster.live:
+            monster.reverse_pending = True
+            monster.target_point = None
 
 
 def activate_group_frightened(
@@ -109,15 +122,7 @@ def activate_group_frightened(
     indicator.
     made by: Mohammad Abu Aresh
     """
-    controller.frightened_timer = max(
-        controller.frightened_timer, max(duration, 0.0)
-    )
-    controller.player._is_super = controller.frightened_timer > 0
-    for monster in (
-        controller.BabyZombie, controller.Skeleton,
-        controller.Enderman, controller.witch
-    ):
-        monster.activate_frightened(duration)
+    start_power_pellet_cycle(controller, duration)
 
 
 def update_group_frightened(
@@ -136,6 +141,7 @@ def update_group_frightened(
         0.0, controller.frightened_timer - max(delta_time, 0.0)
     )
     controller.player._is_super = controller.frightened_timer > 0
+    sync_returning_monsters(controller)
 
 
 def reset_group_frightened(controller: Control_creature) -> None:
@@ -148,6 +154,16 @@ def reset_group_frightened(controller: Control_creature) -> None:
     """
     controller.frightened_timer = 0.0
     controller.player._is_super = False
+    controller.frightened_cycle = 0
+    for monster in (
+        controller.BabyZombie, controller.Skeleton,
+        controller.Enderman, controller.witch
+    ):
+        monster.lifecycle.last_eaten_cycle = -1
+        monster.lifecycle.active_cycle = -1
+        monster.lifecycle.pending_cycle = -1
+        monster.lifecycle.pending_timer = 0.0
+        monster.lifecycle.mode_clock_paused = False
 
 
 def reactivate_monster_at_home(monster: Monster) -> bool:
@@ -158,17 +174,7 @@ def reactivate_monster_at_home(monster: Monster) -> bool:
     occurred.
     made by: Mohammad Abu Aresh
     """
-    if monster.live or (monster.x, monster.y) != tuple(
-        float(value) for value in monster.spawn_point
-    ):
-        return False
-    monster.live = True
-    monster.is_following = True
-    monster.target_point = None
-    monster.next_point = None
-    monster.movement_direction = (0, 0)
-    monster.reverse_pending = False
-    return True
+    return reactivate_eaten_monster(monster)
 
 
 def check_ghost_collisions(
@@ -191,9 +197,8 @@ def check_ghost_collisions(
         dy = controller.player.y - monster.y
         if dx * dx + dy * dy > 0.4:
             continue
-        if monster.frightened:
-            controller.player.eat(points_per_ghost)
-            monster.die()
-        else:
+        if not mark_monster_eaten(
+            controller, monster, points_per_ghost
+        ):
             player_hit = True
     return player_hit

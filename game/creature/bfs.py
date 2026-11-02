@@ -1,6 +1,7 @@
 from collections import deque
 from typing import Optional
 from .player import Direction
+from .ghost_pathing import choose_frightened_step
 
 
 class PathFinder:
@@ -107,6 +108,25 @@ class PathFinder:
                 (cell[0] - target[0]) ** 2
                 + (cell[1] - target[1]) ** 2
             ),
+        )
+
+    @staticmethod
+    def next_step_frightened(
+        grid: list[list[bool]],
+        start: tuple[int, int],
+        direction: tuple[int, int],
+        reverse: bool = False,
+    ) -> Optional[tuple[int, int]]:
+        """Choose a pseudo-random legal turn while the monster is frightened.
+        Honor a forced reversal, then try the selected direction and arcade
+        fallback order while avoiding an ordinary reverse turn.
+        made by: Mohammad Abu Aresh
+        """
+        return choose_frightened_step(
+            start,
+            direction,
+            PathFinder._ordered_neighbors(grid, start),
+            reverse,
         )
 
     @staticmethod

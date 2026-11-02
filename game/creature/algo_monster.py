@@ -105,7 +105,13 @@ class AlgoMonster:
 
         dx, dy = player.direction
         distance = AlgoMonster.VECTOR_TILES * AlgoMonster.GRID_SCALE
-        pivot = (player.x + dx * distance, player.y + dy * distance)
+        if dx == 0 and dy == -1:
+            pivot = (player.x - distance, player.y - distance)
+        else:
+            pivot = (
+                player.x + dx * distance,
+                player.y + dy * distance,
+            )
         target = (
             round(pivot[0] + (pivot[0] - chaser.x)),
             round(pivot[1] + (pivot[1] - chaser.y)),

@@ -167,6 +167,7 @@ class Control_creature:
             self.Enderman,
         )
         self.frightened_timer = 0.0
+        self.frightened_cycle = 0
 
     def activate_frightened(self, duration: float) -> None:
         """

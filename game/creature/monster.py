@@ -1,17 +1,11 @@
 
 from abc import ABC, abstractmethod
 from .bfs import PathFinder
+from .ghost_lifecycle import GhostLifecycle
+from .ghost_modes import MODE_SCHEDULE as GHOST_MODE_SCHEDULE
 from .creature import Creature
 from .player import Direction, Player
-from .ghost_modes import MODE_SCHEDULE as GHOST_MODE_SCHEDULE
-from .ghost_state import (
-    activate_monster_frightened,
-    set_monster_frightened_visual,
-    reactivate_monster_at_home,
-    reset_monster_ai,
-    step_towards,
-    update_monster_mode,
-)
+from . import ghost_state
 
 
 class Monster(Creature, ABC):
@@ -44,6 +38,7 @@ class Monster(Creature, ABC):
         self.reverse_pending = False
         self.frightened = False
         self.frightened_timer = 0.0
+        self.lifecycle = GhostLifecycle()
 
     @abstractmethod
     def follow(self, player: Player) -> None:
@@ -69,7 +64,7 @@ class Monster(Creature, ABC):
         overshooting it.
         made by: Mohammad Abu Aresh
         """
-        return step_towards(current, target, distance)
+        return ghost_state.step_towards(current, target, distance)
 
     def reset_ai(self) -> None:
         """
@@ -79,7 +74,7 @@ class Monster(Creature, ABC):
         fields.
         made by: Mohammad Abu Aresh
         """
-        reset_monster_ai(self)
+        ghost_state.reset_monster_ai(self)
 
     def activate_frightened(self, duration: float) -> None:
         """
@@ -88,7 +83,7 @@ class Monster(Creature, ABC):
         request.
         made by: Mohammad Abu Aresh
         """
-        activate_monster_frightened(self, duration)
+        ghost_state.activate_monster_frightened(self, duration)
 
     def _update_mode(self, delta_time: float) -> None:
         """
@@ -97,7 +92,7 @@ class Monster(Creature, ABC):
         helper.
         made by: Mohammad Abu Aresh
         """
-        update_monster_mode(self, delta_time)
+        ghost_state.update_monster_mode(self, delta_time)
 
     def _choose_next_point(
         self,
@@ -116,9 +111,12 @@ class Monster(Creature, ABC):
             return None
         if not self.live:
             return PathFinder.next_step(grid, current_cell, self.target_point)
-        if self.frightened and player_cell is not None:
-            return PathFinder.next_step_away(
-                grid, current_cell, player_cell
+        if self.frightened:
+            return PathFinder.next_step_frightened(
+                grid,
+                current_cell,
+                self.movement_direction,
+                self.reverse_pending,
             )
         return PathFinder.next_step_towards(
             grid,
@@ -150,14 +148,14 @@ class Monster(Creature, ABC):
             if self.frightened_timer <= 0:
                 self.frightened = False
                 self.frightened_timer = 0.0
-                set_monster_frightened_visual(self, False)
+                ghost_state.set_monster_frightened_visual(self, False)
                 self.target_point = None
-        else:
+        elif not self.lifecycle.mode_clock_paused:
             self._update_mode(delta_time)
 
         delta_time = min(delta_time, 0.05)
         current_cell = (round(self.x), round(self.y))
-        if reactivate_monster_at_home(self):
+        if ghost_state.reactivate_monster_at_home(self):
             return
         if self.target_point is None:
             return
