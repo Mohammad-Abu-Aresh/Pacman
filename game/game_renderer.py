@@ -9,6 +9,12 @@ if TYPE_CHECKING:
 
 
 def draw_game(game: GameSystem) -> None:
+    """
+    Render the complete gameplay frame.
+    Draw the maze, collectibles, y-sorted creatures, and HUD in
+    order.
+    made by: Mohammad Abu Aresh
+    """
     draw_maze(game, game.maze_map.origin_x, game.maze_map.origin_y)
     for item in game.collectibles:
         item.draw(game.maze_map)
@@ -21,6 +27,12 @@ def draw_game(game: GameSystem) -> None:
 
 
 def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
+    """
+    Draw the background and wall cells at the supplied maze
+    origin.
+    Draw collectibles before painting the wall grid.
+    made by: Mohammad Abu Aresh
+    """
     maze_bool = game.maze_map.every_cell
     cell_size = Block.size
     for item in game.collectibles:
@@ -41,6 +53,12 @@ def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
 
 
 def draw_hud(game: GameSystem) -> None:
+    """
+    Render the gameplay status panel.
+    Place the timer, score, and remaining-life display
+    vertically.
+    made by: Mohammad Abu Aresh
+    """
     panel_x = 1480
     panel_y = 100
     spacing_y = 50
@@ -50,6 +68,13 @@ def draw_hud(game: GameSystem) -> None:
 
 
 def draw_timer(game: GameSystem, x: int, y: int) -> None:
+    """
+    Draw the remaining game time at the specified screen
+    coordinates.
+    Render a dark offset copy before the foreground text for a
+    shadow effect.
+    made by: Mohammad Abu Aresh
+    """
     shadow_surface = game.font.render(
         f"Time: {int(game.time_left)}", True, (0, 0, 0)
     )
@@ -61,6 +86,12 @@ def draw_timer(game: GameSystem, x: int, y: int) -> None:
 
 
 def draw_score(game: GameSystem, x: int, y: int) -> None:
+    """
+    Draw the player score at the specified screen coordinates.
+    Render a dark offset copy before the foreground text for a
+    shadow effect.
+    made by: Mohammad Abu Aresh
+    """
     score = game.player_creature.player.score
     shadow_surface = game.font.render(
         f"Score: {score}", True, (0, 0, 0)
@@ -73,6 +104,12 @@ def draw_score(game: GameSystem, x: int, y: int) -> None:
 
 
 def draw_heart(game: GameSystem, x: int, y: int) -> None:
+    """
+    Render the player remaining lives using heart images.
+    Show up to three individual hearts or one heart with a count
+    above three.
+    made by: Mohammad Abu Aresh
+    """
     lives = game.player_creature.player._lives
     heart_alive = Images.player_heart
     heart_dead = Images.pygame_heart_kell

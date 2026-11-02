@@ -13,6 +13,13 @@ class Button:
         font_size: int = 25,
         text_color: str | tuple[int, int, int] = "#000000",
     ) -> None:
+        """
+        Initialize button position, dimensions, label styling, and
+        click state.
+        Build the pygame rectangle used for hit testing and drawing.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.text = text
@@ -24,6 +31,14 @@ class Button:
         self.clicked = False
 
     def draw(self, screen: pygame.Surface) -> bool:
+        """
+        Draw the button label and detect a new mouse click inside
+        its rectangle.
+        Return True only for the click transition tracked by the
+        clicked flag.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         action = False
         button_font = pygame.font.Font(
             None, self.font_size
@@ -60,6 +75,12 @@ class Screens:
         width: int,
         height: int
     ) -> None:
+        """
+        Store the screen surface and its dimensions for the UI
+        screens.
+        Initialize the text buffer used by the score-entry screen.
+        made by: Abdalghani Abtah
+        """
         self.screen = screen
         self.width = width
         self.height = height
@@ -68,6 +89,14 @@ class Screens:
     def main_menu_screen(
         self,
     ) -> Callable[[], dict[str, bool]]:
+        """
+        Create the main-menu buttons and prepare their drawing
+        callback.
+        Return a function that reports which menu action was
+        clicked.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         play_game = Button(
             (int(self.width * 0.21), int(self.height * 0.41)),
             (int(self.width * 0.22), int(self.height * 0.08))
@@ -90,6 +119,12 @@ class Screens:
         )
 
         def draw_buttons() -> dict[str, bool]:
+            """
+            Draw every main-menu button and collect their click results.
+            Return the action mapping consumed by the game engine.
+            made by: Abdalghani Abtah
+            update by: Mohammad Abu Aresh
+            """
             return {
                 "play_game": play_game.draw(self.screen),
                 "minecraft_mode": minecraft_mode.draw(self.screen),
@@ -100,6 +135,13 @@ class Screens:
         return draw_buttons
 
     def settings_screen(self) -> Callable[[], bool]:
+        """
+        Prepare the controls and instructions shown by the settings
+        screen.
+        Return a callback that draws the screen and reports an exit
+        click.
+        made by: Abdalghani Abtah
+        """
         font_title = pygame.font.Font(None, 50)
         font_text = pygame.font.Font(None, 32)
 
@@ -133,6 +175,12 @@ class Screens:
         )
 
         def draw_settings() -> bool:
+            """
+            Render the instructions, divider, and exit button for the
+            settings screen.
+            Return the exit button click result to the game engine.
+            made by: Abdalghani Abtah
+            """
             self.screen.fill((15, 15, 25))
             self.screen.blit(title_surf, title_rect)
             pygame.draw.line(
@@ -167,9 +215,11 @@ class Screens:
         self, highscore_file: str = "highscores.json"
     ) -> Callable[[], bool]:
         """
-        aabtah
-        اخذ المعلومات من ملف json
-        رابط الفيديو : <https://www.youtube.com/watch?v=__mZO-53PPM&t=799s>
+        Load, sort, and prepare the top score entries for display.
+        Return a callback that renders the score list and its exit
+        button.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
         """
         font_title = pygame.font.Font(None, 50)
         font_item = pygame.font.Font(None, 36)
@@ -205,6 +255,13 @@ class Screens:
         )
 
         def draw_higscore() -> bool:
+            """
+            Render the title, up to ten score entries, and the exit
+            button.
+            Return the exit button click result to the game engine.
+            made by: Abdalghani Abtah
+            update by: Mohammad Abu Aresh
+            """
             self.screen.fill((15, 18, 30))
             self.screen.blit(title_surf, title_rect)
 
@@ -263,6 +320,12 @@ class Screens:
     def game_over_screen(
         self, final_score: int = 0, winner: bool = False
     ) -> Callable[[], None]:
+        """
+        Prepare the victory or game-over title, final score, and
+        name input area.
+        Return a callback that draws the prepared result screen.
+        made by: Abdalghani Abtah
+        """
         font_title = pygame.font.Font(None, 60)
         font_text = pygame.font.Font(None, 36)
         status_text = "VICTORY!" if winner else "GAME OVER"
@@ -295,6 +358,12 @@ class Screens:
         )
 
         def draw_game_over() -> None:
+            """
+            Render the result title, final score, prompt, and name-entry
+            box.
+            Display the current user text within the input area.
+            made by: Abdalghani Abtah
+            """
             self.screen.fill((0, 0, 0))
             self.screen.blit(title_surf, title_rect)
             self.screen.blit(score_surf, score_rect)
@@ -320,6 +389,14 @@ class Screens:
         return draw_game_over
 
     def addjson(self, name: str, score: int, file: str) -> None:
+        """
+        Load the score file, append the new result, and retain the
+        top ten entries.
+        Write through a temporary file before replacing the score
+        file.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         import os
         data = []
         if os.path.exists(file):

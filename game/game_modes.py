@@ -11,4 +11,11 @@ class Mod:
 
     @classmethod
     def updatemod(cls, mod: int) -> None:
+        """
+        Set the shared application screen or game mode value.
+        The game engine reads this value to select the active screen
+        behavior.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         cls.state_variable = mod

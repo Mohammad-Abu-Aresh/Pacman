@@ -13,6 +13,14 @@ class GameEngine:
     def __init__(self, config: dict[str, Any]) -> None:
 
         # make it str or any to know what screen is this... and rename it
+        """
+        Initialize the display, screen callbacks, game flags, and
+        frame clock.
+        Prepare the menu background and empty gameplay session
+        references.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         self.config = config  # config
         pygame.display.set_caption("Pac-Man")
         self.screen = Images.screen
@@ -34,6 +42,13 @@ class GameEngine:
         self.clock = pygame.time.Clock()
 
     def button_management(self) -> None:
+        """
+        Process window, keyboard, text-entry, cheat, and movement
+        input events.
+        Route saved scores and screen changes through the existing
+        managers.
+        made by: Abdalghani Abtah
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -76,6 +91,14 @@ class GameEngine:
 
 
     def run(self) -> None:
+        """
+        Run the main application loop and dispatch the active screen
+        state.
+        Create and update gameplay sessions, render screens, and
+        refresh the display.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         font = pygame.font.SysFont(None, 36)
 
         while True:

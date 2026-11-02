@@ -34,6 +34,14 @@ class GameSystem:
             hardcore_mode: bool = False,
             cheating: bool = False
             ) -> None:
+        """
+        Initialize game configuration, level state, timing, and
+        creature objects.
+        Build the first level and prepare the player and monster
+        update collection.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         self.num = 0
         self.config = config
         self.current_level: int = 1
@@ -63,9 +71,25 @@ class GameSystem:
         self.pending_action: str | None = None
 
     def load_level(self) -> None:
+        """
+        Delegate maze and collectible creation to the level builder
+        helper.
+        The helper updates the level data stored on this GameSystem
+        instance.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         build_level(self)
 
     def next_level(self) -> None:
+        """
+        Advance the level or switch to the victory screen after the
+        final level.
+        Reload the maze, refresh creatures, and briefly freeze the
+        next level start.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         if self.current_level <= self.max_levels:
             self.current_level += 1
         else:
@@ -80,6 +104,13 @@ class GameSystem:
         self.pending_action = "frozen"
 
     def update(self, time: float, cheating: bool = False) -> None:
+        """
+        Coordinate one gameplay update using the elapsed frame time.
+        Update timers, player movement, monster behavior,
+        collisions, and level input.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         if self.wait_timer > 0:
             self.wait_timer -= time
             if self.wait_timer <= 0:
@@ -131,6 +162,13 @@ class GameSystem:
             Mod.updatemod(Mod.MAIN_MENU_SCREEN)
 
     def _handle_player_death(self) -> None:
+        """
+        Respawn the player and synchronize the remaining life count.
+        End the game when no lives remain or reset monsters and
+        apply a short pause.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         player = self.player_creature.player
         player.respawn()
         self.lives = player._lives
@@ -143,6 +181,14 @@ class GameSystem:
         self.pending_action = "frozen"
 
     def draw(self) -> None:
+        """
+        Delegate rendering of the current gameplay frame to the
+        renderer module.
+        Keep drawing coordination separate from the game update
+        loop.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_game(self)
 
     def _draw_maze(
@@ -150,9 +196,23 @@ class GameSystem:
             origin_x: int,
             origin_y: int
             ) -> None:
+        """
+        Delegate maze rendering to the game renderer helper.
+        Pass the maze origin coordinates through unchanged.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_maze(self, origin_x, origin_y)
 
     def _eat_pacgums(self) -> None:
+        """
+        Check whether the player occupies an uneaten collectible
+        cell.
+        Award points, activate frightened mode for power pellets,
+        and advance when all are eaten.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         player = self.player_creature.player
 
         player_x = int(player.x + 0.5)
@@ -175,16 +235,49 @@ class GameSystem:
             self.next_level()
 
     def _draw_hud(self) -> None:
+        """
+        Delegate status-panel rendering to the game renderer helper.
+        Keep HUD rendering outside the gameplay coordination logic.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_hud(self)
 
     def _draw_timer(self, x: int, y: int) -> None:
+        """
+        Delegate timer rendering to the game renderer helper.
+        Pass the requested screen coordinates through unchanged.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_timer(self, x, y)
 
     def _draw_score(self, x: int, y: int) -> None:
+        """
+        Delegate score rendering to the game renderer helper.
+        Keep the score display implementation in the rendering
+        module.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_score(self, x, y)
 
     def _heart(self, x: int, y: int) -> None:
+        """
+        Delegate the remaining-life display to the game renderer
+        helper.
+        Keep heart drawing implementation outside the gameplay
+        update flow.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         render_heart(self, x, y)
 
     def points(self) -> int:
+        """
+        Return the current player score for the game engine.
+        Read the value from the player managed by the creature
+        controller.
+        made by: Abdalghani Abtah
+        """
         return self.player_creature.player.score

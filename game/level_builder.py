@@ -13,6 +13,13 @@ if TYPE_CHECKING:
 
 
 def build_level(game: GameSystem) -> None:
+    """
+    Build the maze, background, and collectibles for the current
+    level.
+    Update level sizing and timing, then place power pellets at
+    the maze corners.
+    made by: Mohammad Abu Aresh
+    """
     if game.current_level == 1:
         game.num += 1
         game.seed = game.config.get("seed", 42)

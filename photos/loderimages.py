@@ -44,6 +44,11 @@ class Images:
 
     @classmethod
     def _drow(cls, image: pygame.Surface, location: tuple[int, int]) -> None:
+        """
+        Blit the supplied image onto the shared display surface.
+        Use the provided screen location without changing the image.
+        made by: Mohammad Abu Aresh
+        """
         Images.screen.blit(image, location)
 
     @classmethod
@@ -51,6 +56,12 @@ class Images:
         cls, image_name: str,
         size: tuple[int | float, int | float]
     ) -> None:
+        """
+        Scale a named original image to the requested dimensions.
+        Store the scaled surface on the Images class using the _new
+        suffix.
+        made by: Mohammad Abu Aresh
+        """
         setattr(
             cls,
             f"{image_name}_new",
