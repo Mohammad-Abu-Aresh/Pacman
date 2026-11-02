@@ -99,7 +99,7 @@ class GameSystem:
             return
         self.load_level()
         movement.traffic_update(Direction.none)
-        self.player_creature.refresh(self.maze_map)
+        self.player_creature.refresh(self.maze_map, self.current_level)
         self.wait_timer = 1.0
         self.pending_action = "frozen"
 

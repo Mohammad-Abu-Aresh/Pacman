@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from .bfs import PathFinder
 from .creature import Creature
 from .player import Direction, Player
+from .ghost_modes import MODE_SCHEDULE as GHOST_MODE_SCHEDULE
 from .ghost_state import (
-    MODE_SCHEDULE as GHOST_MODE_SCHEDULE,
     activate_monster_frightened,
     set_monster_frightened_visual,
     reactivate_monster_at_home,

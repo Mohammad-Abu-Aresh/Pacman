@@ -7,18 +7,6 @@ if TYPE_CHECKING:
     from .creature import Control_creature
     from .monster import Monster
 
-MODE_SCHEDULE: tuple[tuple[str, float], ...] = (
-    ("scatter", 7.0),
-    ("chase", 20.0),
-    ("scatter", 7.0),
-    ("chase", 20.0),
-    ("scatter", 5.0),
-    ("chase", 20.0),
-    ("scatter", 5.0),
-    ("chase", float("inf")),
-)
-
-
 def set_monster_frightened_visual(
     monster: Monster, enabled: bool
 ) -> None:
@@ -65,7 +53,7 @@ def reset_monster_ai(monster: Monster) -> None:
     monster.is_following = True
     monster.movement_direction = (0, 0)
     monster.mode_index = 0
-    monster.mode, monster.mode_timer = MODE_SCHEDULE[0]
+    monster.mode, monster.mode_timer = monster.MODE_SCHEDULE[0]
     monster.reverse_pending = False
     monster.frightened = False
     monster.frightened_timer = 0.0
@@ -101,11 +89,11 @@ def update_monster_mode(monster: Monster, delta_time: float) -> None:
     monster.mode_timer -= delta_time
     while (
         monster.mode_timer <= 0
-        and monster.mode_index < len(MODE_SCHEDULE) - 1
+        and monster.mode_index < len(monster.MODE_SCHEDULE) - 1
     ):
         previous_timer = monster.mode_timer
         monster.mode_index += 1
-        monster.mode, duration = MODE_SCHEDULE[monster.mode_index]
+        monster.mode, duration = monster.MODE_SCHEDULE[monster.mode_index]
         monster.mode_timer = duration + previous_timer
         monster.reverse_pending = True
         monster.target_point = None

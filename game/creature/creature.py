@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from ..block import Mape, Block
 from photos.loderimages import Images
+from .ghost_modes import set_group_level
 from .ghost_state import (
     activate_group_frightened,
     check_ghost_collisions,
@@ -187,7 +188,7 @@ class Control_creature:
         """
         update_group_frightened(self, delta_time)
 
-    def refresh(self, mape: Mape) -> None:
+    def refresh(self, mape: Mape, level: int = 1) -> None:
         """
         Attach the creature group to a newly generated maze.
         Refresh spawn points, positions, sprite sizes, AI states,
@@ -205,10 +206,7 @@ class Control_creature:
             mob.load_size()
             mob.x, mob.y = mob.spawn_point
             mob.locaion = (float(mob.x), float(mob.y))
-        for mob in (
-            self.witch, self.Skeleton, self.BabyZombie, self.Enderman
-        ):
-            mob.reset_ai()
+        set_group_level(self, level)
         reset_group_frightened(self)
 
         # def update_spown_point(obj: str) -> None:
