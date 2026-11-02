@@ -10,6 +10,12 @@ class BabyZombie(Monster):
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
+        """
+        Initialize the BabyZombie spawn state, movement fields, and
+        sprite.
+        Apply the faster speed when hardcore mode is enabled.
+        made by: Mohammad Abu Aresh
+        """
         super().__init__(spawn_point, is_hardcore)
         self.spawn_point = spawn_point
         self.locaion: tuple[float, float] = (
@@ -24,6 +30,11 @@ class BabyZombie(Monster):
         self.load_size()
 
     def load_size(self) -> None:
+        """
+        Scale the zombie image to the current maze cell size.
+        Store the scaled surface for subsequent drawing.
+        made by: Mohammad Abu Aresh
+        """
         Images._update_size(
             "zombie",
             (Block.size * 0.6, Block.size * 0.9)
@@ -31,12 +42,24 @@ class BabyZombie(Monster):
         self.image = Images.zombie_new
 
     def draw(self, mape: Mape) -> None:
+        """
+        Draw the zombie at its current maze position.
+        Render foreground wall blocks afterward to preserve the 2.5D
+        layering.
+        made by: Mohammad Abu Aresh
+        """
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y + 0.2) * Block.size
         Images._drow(self.image, location=(px, py))
         self._draw_front_blocks(mape)
 
     def set_hardcore_mode(self, enabled: bool) -> None:
+        """
+        Update the inherited hardcore flag and the zombie movement
+        speed.
+        Change speed only while the zombie is alive.
+        made by: Mohammad Abu Aresh
+        """
         super().set_hardcore_mode(enabled)
         if self.live:
             self.speed = 110 if enabled else 65
@@ -70,6 +93,13 @@ class BabyZombie(Monster):
         self, player: Player,
         grid: list[list[bool]] | None = None
     ) -> None:
+        """
+        Choose the BabyZombie target according to its life and mode
+        state.
+        Use its spawn, player cell, scatter corner, or direct chase
+        target.
+        made by: Mohammad Abu Aresh
+        """
         if not self.live:
             self.target_point = self.spawn_point
 

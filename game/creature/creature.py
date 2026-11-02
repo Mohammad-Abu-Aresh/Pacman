@@ -17,6 +17,14 @@ class Creature(ABC):
         image: pygame.Surface,
         spawn_point: tuple[int, int],
     ) -> None:
+        """
+        Initialize the shared spawn point, position, and image
+        fields.
+        Concrete creature classes supply their own movement and
+        sizing methods.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.spawn_point = spawn_point
         self.locaion: tuple[float, float] = (
             float(spawn_point[0]),
@@ -28,19 +36,47 @@ class Creature(ABC):
 
     @abstractmethod
     def move(self) -> None:
+        """
+        Declare the movement interface required by concrete
+        creatures.
+        Each creature implementation defines how its position is
+        updated.
+        made by: Mohammad Abu Aresh
+        """
         pass
 
     @abstractmethod
     def load_size(self) -> None:
+        """
+        Declare the sprite-sizing hook required by concrete
+        creatures.
+        Subclasses load or scale the image used by their drawing
+        method.
+        made by: Mohammad Abu Aresh
+        """
         ...
 
     def draw(self, mape: Mape) -> None:
+        """
+        Draw the creature using the maze origin and shared cell
+        size.
+        Draw foreground wall blocks afterward to maintain the 2.5D
+        effect.
+        made by: Mohammad Abu Aresh
+        """
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y - 0.5) * Block.size
         Images._drow(self.image, location=(px, py))
         self._draw_front_blocks(mape)
 
     def _draw_front_blocks(self, mape: Mape) -> None:
+        """
+        Draw bottom-facing wall sections that visually overlap the
+        creature.
+        Use the creature grid position to select the nearby
+        foreground blocks.
+        made by: Mohammad Abu Aresh
+        """
         cell_x = round(self.x)
         cell_y = round(self.y)
         row = cell_y // 2
@@ -71,6 +107,14 @@ class Creature(ABC):
 
     @abstractmethod
     def die(self) -> None:
+        """
+        Declare the death-handling hook for concrete creature
+        classes.
+        Subclasses provide the state changes required when a
+        creature dies.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.image._drow(self.locaion)
         ...
 
@@ -83,6 +127,14 @@ class Control_creature:
             super_timer: int = 15,
             is_hardcore: bool = False,
                  ) -> None:
+        """
+        Create the player and four monster instances for the current
+        maze.
+        Connect the Enderman chaser reference and collect the shared
+        creature tuple.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         from .player import Player
         # from .algo_monster import AlgoMonster
 
@@ -116,12 +168,32 @@ class Control_creature:
         self.frightened_timer = 0.0
 
     def activate_frightened(self, duration: float) -> None:
+        """
+        Delegate group frightened activation to the ghost state
+        helpers.
+        The helper updates the group timer, player indicator, and
+        each monster.
+        made by: Mohammad Abu Aresh
+        """
         activate_group_frightened(self, duration)
 
     def update_frightened(self, delta_time: float) -> None:
+        """
+        Update the shared frightened timer using the elapsed frame
+        time.
+        The delegated helper also synchronizes the player super-
+        state indicator.
+        made by: Mohammad Abu Aresh
+        """
         update_group_frightened(self, delta_time)
 
     def refresh(self, mape: Mape) -> None:
+        """
+        Attach the creature group to a newly generated maze.
+        Refresh spawn points, positions, sprite sizes, AI states,
+        and frightened state.
+        made by: Mohammad Abu Aresh
+        """
         self.maze_mape = mape
         self.player.maze = mape
         self.player.spawn_point = mape.spawn_point["player"]
@@ -142,9 +214,22 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def check_collision(self, points_per_ghost: int = 200) -> bool:
+        """
+        Delegate monster collision checks and frightened-ghost
+        scoring.
+        Return whether a dangerous monster hit the player.
+        made by: Mohammad Abu Aresh
+        """
         return check_ghost_collisions(self, points_per_ghost)
 
     def reset_mobs(self) -> None:
+        """
+        Stop buffered player movement and reset group frightened
+        state.
+        Move each monster to its spawn point and restore its AI
+        state.
+        made by: Mohammad Abu Aresh
+        """
         from .player import Direction, movement
 
         movement.traffic_update(Direction.none)

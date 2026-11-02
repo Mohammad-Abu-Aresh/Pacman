@@ -24,7 +24,13 @@ class PathFinder:
             grid: list[list[bool]], start: tuple[int, int],
             goal: tuple[int, int]
             ) -> Optional[list[tuple[int, int]]]:
-        """Shortest path start -> goal as a list of cells, or None."""
+        """
+        Find a shortest four-direction path between two grid cells
+        with BFS.
+        Return the ordered path or None when the goal cannot be
+        reached.
+        made by: Mohammad Abu Aresh
+        """
         if start == goal:
             return [start]
         if not PathFinder._walkable(grid, goal):
@@ -51,7 +57,13 @@ class PathFinder:
             grid: list[list[bool]], start: tuple[int, int],
             goal: tuple[int, int]
             ) -> Optional[tuple[int, int]]:
-        """The first cell on the shortest path, or None if stuck."""
+        """
+        Return the first move on the shortest path from start to
+        goal.
+        Return None when no route exists or the start already equals
+        the goal.
+        made by: Mohammad Abu Aresh
+        """
         path = PathFinder.find_path(grid, start, goal)
         if path is None or len(path) < 2:
             return None
@@ -65,6 +77,13 @@ class PathFinder:
         direction: tuple[int, int] = (0, 0),
         reverse: bool = False,
     ) -> Optional[tuple[int, int]]:
+        """
+        Choose a legal neighboring cell that moves toward the
+        target.
+        Avoid reversing the current direction unless a reversal is
+        requested.
+        made by: Mohammad Abu Aresh
+        """
         options = PathFinder._ordered_neighbors(grid, start)
         if not options:
             return None
@@ -96,6 +115,13 @@ class PathFinder:
         start: tuple[int, int],
         from_cell: tuple[int, int],
     ) -> Optional[tuple[int, int]]:
+        """
+        Choose a legal neighboring cell that increases distance from
+        a source.
+        Rank options by maze distance, then by straight-line
+        distance.
+        made by: Mohammad Abu Aresh
+        """
         options = PathFinder._ordered_neighbors(grid, start)
         if not options:
             return None
@@ -121,7 +147,12 @@ class PathFinder:
     def _neighbors(
             grid: list[list[bool]], cell: tuple[int, int]
             ) -> list[tuple[int, int]]:
-        """Open cells adjacent to `cell` (walls and out-of-bounds dropped)."""
+        """
+        Return walkable cells adjacent to the supplied cell.
+        Use the shared Direction constants and discard walls or out-
+        of-bounds cells.
+        made by: Mohammad Abu Aresh
+        """
         x, y = cell
         result = []
         for direction in (
@@ -138,6 +169,12 @@ class PathFinder:
         grid: list[list[bool]],
         cell: tuple[int, int],
     ) -> list[tuple[int, int]]:
+        """
+        Return legal adjacent cells in a stable up-left-down-right
+        order.
+        Discard any candidate that is a wall or outside the grid.
+        made by: Mohammad Abu Aresh
+        """
         x, y = cell
         result = []
         for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)):
@@ -148,6 +185,11 @@ class PathFinder:
 
     @staticmethod
     def _walkable(grid: list[list[bool]], cell: tuple[int, int]) -> bool:
+        """
+        Check whether a cell is inside the grid and is not a wall.
+        Return False for out-of-bounds coordinates.
+        made by: Mohammad Abu Aresh
+        """
         x, y = cell
         if y < 0 or y >= len(grid) or x < 0 or x >= len(grid[0]):
             return False
@@ -157,6 +199,13 @@ class PathFinder:
     def _reconstruct(
             came_from: dict, goal: tuple[int, int]
             ) -> list[tuple[int, int]]:
+        """
+        Rebuild a path by following predecessor entries back to the
+        start.
+        Reverse the collected cells so the result runs from start to
+        goal.
+        made by: Mohammad Abu Aresh
+        """
         path: list[tuple[int, int]] = []
         node: Optional[tuple[int, int]] = goal
         while node is not None:

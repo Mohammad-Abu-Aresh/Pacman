@@ -8,8 +8,8 @@ permissions:
   contents: write
 
 env:
-  ENTRY: main.py     # غيّره لو الملف الرئيسي اسمه غير
-  ASSETS: assets     # مجلد الصور/الأصوات (احذف السطر لو ما في)
+  ENTRY: main.py     # Change this if the main script has a different name
+  ASSETS: assets     # Image and sound assets directory; remove if unused
   APP_NAME: Pacman
 
 jobs:

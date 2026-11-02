@@ -47,7 +47,12 @@ class AlgoMonster:
 
     @staticmethod
     def target_player(player: Player) -> tuple[int, int]:
-        """BabyZombie — straight at the player's current cell."""
+        """
+        Return the player current grid cell as the monster target.
+        Round the floating-point player coordinates to cell
+        coordinates.
+        made by: Mohammad Abu Aresh
+        """
         return round(player.x), round(player.y)
 
     @staticmethod
@@ -57,6 +62,12 @@ class AlgoMonster:
         grid: list[list[bool]],
         chaser: Optional[Monster] = None,
     ) -> tuple[int, int]:
+        """
+        Calculate a target several grid cells ahead of the player.
+        Apply the upward-direction offset rule and clamp to grid
+        bounds.
+        made by: Mohammad Abu Aresh
+        """
         dx, dy = player.direction
 
         if dx == 0 and dy == 0:
@@ -82,9 +93,12 @@ class AlgoMonster:
         grid: list[list[bool]],
         chaser: Optional[Monster] = None,
     ) -> tuple[int, int]:
-        """Enderman — mirror the chaser through a pivot ahead of the player.
-
-        Falls back to chasing the player directly if no chaser is given.
+        """
+        Calculate a target by reflecting the chaser across a player
+        pivot.
+        Use the player direction and fall back to the player cell if
+        needed.
+        made by: Mohammad Abu Aresh
         """
         if chaser is None:
             return AlgoMonster.target_player(player)
@@ -105,7 +119,12 @@ class AlgoMonster:
         grid: list[list[bool]],
         chaser: Optional[Monster] = None,
     ) -> tuple[int, int]:
-        """Witch chases from afar and retreats when close."""
+        """
+        Choose the Witch target from its distance to the player.
+        Chase the player at long range and use the corner target
+        nearby.
+        made by: Mohammad Abu Aresh
+        """
         distance = sqrt(
             (monster.x - player.x) ** 2
             + (monster.y - player.y) ** 2
@@ -127,7 +146,13 @@ class AlgoMonster:
 
     @classmethod
     def get(cls, strategy_id: int) -> Strategy:
-        """Fetch a strategy by its monster ID."""
+        """
+        Return the target-selection strategy registered for a
+        monster ID.
+        The strategy registry maps each project monster to its own
+        method.
+        made by: Mohammad Abu Aresh
+        """
         return cls.STRATEGIES[strategy_id]
 
     # ==================== helpers ====================
@@ -137,6 +162,12 @@ class AlgoMonster:
         target: tuple[int, int],
         grid: list[list[bool]],
     ) -> tuple[int, int]:
+        """
+        Clamp a target coordinate to the valid grid index range.
+        This method checks grid bounds but does not test whether a
+        cell is open.
+        made by: Mohammad Abu Aresh
+        """
         if not grid or not grid[0]:
             return target
         x, y = target
@@ -150,7 +181,13 @@ class AlgoMonster:
         target: tuple[int, int],
         grid: list[list[bool]],
     ) -> tuple[int, int]:
-        """Keep the target in the maze on a walkable cell."""
+        """
+        Clamp a target to the grid and ensure it points to a
+        walkable cell.
+        If the target is a wall, select the nearest open cell by
+        Manhattan distance.
+        made by: Mohammad Abu Aresh
+        """
         if not grid or not grid[0]:
             return target
 

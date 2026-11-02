@@ -6,6 +6,12 @@ from typing import Any
 class ConfigLoader:
 
     def __init__(self) -> None:
+        """
+        Read the configuration path from the command-line arguments.
+        Prepare default settings and an empty data container.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         self.fileName: str = sys.argv[1]
         self.default_config: dict[str, Any] = {
             "highscore_filename": "highscores.json",
@@ -22,6 +28,14 @@ class ConfigLoader:
 
     @property
     def load_config(self) -> dict[str, Any]:
+        """
+        Load JSON settings, ignore comment lines, and merge
+        supported keys.
+        Check configured value types and validate the maximum level
+        count.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         with open(self.fileName, "r") as f:
             content = "".join([self.__parse_line(line) for line in f])
         user_data = json.loads(content)
@@ -43,6 +57,11 @@ class ConfigLoader:
         return config
 
     def __parse_line(self, line: str) -> str:
+        """
+        Remove full-line comments from the configuration text.
+        Return every other line unchanged for JSON parsing.
+        made by: Abdalghani Abtah
+        """
         if line.strip().startswith("#"):
             return ""
         return line

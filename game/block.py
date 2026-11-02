@@ -7,6 +7,14 @@ class Block:
     size: int = 0
 
     def __init__(self, wall: int) -> None:
+        """
+        Decode the wall bitmask into the four directional wall
+        flags.
+        Reject values that contain bits outside the supported wall
+        layout.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.left: bool = True if wall >= 8 else False
         if self.left:
             wall -= 8
@@ -26,6 +34,13 @@ class Block:
     def size_update(
             cls, width: int, height: int, columns: int, rows: int
             ) -> int:
+        """
+        Calculate a cell size that fits the maze within the display
+        area.
+        Store the selected size on Block and return it to the
+        caller.
+        made by: Mohammad Abu Aresh
+        """
         cell_width: int = int(((width - (width * 0.28)) // columns))
         cell_height: int = int(((height - (height * 0.1)) // rows))
         cls.size = cell_width if cell_width < cell_height else cell_height
@@ -36,6 +51,13 @@ class Mape:
     def __init__(
             self, maze: MazeGenerator,
             ) -> None:
+        """
+        Build the map, expanded grid, spawn positions, and display
+        offsets.
+        Calculate the shared cell size after converting maze blocks.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.width = Images.width
         self.height = Images.height
         self.mape: list[list[Block]] = self.blocks(maze.maze)
@@ -59,6 +81,14 @@ class Mape:
             ) // 2
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:
+        """
+        Convert each integer in the generated maze into a Block
+        object.
+        Return the converted maze while preserving its row and
+        column order.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         res: list[list[Block]] = []
         for lis in lists:
             arr: list[Block] = []
@@ -69,6 +99,13 @@ class Mape:
 
     @property
     def every_cell(self) -> list[list[bool]]:
+        """
+        Expand maze blocks into a cell grid used for movement and
+        pathfinding.
+        Mark walls as True and traversable cells as False.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         mape2 = self.mape
         x = 2 * len(mape2) + 1
         y = 2 * len(mape2[0]) + 1
@@ -97,6 +134,14 @@ class Mape:
 
     @property
     def coordination_42(self) -> list[list[bool]]:
+        """
+        Build the expanded grid used to place the project
+        collectibles.
+        Mark cell centers and passages according to each block wall
+        layout.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         mape2 = self.mape
         x = 2 * len(mape2) + 1
         y = 2 * len(mape2[0]) + 1
