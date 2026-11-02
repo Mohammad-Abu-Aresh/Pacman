@@ -13,6 +13,13 @@ class Skeleton(Monster):
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
+        """
+        Initialize the Skeleton shooting state and base monster
+        attributes.
+        Prepare its sprite, direction field, and active arrow
+        collection.
+        made by: Mohammad Abu Aresh
+        """
         super().__init__(spawn_point, is_hardcore)
         self.shoot_cooldown: float = 3.0  # cooldown between shots in seconds
         self.active_arrows: list[Arrow] = []  # if len(arr) > 0 dont shot again
@@ -23,6 +30,11 @@ class Skeleton(Monster):
         # tempr = 0 becose ge is not folowing a target yet
 
     def load_size(self) -> None:
+        """
+        Scale the Skeleton sprite for the current maze cell size.
+        Store the scaled image surface for drawing.
+        made by: Mohammad Abu Aresh
+        """
         Images._update_size(
             "skeleton",
             (Block.size * 0.6, Block.size * 1.8)
@@ -33,8 +45,11 @@ class Skeleton(Monster):
         self, player: Player, mape: Mape
     ) -> bool:
         """
-        Checks if the skeleton and Player are in the same row or column
-        with no wall collisions between them
+        Check whether the living Skeleton and player share a clear
+        row or column.
+        Return False when an intervening wall blocks the straight
+        path.
+        made by: Mohammad Abu Aresh
         """
         if not self.live:
             return False
@@ -63,8 +78,10 @@ class Skeleton(Monster):
         self, player: Player, mape: Mape
     ) -> None:
         """
-        shoots an arrow only if hardcore mode is active
-        creature is alive and has line of sight
+        Create an Arrow when hardcore mode, life state, and sight
+        checks allow it.
+        Do not create another arrow while one is already active.
+        made by: Mohammad Abu Aresh
         """
         if not self.is_hardcore or not self.live:
             return
@@ -107,6 +124,13 @@ class Skeleton(Monster):
         self, player: Player,
         grid: list[list[bool]] | None = None
     ) -> None:
+        """
+        Choose the Skeleton target from its life state and current
+        ghost mode.
+        Use its spawn, player cell, scatter corner, or ahead-target
+        strategy.
+        made by: Mohammad Abu Aresh
+        """
         if not self.live:
             self.target_point = self.spawn_point
         elif grid is None:

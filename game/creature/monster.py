@@ -21,6 +21,13 @@ class Monster(Creature, ABC):
         self, spawn_point: tuple[int, int],
         is_hardcore: bool = False
     ) -> None:
+        """
+        Initialize spawn, position, target, movement, and life-state
+        fields.
+        Prepare the first Scatter mode and the frightened-state
+        timer.
+        made by: Mohammad Abu Aresh
+        """
         self.spawn_point: tuple[int, int] = spawn_point
         self.x = float(spawn_point[0])
         self.y = float(spawn_point[1])
@@ -40,6 +47,13 @@ class Monster(Creature, ABC):
 
     @abstractmethod
     def follow(self, player: Player) -> None:
+        """
+        Declare the target-selection hook implemented by each
+        monster type.
+        Subclasses choose their own behavior for the supplied
+        player.
+        made by: Mohammad Abu Aresh
+        """
         pass
 
     @staticmethod
@@ -48,15 +62,41 @@ class Monster(Creature, ABC):
         target: float,
         distance: float,
     ) -> float:
+        """
+        Delegate one bounded scalar movement step to the shared
+        helper.
+        Return a value that approaches the target without
+        overshooting it.
+        made by: Mohammad Abu Aresh
+        """
         return step_towards(current, target, distance)
 
     def reset_ai(self) -> None:
+        """
+        Delegate restoration of the monster AI state to the state
+        helpers.
+        Reset its mode, target, movement direction, and frightened
+        fields.
+        made by: Mohammad Abu Aresh
+        """
         reset_monster_ai(self)
 
     def activate_frightened(self, duration: float) -> None:
+        """
+        Delegate frightened activation for this monster.
+        The state helper handles the timer, visual, and reversal
+        request.
+        made by: Mohammad Abu Aresh
+        """
         activate_monster_frightened(self, duration)
 
     def _update_mode(self, delta_time: float) -> None:
+        """
+        Update this monster current Scatter or Chase mode timer.
+        Mode transitions are handled by the shared ghost-state
+        helper.
+        made by: Mohammad Abu Aresh
+        """
         update_monster_mode(self, delta_time)
 
     def _choose_next_point(
@@ -65,6 +105,13 @@ class Monster(Creature, ABC):
         current_cell: tuple[int, int],
         player_cell: tuple[int, int] | None = None,
     ) -> tuple[int, int] | None:
+        """
+        Choose the next legal grid cell according to the monster
+        state.
+        Use pathfinding for dead return, frightened escape, or
+        normal targeting.
+        made by: Mohammad Abu Aresh
+        """
         if self.target_point is None:
             return None
         if not self.live:
@@ -87,6 +134,13 @@ class Monster(Creature, ABC):
         delta_time: float = 1 / 60,
         player_cell: tuple[int, int] | None = None,
     ) -> None:
+        """
+        Update monster state and move it incrementally toward its
+        next cell.
+        Validate the stored step, choose a legal route step, and
+        update its position.
+        made by: Mohammad Abu Aresh
+        """
         if grid is None:
             return
 
@@ -161,12 +215,21 @@ class Monster(Creature, ABC):
             self.next_point = None
 
     def set_hardcore_mode(self, enabled: bool) -> None:
+        """
+        Store whether hardcore mode is enabled for this monster.
+        Concrete monster types may extend this method with mode-
+        specific behavior.
+        made by: Mohammad Abu Aresh
+        """
         self.is_hardcore = enabled
 
     def die(self) -> None:
         """
-        sets the monster to dead state and
-        resets its target to spawn point
+        Mark the monster as inactive and stop its following
+        behavior.
+        Set its return target to spawn and clear the stored next
+        cell.
+        made by: Mohammad Abu Aresh
         """
         self.live = False
         self.is_following = False

@@ -28,12 +28,26 @@ class movement:
     def traffic_update(
         cls, new_move: tuple[int, int]
     ) -> None:
+        """
+        Store the currently active player movement direction.
+        The Player movement method reads this shared direction each
+        frame.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         cls.move = new_move
 
     @classmethod
     def musle_memory(
         cls, new_move: tuple[int, int] | None
     ) -> None:
+        """
+        Store or clear the next requested player direction.
+        The player applies this buffered direction when the next
+        cell is legal.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         cls.new_dir = new_move
 
 
@@ -44,6 +58,13 @@ class Player(Creature):
             is_hardcore: bool,
             spawn_point: tuple[int, int]
             ) -> None:
+        """
+        Initialize player maze, lives, timers, spawn, position, and
+        direction.
+        Prepare the score, movement speed, and scaled player image.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.maze = maze_map
         self.myx_lives = lives
         self._lives = lives
@@ -68,6 +89,11 @@ class Player(Creature):
         #     ...
 
     def load_size(self) -> None:
+        """
+        Scale the player sprite using the current maze cell size.
+        Store the scaled surface used by the player drawing routine.
+        made by: Mohammad Abu Aresh
+        """
         Images._update_size(
             "player",
             size=(Block.size * 0.7, Block.size * 2.8)
@@ -76,6 +102,14 @@ class Player(Creature):
         self.image = Images.player_new
 
     def change_diric(self) -> None:
+        """
+        Apply a buffered direction when its destination cell is
+        walkable.
+        Align the player to the relevant grid axis before changing
+        direction.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
         if movement.new_dir is None:
             return
 
@@ -96,6 +130,12 @@ class Player(Creature):
         return
 
     def can_move_to(self, cell_x: int, cell_y: int) -> bool:
+        """
+        Check whether a grid coordinate is inside the maze and not a
+        wall.
+        Return False for coordinates outside the available grid.
+        made by: Abdalghani Abtah
+        """
         grid = self.maze.every_cell
         if not (0 <= cell_y < len(grid)):
             return False
@@ -104,6 +144,13 @@ class Player(Creature):
         return not grid[cell_y][cell_x]
 
     def move(self) -> None:
+        """
+        Move the player using the shared active direction and
+        current speed.
+        Stop movement when the next rounded cell is blocked.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         dx, dy = movement.move
         if movement.move == Direction.none:
             return
@@ -117,11 +164,23 @@ class Player(Creature):
         self.locaion = (self.x, self.y)
 
     def die(self) -> None:
+        """
+        Move the player to the temporary off-maze death coordinates.
+        The current method references respawn without invoking it.
+        made by: Mohammad Abu Aresh
+        """
         self.telport((800, 800))
         # time.sleep(3) # timer . tic + 3000
         self.respawn
 
     def handle_input(self, keys: list[bool]) -> None:
+        """
+        Update the player facing direction from the supplied key
+        states.
+        Support arrow keys and WASD movement keys.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction = Direction.right
         elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -132,14 +191,32 @@ class Player(Creature):
             self.direction = Direction.down
 
     def eat(self, points: int) -> int:
+        """
+        Add collected points to the player score.
+        Return the updated score after the addition.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.score += points
         return self.score
 
     def respawn(self) -> None:
+        """
+        Return the player to its configured spawn point.
+        Decrease the remaining life count after teleporting.
+        made by: Mohammad Abu Aresh
+        """
         self.telport(self.spawn_point)
         self._lives -= 1
 
     def telport(self, point: tuple[int, int]) -> None:
+        """
+        Set the player position to the supplied grid coordinates.
+        Refresh the stored location and rebuild the pygame
+        rectangle.
+        made by: Mohammad Abu Aresh
+        update by: Abdalghani Abtah
+        """
         self.locaion = (float(point[0]), float(point[1]))
         self.x = self.locaion[0]
         self.y = self.locaion[1]
@@ -151,4 +228,11 @@ class Player(Creature):
         )
 
     def update_speed(self, new_speed: int, time: int) -> None:
+        """
+        Store the requested speed value in the player private speed
+        field.
+        The time parameter is accepted but is not used by the
+        current method.
+        made by: Mohammad Abu Aresh
+        """
         self._speed = new_speed

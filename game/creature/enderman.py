@@ -12,6 +12,12 @@ class Enderman(Monster):
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
     ) -> None:
+        """
+        Initialize Enderman teleport state, chaser reference, and
+        base monster data.
+        Load the image at the current maze cell size.
+        made by: Mohammad Abu Aresh
+        """
         super().__init__(spawn_point, is_hardcore)
         self.teleport_cooldown: float = 20.0  # every 20 seconds
         self.current_pearl: EnderPearl | None = None
@@ -19,6 +25,11 @@ class Enderman(Monster):
         self.load_size()
 
     def load_size(self) -> None:
+        """
+        Scale the Enderman image for the current maze cell size.
+        Store the scaled image surface for drawing.
+        made by: Mohammad Abu Aresh
+        """
         Images._update_size(
             "enderman",
             (Block.size * 0.6, Block.size * 2.8)
@@ -26,6 +37,12 @@ class Enderman(Monster):
         self.image = Images.enderman_new
 
     def draw(self, mape: Mape) -> None:
+        """
+        Draw Enderman at its adjusted maze position.
+        Render foreground blocks afterward to preserve the 2.5D
+        layering.
+        made by: Mohammad Abu Aresh
+        """
         px = mape.origin_x + (self.x + 0.7) * Block.size
         py = mape.origin_y + (self.y - 1) * Block.size
         Images._drow(self.image, location=(px, py))
@@ -33,8 +50,10 @@ class Enderman(Monster):
 
     def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
         """
-        teleports the enderman using an enderpearl
-        if alive and in hardcore mode
+        Create an EnderPearl destination and move a living hardcore
+        Enderman.
+        Choose random coordinates within the supplied maze bounds.
+        made by: Mohammad Abu Aresh
         """
         if not self.is_hardcore or not self.live:
             return
@@ -52,6 +71,13 @@ class Enderman(Monster):
         grid: list[list[bool]] | None = None,
         chaser: Monster | None = None,
     ) -> None:
+        """
+        Select Enderman target using its life state and current
+        ghost mode.
+        Use the spawn, player, scatter corner, or vector strategy
+        with its chaser.
+        made by: Mohammad Abu Aresh
+        """
         if not self.live:
             self.target_point = self.spawn_point
         elif grid is None:
