@@ -3,13 +3,12 @@ from game.creature.player import movement, Direction
 from .creature import (
     Creature,
     Control_creature,
-    Diamond,
-    Netherite,
 )
 from photos.loderimages import Images
 from typing import Dict, Any
 from .block import Mape
 from .game_modes import Mod
+from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .game_renderer import (
     draw_game as render_game,
@@ -123,9 +122,11 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
-        self.player_creature.update_frightened(time)
         self.player_creature.player.change_diric()
         self.player_creature.player.move()
+        if self._eat_pacgums():
+            return
+        self.player_creature.update_frightened(time)
         grid = self.maze_map.every_cell
 
         for mob in (
@@ -146,16 +147,12 @@ class GameSystem:
                 ),
             )
 
-        if self.player_creature.check_collision(
+        player_hit = self.player_creature.check_collision(
             self.config.get("points_per_ghost", 200)
-        ):
-            mob.follow(self.player_creature.player, grid)
-            mob.move(grid)
-
-        if not cheating and self.player_creature.check_collision():
+        )
+        if not cheating and player_hit:
             self._handle_player_death()
             return
-        self._eat_pacgums()
         if keys[pygame.K_n] and cheating:
             self.next_level()
         if keys[pygame.K_ESCAPE]:
@@ -204,7 +201,7 @@ class GameSystem:
         """
         render_maze(self, origin_x, origin_y)
 
-    def _eat_pacgums(self) -> None:
+    def _eat_pacgums(self) -> bool:
         """
         Check whether the player occupies an uneaten collectible
         cell.
@@ -213,26 +210,7 @@ class GameSystem:
         made by: Abdalghani Abtah
         update by: Mohammad Abu Aresh
         """
-        player = self.player_creature.player
-
-        player_x = int(player.x + 0.5)
-        player_y = int(player.y + 0.5)
-
-        for item in self.collectibles:
-            if item.is_eaten:
-                continue
-
-            if item.x == player_x and item.y == player_y:
-                item.eaten()
-                player.eat(item.points)
-                if isinstance(item, Netherite):
-                    self.player_creature.activate_frightened(
-                        max(float(player._super_timer), 1.0)
-                    )
-        if self.collectibles and all(
-            item.is_eaten for item in self.collectibles
-        ):
-            self.next_level()
+        return eat_pacgums(self)
 
     def _draw_hud(self) -> None:
         """

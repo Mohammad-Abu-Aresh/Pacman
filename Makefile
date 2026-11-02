@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Variables
-PYTHON       := python3
+PYTHON       ?= python3.14
 VENV         := .venv
 VENV_PYTHON  := $(VENV)/bin/python
 VENV_PIP     := $(VENV)/bin/pip
@@ -41,9 +41,10 @@ install: venv
 venv:
 	@if [ ! -d "$(VENV)" ]; then \
 		echo "Creating virtual environment at $(VENV)..."; \
-		$(PYTHON) -m venv $(VENV); \
+		$(PYTHON) -m venv $(VENV) || exit 1; \
 		echo "Virtual environment created successfully."; \
 	else \
+		$(VENV_PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required; remove .venv and rerun make install."' || exit 1; \
 		echo "Virtual environment already exists at $(VENV)."; \
 	fi
 
@@ -73,17 +74,27 @@ debug:
 # Code Quality & Testing
 # ------------------------------------------------------------------------------
 
+.PHONY: test
+test:
+	@if [ -d "$(VENV)" ]; then \
+		$(VENV_PYTHON) -m unittest discover -s tests -v; \
+	else \
+		$(PYTHON) -m unittest discover -s tests -v; \
+	fi
+
 # Run linting with flake8 and mypy
 .PHONY: lint
 lint:
 	@if [ -d "$(VENV)" ]; then \
+		$(VENV_PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required; recreate .venv with make install."' && \
 		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV) && \
 		$(VENV_PYTHON) -m mypy . --warn-return-any --warn-unused-ignores \
 			--ignore-missing-imports --disallow-untyped-defs \
 			--check-untyped-defs --exclude=$(VENV); \
 	else \
-		flake8 . --exclude=$(VENV) && \
-		mypy . --warn-return-any --warn-unused-ignores \
+		$(PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required."' && \
+		$(PYTHON) -m flake8 . --exclude=$(VENV) && \
+		$(PYTHON) -m mypy . --warn-return-any --warn-unused-ignores \
 			--ignore-missing-imports --disallow-untyped-defs \
 			--check-untyped-defs --exclude=$(VENV); \
 	fi
@@ -92,11 +103,13 @@ lint:
 .PHONY: lint-strict
 lint-strict:
 	@if [ -d "$(VENV)" ]; then \
+		$(VENV_PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required; recreate .venv with make install."' && \
 		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV)&& \
 		$(VENV_PYTHON) -m mypy . --strict --exclude=$(VENV); \
 	else \
-		flake8 . --exclude=$(VENV)&& \
-		mypy . --strict --exclude=$(VENV); \
+		$(PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required."' && \
+		$(PYTHON) -m flake8 . --exclude=$(VENV)&& \
+		$(PYTHON) -m mypy . --strict --exclude=$(VENV); \
 	fi
 
 # ------------------------------------------------------------------------------
@@ -143,9 +156,10 @@ help:
 	@echo "  install      - Create venv + install poetry dependencies"
 	@echo "  run          - Execute the main script (uses venv if exists)"
 	@echo "  debug        - Run with Python debugger (uses venv if exists)"
+	@echo "  test         - Run the standard-library regression tests"
 	@echo "  lint         - Run flake8 and mypy checks"
 	@echo "  lint-strict  - Run strict mypy linting"
 	@echo "  build        - Build the package (requires pyproject.toml)"
 	@echo "  clean        - Remove caches, temporary files, and .venv"
 	@echo "  venv         - Create virtual environment only"
-	@echo "  help         - Show this help message
+	@echo "  help         - Show this help message"
