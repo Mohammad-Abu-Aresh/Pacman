@@ -1,9 +1,11 @@
+import random
+import pygame
+
 from .abilities import EnderPearl
 from .monster import Monster
 from .player import Player
 from ..block import Mape, Block
 from photos import Images
-import random
 from .algo_monster import AlgoMonster
 
 
@@ -35,6 +37,16 @@ class Enderman(Monster):
             (Block.size * 0.6, Block.size * 2.8)
         )
         self.image = Images.enderman_new
+
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the Enderman image rectangle at its current maze position.
+        Preserve the Enderman-specific vertical drawing offset.
+        made by: Mohammad Abu Aresh
+        """
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y - 1) * Block.size
+        return self.image.get_rect(topleft=(int(px), int(py)))
 
     def draw(self, mape: Mape) -> None:
         """

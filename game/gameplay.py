@@ -10,6 +10,7 @@ from .block import Mape
 from .game_modes import Mod
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
+from .world_render import WorldRenderer
 from .game_renderer import (
     draw_game as render_game,
     draw_heart as render_heart,
@@ -66,6 +67,7 @@ class GameSystem:
                 self.player_creature.Enderman,
                 self.player_creature.witch,
                 )
+        self.world_renderer = WorldRenderer()
         self.wait_timer: float = 2.0
         self.pending_action: str | None = None
 

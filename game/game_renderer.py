@@ -15,14 +15,10 @@ def draw_game(game: GameSystem) -> None:
     order.
     made by: Mohammad Abu Aresh
     """
-    draw_maze(game, game.maze_map.origin_x, game.maze_map.origin_y)
-    for item in game.collectibles:
-        item.draw(game.maze_map)
-    for mob in sorted(
-        game.mobs,
-        key=lambda mob: int(mob.y + 0.5)
-    ):
-        mob.draw(game.maze_map)
+    Images.screen.blit(game.background, (0, 0))
+    game.world_renderer.draw(
+        game.maze_map, game.mobs, game.collectibles
+    )
     draw_hud(game)
 
 

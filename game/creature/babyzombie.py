@@ -1,3 +1,5 @@
+import pygame
+
 from .monster import Monster
 from .player import Player
 from ..block import Block, Mape
@@ -40,6 +42,16 @@ class BabyZombie(Monster):
             (Block.size * 0.6, Block.size * 0.9)
         )
         self.image = Images.zombie_new
+
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the zombie image rectangle at its current maze position.
+        Preserve the zombie-specific vertical drawing offset.
+        made by: Mohammad Abu Aresh
+        """
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y + 0.2) * Block.size
+        return self.image.get_rect(topleft=(int(px), int(py)))
 
     def draw(self, mape: Mape) -> None:
         """

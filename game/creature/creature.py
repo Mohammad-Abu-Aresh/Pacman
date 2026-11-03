@@ -57,6 +57,16 @@ class Creature(ABC):
         """
         ...
 
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the creature image rectangle at its current maze position.
+        Preserve the shared creature drawing offset.
+        made by: Mohammad Abu Aresh
+        """
+        px = mape.origin_x + (self.x + 0.7) * Block.size
+        py = mape.origin_y + (self.y - 0.5) * Block.size
+        return self.image.get_rect(topleft=(int(px), int(py)))
+
     def draw(self, mape: Mape) -> None:
         """
         Draw the creature using the maze origin and shared cell
