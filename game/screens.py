@@ -210,7 +210,6 @@ class Screens:
             return exit_button.draw(self.screen)
         return draw_settings
 
-
     def highscore_screen(
         self, highscore_file: str = "highscores.json"
     ) -> Callable[[], bool]:
@@ -315,7 +314,6 @@ class Screens:
             return exit_button.draw(self.screen)
 
         return draw_higscore
-
 
     def game_over_screen(
         self, final_score: int = 0, winner: bool = False

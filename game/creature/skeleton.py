@@ -5,7 +5,6 @@ from .player import Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
-from .bfs import PathFinder
 
 
 class Skeleton(Monster):

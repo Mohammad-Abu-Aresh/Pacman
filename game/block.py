@@ -65,20 +65,54 @@ class Mape:
         # columns == x in a nother file's
         self.rows = len(self.mape) * 2 + 1
         Block.size_update(self.width, self.height, self.columns, self.rows)
+        self.grid = self.every_cell
         self.spawn_point = {
-            "player":   (len(self.mape[0]), len(self.mape) - 1),
+            "player": self._center_spawn_point(self.grid),
             "zombie":   (1, 1),
             "skeleton": (2 * len(self.mape[0]) - 1, 1),
             "enderman": (1, 2 * len(self.mape) - 1),
             "witch":    (2 * len(self.mape[0]) - 1, 2 * len(self.mape) - 1),
         }
-        self.grid = self.every_cell
         self.origin_x = (
             Images.width - (self.columns * Block.size * 1.4)
             ) // 2
         self.origin_y = (
             Images.height - (self.rows * Block.size * 1.1)
             ) // 2
+
+    @staticmethod
+    def _center_spawn_point(
+        grid: list[list[bool]],
+    ) -> tuple[int, int]:
+        """Find the nearest walkable cell to the expanded grid center.
+        Use Manhattan distance and stable tie-breaking for each maze seed.
+        Return the selected coordinates in the player's (x, y) order.
+        made by: Mohammad Abu Aresh
+        """
+        if not grid or not grid[0]:
+            raise ValueError("Maze grid must not be empty")
+        if any(len(row) != len(grid[0]) for row in grid):
+            raise ValueError("Maze grid must be rectangular")
+
+        center_x = len(grid[0]) // 2
+        center_y = len(grid) // 2
+        walkable_cells = [
+            (x, y)
+            for y, row in enumerate(grid)
+            for x, is_wall in enumerate(row)
+            if not is_wall
+        ]
+        if not walkable_cells:
+            raise ValueError("Maze grid has no walkable spawn cell")
+        return min(
+            walkable_cells,
+            key=lambda point: (
+                abs(point[0] - center_x) + abs(point[1] - center_y),
+                abs(point[1] - center_y),
+                point[1],
+                point[0],
+            ),
+        )
 
     def blocks(self, lists: list[list[int]]) -> list[list[Block]]:
         """

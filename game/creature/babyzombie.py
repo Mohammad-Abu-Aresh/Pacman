@@ -5,7 +5,6 @@ from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
 from .algo_monster import AlgoMonster
-from .bfs import PathFinder
 
 
 class BabyZombie(Monster):

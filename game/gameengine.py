@@ -89,7 +89,6 @@ class GameEngine:
                 elif event.key == pygame.K_DOWN:
                     movement.musle_memory(Direction.down)
 
-
     def run(self) -> None:
         """
         Run the main application loop and dispatch the active screen
