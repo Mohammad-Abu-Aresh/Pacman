@@ -36,8 +36,8 @@ class GameEngine:
         self.playr_score: int = 0
         self.victory_screen: Optional[Callable[[], None]] = None
         self.game_session: Optional[GameSystem] = None
-        self.settings_callable: Optional[Callable[[], None]] = None
-        self.highscore_callable: Optional[Callable[[], None]] = None
+        self.settings_callable: Optional[Callable[[], bool]] = None
+        self.highscore_callable: Optional[Callable[[], bool]] = None
         self.loss_callable: Optional[Callable[[], None]] = None
         self.clock = pygame.time.Clock()
 
@@ -170,7 +170,7 @@ class GameEngine:
                     )
 
             elif Mod.state_variable == Mod.SETTINGS_SCREEN:
-                if not self.settings_callable:
+                if self.settings_callable is None:
                     self.settings_callable = self.screens.settings_screen()
 
                 exit_requested = self.settings_callable()
@@ -179,7 +179,7 @@ class GameEngine:
                     Mod.updatemod(Mod.MAIN_MENU_SCREEN)
 
             elif Mod.state_variable == Mod.HIGHSCORE_SCREEN:
-                if not self.highscore_callable:
+                if self.highscore_callable is None:
                     self.highscore_callable = self.screens.highscore_screen()
 
                 exit_requested = self.highscore_callable()

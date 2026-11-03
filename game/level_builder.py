@@ -54,7 +54,7 @@ def build_level(game: GameSystem) -> None:
     game.time_left = game.level_max_time
     movement.traffic_update(Direction.none)
 
-    game.collectibles: list[Diamond | Netherite] = []
+    game.collectibles = []
     height = len(game.maze_map.every_cell)
     max_y = height - 1
     max_x = len(game.maze_map.every_cell[0]) - 1 if height > 0 else 0

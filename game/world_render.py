@@ -50,7 +50,9 @@ class WorldRenderer:
         Static wall sprites are rebuilt only when the maze changes.
         made by: Mohammad Abu Aresh
         """
-        self._group = pygame.sprite.LayeredUpdates()
+        self._group: pygame.sprite.LayeredUpdates = (
+            pygame.sprite.LayeredUpdates()
+        )
         self._map: Mape | None = None
         self._actor_sprites: dict[int, WorldSprite] = {}
         self._collectible_sprites: dict[int, WorldSprite] = {}

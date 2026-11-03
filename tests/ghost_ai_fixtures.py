@@ -73,6 +73,8 @@ class FakePlayer:
 
 
 class FakeMonster:
+    MODE_SCHEDULE: tuple[tuple[str, float], ...]
+
     def __init__(self, spawn_point: tuple[int, int]) -> None:
         """Initialize lifecycle and movement fields used by ghost helpers.
         Keep the fake image as a string so tests do not require a display.

@@ -1,4 +1,5 @@
 import pygame
+from typing import cast
 
 
 class Images:
@@ -43,13 +44,16 @@ class Images:
     )
 
     @classmethod
-    def _drow(cls, image: pygame.Surface, location: tuple[int, int]) -> None:
+    def _drow(
+        cls, image: pygame.Surface,
+        location: tuple[int | float, int | float]
+    ) -> None:
         """
         Blit the supplied image onto the shared display surface.
         Use the provided screen location without changing the image.
         made by: Mohammad Abu Aresh
         """
-        Images.screen.blit(image, location)
+        Images.screen.blit(image, cast(tuple[int, int], location))
 
     @classmethod
     def _update_size(

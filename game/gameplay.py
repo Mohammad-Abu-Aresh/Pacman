@@ -3,6 +3,8 @@ from game.creature.player import movement, Direction
 from .creature import (
     Creature,
     Control_creature,
+    Diamond,
+    Netherite,
 )
 from photos.loderimages import Images
 from typing import Dict, Any
@@ -23,6 +25,10 @@ from .game_renderer import (
 
 class GameSystem:
     maze_map: Mape
+    seed: int
+    backimage: pygame.Surface
+    background: pygame.Surface
+    collectibles: list[Diamond | Netherite]
 
     backphoto: dict[int, Any] = {
         1: Images.level_1,

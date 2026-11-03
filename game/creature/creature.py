@@ -126,7 +126,7 @@ class Creature(ABC):
         made by: Mohammad Abu Aresh
         update by: Abdalghani Abtah
         """
-        self.image._drow(self.locaion)
+        Images._drow(self.image, self.locaion)
         ...
 
 
