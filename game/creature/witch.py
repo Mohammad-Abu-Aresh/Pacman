@@ -1,6 +1,6 @@
 import math
 from .monster import Monster
-from .abilities import SlowPotion
+from .projectiles import SlowPotion
 from .player import Player
 from ..block import Block
 from photos import Images
@@ -20,6 +20,8 @@ class Witch(Monster):
         """
         super().__init__(spawn_point, is_hardcore)
         self.potion_cooldown: float = 30.0  # cooldown in seconds
+        self.potion_timer: float = self.potion_cooldown
+        self.active_potions: list[SlowPotion] = []
         # i need to define the potion in a hardcore fun
         self.radius_check: int = 4  # 4-block radius
         self._is_fleeing = False
@@ -46,15 +48,42 @@ class Witch(Monster):
         effect.
         made by: Mohammad Abu Aresh
         """
-        if not self.is_hardcore or not self.live:
+        if not self.hardcore_active or self.active_potions:
             return
 
         distance = math.sqrt(
             (self.x - player.x) ** 2 + (self.y - player.y) ** 2
         )
         if distance <= self.radius_check:
-            potion = SlowPotion((self.x, self.y), duration=5)
-            potion.apply_effect(player)
+            self.active_potions.append(
+                SlowPotion((self.x, self.y), duration=5)
+            )
+
+    def update_hardcore_ability(
+        self,
+        delta_time: float,
+        player: Player,
+        grid: list[list[bool]],
+    ) -> None:
+        """Update the Witch potion cooldown and active potion projectiles.
+        Freeze attacks during fear and apply the slowdown only on contact.
+        made by: Mohammad Abu aresh
+        """
+        if not self.is_hardcore or not self.live:
+            self.active_potions.clear()
+            return
+        if self.frightened:
+            return
+        self.potion_timer = max(
+            0.0, self.potion_timer - max(delta_time, 0.0)
+        )
+        if self.potion_timer <= 0 and not self.active_potions:
+            self.throw_slow_potion(player)
+            self.potion_timer = self.potion_cooldown
+        for potion in self.active_potions[:]:
+            potion.update(delta_time, grid, player)
+            if not potion.active:
+                self.active_potions.remove(potion)
 
     def _choose_next_point(
         self,

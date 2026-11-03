@@ -63,8 +63,10 @@ class GameSystem:
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 36)
         self.player_creature = Control_creature(
-            maze_map=self.maze_map, lives=self.lives,
-            super_timer=15
+            maze_map=self.maze_map,
+            lives=self.lives,
+            super_timer=15,
+            is_hardcore=self.hardcore_mode,
         )
         self.mobs: tuple[Creature, ...] = (
                 self.player_creature.player,
@@ -107,6 +109,7 @@ class GameSystem:
         self.load_level()
         movement.traffic_update(Direction.none)
         self.player_creature.refresh(self.maze_map, self.current_level)
+        self._clear_hardcore_abilities()
         self.wait_timer = 1.0
         self.pending_action = "frozen"
 
@@ -130,8 +133,10 @@ class GameSystem:
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
         keys = pygame.key.get_pressed()
-        self.player_creature.player.change_diric()
-        self.player_creature.player.move()
+        player = self.player_creature.player
+        player.update_effects(time)
+        player.change_diric()
+        player.move()
         if self._eat_pacgums():
             return
         self.player_creature.update_frightened(time)
@@ -154,6 +159,14 @@ class GameSystem:
                     round(self.player_creature.player.y),
                 ),
             )
+
+        if self.hardcore_mode:
+            ability_hit = self._update_hardcore_abilities(
+                time, player, grid
+            )
+            if ability_hit:
+                self._handle_player_death()
+                return
 
         player_hit = self.player_creature.check_collision(
             self.config.get("points_per_ghost", 200)
@@ -182,6 +195,7 @@ class GameSystem:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
             return
         self.player_creature.reset_mobs()
+        self._clear_hardcore_abilities()
         self.wait_timer = 1.0
         self.pending_action = "frozen"
 
@@ -195,6 +209,53 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         render_game(self)
+        if not self.hardcore_mode:
+            return
+        for arrow in self.player_creature.Skeleton.active_arrows:
+            arrow.render(self.maze_map)
+        pearl = self.player_creature.Enderman.current_pearl
+        if pearl is not None:
+            pearl.render(self.maze_map)
+        for potion in self.player_creature.witch.active_potions:
+            potion.render(self.maze_map)
+
+    def _update_hardcore_abilities(
+        self,
+        delta_time: float,
+        player: Any,
+        grid: list[list[bool]],
+    ) -> bool:
+        """Advance Hardcore monster powers during the gameplay update.
+        Return True when a Skeleton arrow hits the player.
+        made by: Mohammad Abu aresh
+        """
+        mape = self.maze_map
+        if self.player_creature.Skeleton.update_hardcore_ability(
+            delta_time, player, mape
+        ):
+            return True
+        self.player_creature.Enderman.update_hardcore_ability(
+            delta_time, player, grid
+        )
+        self.player_creature.witch.update_hardcore_ability(
+            delta_time, player, grid
+        )
+        return False
+
+    def _clear_hardcore_abilities(self) -> None:
+        """Remove active projectiles when a level or life is reset.
+        Restore the ability cooldowns before gameplay resumes.
+        made by: Mohammad Abu aresh
+        """
+        skeleton = self.player_creature.Skeleton
+        enderman = self.player_creature.Enderman
+        witch = self.player_creature.witch
+        skeleton.active_arrows.clear()
+        skeleton.shoot_timer = skeleton.shoot_cooldown
+        enderman.current_pearl = None
+        enderman.teleport_timer = enderman.teleport_cooldown
+        witch.active_potions.clear()
+        witch.potion_timer = witch.potion_cooldown
 
     def _draw_maze(
             self,

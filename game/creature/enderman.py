@@ -1,7 +1,7 @@
 import random
 import pygame
 
-from .abilities import EnderPearl
+from .projectiles import EnderPearl
 from .monster import Monster
 from .player import Player
 from ..block import Mape, Block
@@ -22,6 +22,7 @@ class Enderman(Monster):
         """
         super().__init__(spawn_point, is_hardcore)
         self.teleport_cooldown: float = 20.0  # every 20 seconds
+        self.teleport_timer: float = self.teleport_cooldown
         self.current_pearl: EnderPearl | None = None
         self.chaser: Monster | None = None
         self.load_size()
@@ -60,22 +61,68 @@ class Enderman(Monster):
         Images._drow(self.image, location=(px, py))
         self._draw_front_blocks(mape)
 
-    def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
+    def throw_pearl_and_teleport(
+        self, grid: list[list[bool]], player: Player
+    ) -> None:
         """
         Create an EnderPearl destination and move a living hardcore
         Enderman.
         Choose random coordinates within the supplied maze bounds.
         made by: Mohammad Abu Aresh
         """
-        if not self.is_hardcore or not self.live:
+        if not self.hardcore_active or self.current_pearl is not None:
             return
 
-        rand_x = random.randint(0, maze_bounds[0])
-        rand_y = random.randint(0, maze_bounds[1])
+        walkable = [
+            (x, y)
+            for y, row in enumerate(grid)
+            for x, is_wall in enumerate(row)
+            if not is_wall
+            and (x, y) != (round(self.x), round(self.y))
+        ]
+        safer_cells = [
+            cell for cell in walkable
+            if (cell[0] - player.x) ** 2 + (cell[1] - player.y) ** 2 >= 9
+        ]
+        destinations = safer_cells or walkable
+        if not destinations:
+            return
+        target = random.choice(destinations)
+        self.current_pearl = EnderPearl(
+            target, spawn_point=(self.x, self.y)
+        )
 
-        self.current_pearl = EnderPearl((rand_x, rand_y))
-        self.x = rand_x
-        self.y = rand_y
+    def update_hardcore_ability(
+        self,
+        delta_time: float,
+        player: Player,
+        grid: list[list[bool]],
+    ) -> None:
+        """Advance the Ender Pearl and teleport after its visual arrives.
+        Freeze the cooldown and projectile while the Enderman is frightened.
+        made by: Mohammad Abu aresh
+        """
+        if not self.is_hardcore or not self.live:
+            self.current_pearl = None
+            return
+        if self.frightened:
+            return
+        if self.current_pearl is not None:
+            arrived = not self.current_pearl.update(delta_time)
+            if arrived:
+                self.x = float(self.current_pearl.target_x)
+                self.y = float(self.current_pearl.target_y)
+                self.locaion = (self.x, self.y)
+                self.next_point = None
+                self.target_point = None
+                self.current_pearl = None
+            return
+        self.teleport_timer = max(
+            0.0, self.teleport_timer - max(delta_time, 0.0)
+        )
+        if self.teleport_timer <= 0:
+            self.throw_pearl_and_teleport(grid, player)
+            self.teleport_timer = self.teleport_cooldown
 
     def follow(
         self,

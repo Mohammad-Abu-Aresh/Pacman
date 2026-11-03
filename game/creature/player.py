@@ -66,6 +66,7 @@ class Player(Creature):
         update by: Abdalghani Abtah
         """
         self.maze = maze_map
+        self.is_hardcore = is_hardcore
         self.myx_lives = lives
         self._lives = lives
         self._super_timer = super_timer
@@ -82,7 +83,9 @@ class Player(Creature):
         # must be update when i move
 
         self.score: int = 0
-        self.speed: float = Block.size / 550
+        self.base_speed: float = Block.size / 550
+        self.speed: float = self.base_speed
+        self._slow_timer: float = 0.0
         self._is_super = False
         self.load_size()
         # if is_hardcore:
@@ -100,6 +103,9 @@ class Player(Creature):
             # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = Images.player_new
+        self.base_speed = Block.size / 550
+        if self._slow_timer <= 0:
+            self.speed = self.base_speed
 
     def change_diric(self) -> None:
         """
@@ -208,6 +214,8 @@ class Player(Creature):
         """
         self.telport(self.spawn_point)
         self._lives -= 1
+        self._slow_timer = 0.0
+        self.speed = self.base_speed
 
     def telport(self, point: tuple[int, int]) -> None:
         """
@@ -227,12 +235,24 @@ class Player(Creature):
             self.image.get_height()
         )
 
-    def update_speed(self, new_speed: int, time: int) -> None:
+    def update_speed(self, new_speed: int, time: float) -> None:
         """
-        Store the requested speed value in the player private speed
-        field.
-        The time parameter is accepted but is not used by the
-        current method.
+        Store the requested percentage of normal movement speed.
+        Keep the slowdown active for the configured duration.
         made by: Mohammad Abu Aresh
         """
-        self._speed = new_speed
+        self.speed = self.base_speed * (new_speed / 100.0)
+        self._slow_timer = max(self._slow_timer, time)
+
+    def update_effects(self, delta_time: float) -> None:
+        """Advance temporary player effects and restore normal speed on expiry.
+        Keep the slowdown active for its configured duration.
+        made by: Mohammad Abu aresh
+        """
+        if self._slow_timer <= 0:
+            return
+        self._slow_timer = max(
+            0.0, self._slow_timer - max(delta_time, 0.0)
+        )
+        if self._slow_timer == 0:
+            self.speed = self.base_speed

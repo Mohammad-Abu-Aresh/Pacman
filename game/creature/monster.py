@@ -195,7 +195,7 @@ class Monster(Creature, ABC):
             return
 
         next_x, next_y = self.next_point
-        step = 5.0 * (self.speed / 100.0) * delta_time
+        step = 5.0 * (self.movement_speed / 100.0) * delta_time
         if self.frightened:
             step *= 0.5
 
@@ -211,6 +211,24 @@ class Monster(Creature, ABC):
         self.locaion = (self.x, self.y)
         if (self.x, self.y) == self.next_point:
             self.next_point = None
+
+    @property
+    def hardcore_active(self) -> bool:
+        """Return whether the living monster may use Hardcore abilities.
+        Frightened monsters temporarily lose their Hardcore powers.
+        made by: Mohammad Abu aresh
+        """
+        return self.is_hardcore and self.live and not self.frightened
+
+    @property
+    def movement_speed(self) -> int:
+        """Return the speed for the monster's current state.
+        A frightened Hardcore BabyZombie moves at the normal mob speed.
+        made by: Mohammad Abu aresh
+        """
+        if self.is_hardcore and self.frightened:
+            return 65
+        return self.speed
 
     def set_hardcore_mode(self, enabled: bool) -> None:
         """
