@@ -17,7 +17,7 @@ class Images:
     level_2 = pygame.image.load("photos/background/background2.jpg")
 
     # wall image
-    wall = pygame.image.load("photos/blocks/block.png")
+    wall = pygame.image.load("photos/blocks/block-new.png")
 
     player = pygame.image.load("photos/player/steve.png")
     player_heart = pygame.image.load("photos/player/heart/full_heart.png")
