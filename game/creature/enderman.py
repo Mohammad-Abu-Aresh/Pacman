@@ -61,6 +61,20 @@ class Enderman(Monster):
         Images._drow(self.image, location=(px, py))
         self._draw_front_blocks(mape)
 
+    def move(
+        self,
+        grid: list[list[bool]] | None = None,
+        delta_time: float = 1 / 60,
+        player_cell: tuple[int, int] | None = None,
+    ) -> None:
+        """Pause Enderman movement while its pearl animation is active.
+        Resume normal path movement after the teleport is complete.
+        made by: Mohammad Abu aresh
+        """
+        if self.current_pearl is not None:
+            return
+        super().move(grid, delta_time, player_cell)
+
     def throw_pearl_and_teleport(
         self, grid: list[list[bool]], player: Player
     ) -> None:
@@ -106,6 +120,7 @@ class Enderman(Monster):
             self.current_pearl = None
             return
         if self.frightened:
+            self.current_pearl = None
             return
         if self.current_pearl is not None:
             arrived = not self.current_pearl.update(delta_time)

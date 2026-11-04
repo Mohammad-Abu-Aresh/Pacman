@@ -73,6 +73,7 @@ class Witch(Monster):
             self.active_potions.clear()
             return
         if self.frightened:
+            self.active_potions.clear()
             return
         self.potion_timer = max(
             0.0, self.potion_timer - max(delta_time, 0.0)

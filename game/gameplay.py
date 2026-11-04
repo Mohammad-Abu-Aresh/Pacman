@@ -164,7 +164,7 @@ class GameSystem:
             ability_hit = self._update_hardcore_abilities(
                 time, player, grid
             )
-            if ability_hit:
+            if ability_hit and not cheating:
                 self._handle_player_death()
                 return
 
@@ -209,15 +209,6 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         render_game(self)
-        if not self.hardcore_mode:
-            return
-        for arrow in self.player_creature.Skeleton.active_arrows:
-            arrow.render(self.maze_map)
-        pearl = self.player_creature.Enderman.current_pearl
-        if pearl is not None:
-            pearl.render(self.maze_map)
-        for potion in self.player_creature.witch.active_potions:
-            potion.render(self.maze_map)
 
     def _update_hardcore_abilities(
         self,

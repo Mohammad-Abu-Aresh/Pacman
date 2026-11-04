@@ -148,6 +148,7 @@ class Skeleton(Monster):
             self.active_arrows.clear()
             return False
         if self.frightened:
+            self.active_arrows.clear()
             return False
         self.shoot_timer = max(
             0.0, self.shoot_timer - max(delta_time, 0.0)

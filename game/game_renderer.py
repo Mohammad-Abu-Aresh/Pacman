@@ -19,7 +19,24 @@ def draw_game(game: GameSystem) -> None:
     game.world_renderer.draw(
         game.maze_map, game.mobs, game.collectibles
     )
+    draw_hardcore_abilities(game)
     draw_hud(game)
+
+
+def draw_hardcore_abilities(game: GameSystem) -> None:
+    """Render active Hardcore projectiles above the world sprites.
+    Keep ability drawing in the renderer and below the HUD.
+    made by: Mohammad Abu aresh
+    """
+    if not game.hardcore_mode:
+        return
+    for arrow in game.player_creature.Skeleton.active_arrows:
+        arrow.render(game.maze_map)
+    pearl = game.player_creature.Enderman.current_pearl
+    if pearl is not None:
+        pearl.render(game.maze_map)
+    for potion in game.player_creature.witch.active_potions:
+        potion.render(game.maze_map)
 
 
 def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
