@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pygame
 from game.block import Block
 from game.block import Mape
+from game.collectible_visuals import create_diamond, create_nether_star
 
 
 class pacgum(ABC):
@@ -93,9 +94,8 @@ class Diamond(pacgum):
                 ) + (Block.size // 2) + shift_y
                 )
 
-        pygame.draw.circle(
-            self.screen, (255, 255, 255), (px, py), Block.size // 6
-            )
+        image = create_diamond(max(Block.size // 3, 8))
+        self.screen.blit(image, image.get_rect(center=(px, py)))
 
 
 class Netherite(pacgum):
@@ -133,6 +133,5 @@ class Netherite(pacgum):
                 self.y * Block.size
                 ) + (Block.size // 2) + shift_y
                 )
-        pygame.draw.circle(
-            self.screen, (255, 165, 0), (px, py), Block.size // 3
-            )
+        image = create_nether_star(max(Block.size // 2, 12))
+        self.screen.blit(image, image.get_rect(center=(px, py)))

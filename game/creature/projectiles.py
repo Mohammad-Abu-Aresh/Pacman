@@ -5,10 +5,9 @@ from ..block import Block, Mape
 from .player import Player
 
 
-_SHEET = pygame.image.load("photos/abilities/hardcore_items.png")
-_ARROW_IMAGE = _SHEET.subsurface((0, 0, 64, 64)).copy()
-_PEARL_IMAGE = _SHEET.subsurface((64, 0, 64, 64)).copy()
-_POTION_IMAGE = _SHEET.subsurface((128, 0, 64, 64)).copy()
+_ARROW_IMAGE = pygame.image.load("photos/abilities/arrow.png")
+_PEARL_IMAGE = pygame.image.load("photos/abilities/ender_pearl.png")
+_POTION_IMAGE = pygame.image.load("photos/abilities/slow_potion.png")
 
 
 def _is_walkable(grid: list[list[bool]], x: float, y: float) -> bool:
@@ -31,60 +30,73 @@ class Arrow:
         direction: tuple[float, float],
         speed: float = 6.0,
     ) -> None:
-        """Create an arrow with a normalized travel direction.
-        Store its position, speed, lifetime, and transparent sprite.
+        """Create a cardinal arrow with a permanent wall-bounded lifetime.
+        Store its lane, movement speed, and horizontal source sprite.
         made by: Mohammad Abu aresh
         """
         self.x, self.y = spawn_point
-        length = math.hypot(*direction) or 1.0
-        self.direction = (direction[0] / length, direction[1] / length)
+        if abs(direction[0]) >= abs(direction[1]):
+            self.direction = (1 if direction[0] >= 0 else -1, 0)
+        else:
+            self.direction = (0, 1 if direction[1] >= 0 else -1)
         self.speed = speed
-        self.lifetime = 4.0
         self.active = True
+        self.hit_registered = False
         size = max(int(Block.size * 0.8), 1)
-        self.image = pygame.transform.smoothscale(_ARROW_IMAGE, (size, size))
+        scaled = pygame.transform.smoothscale(_ARROW_IMAGE, (size, size))
+        self.image = pygame.transform.rotate(scaled, -45)
 
     def update(self, delta_time: float, grid: list[list[bool]]) -> None:
-        """Advance the arrow until it hits a wall or expires.
-        Move in short frame-time steps so the projectile cannot skip a cell.
+        """Move along a cardinal lane until the arrow reaches a wall.
+        Substeps prevent fast frames from skipping wall cells.
         made by: Mohammad Abu aresh
         """
-        dt = max(delta_time, 0.0)
-        self.lifetime -= dt
-        if self.lifetime <= 0:
-            self.active = False
-            return
-        next_x = self.x + self.direction[0] * self.speed * dt
-        next_y = self.y + self.direction[1] * self.speed * dt
-        if not _is_walkable(grid, next_x, next_y):
-            self.active = False
-            return
-        self.x, self.y = next_x, next_y
+        distance = self.speed * max(delta_time, 0.0)
+        steps = max(1, math.ceil(distance / 0.15))
+        step_x = self.direction[0] * distance / steps
+        step_y = self.direction[1] * distance / steps
+        for _ in range(steps):
+            next_x = self.x + step_x
+            next_y = self.y + step_y
+            if not _is_walkable(grid, next_x, next_y):
+                self.active = False
+                return
+            self.x, self.y = next_x, next_y
 
     def hits_player(self, player: Player) -> bool:
-        """Check whether the arrow overlaps the player's grid position.
-        Use a small circular radius to avoid oversized hitboxes.
+        """Check whether the arrow reaches the player's current grid cell.
+        Use a lane-aligned square hitbox for cardinal projectile travel.
         made by: Mohammad Abu aresh
         """
         dx, dy = self.x - player.x, self.y - player.y
-        return self.active and dx * dx + dy * dy <= 0.12
+        hit = (
+            self.active
+            and not self.hit_registered
+            and abs(dx) <= 0.5
+            and abs(dy) <= 0.5
+        )
+        self.hit_registered = self.hit_registered or hit
+        return hit
 
     def render(self, mape: Mape) -> None:
-        """Draw the arrow rotated along its current travel direction.
+        """Draw the arrow at a right-angle rotation matching its lane.
         Position the transparent sprite in maze screen coordinates.
         made by: Mohammad Abu aresh
         """
-        angle = math.degrees(
-            math.atan2(-self.direction[1], self.direction[0])
-        ) - 45
-        image = pygame.transform.rotate(self.image, angle)
+        angles = {
+            (1, 0): 0, (0, -1): 90,
+            (-1, 0): 180, (0, 1): 270,
+        }
+        image = pygame.transform.rotate(
+            self.image, angles[self.direction]
+        )
         center = (
             round(mape.origin_x + self.x * Block.size),
             round(mape.origin_y + self.y * Block.size),
         )
-        Images_screen = pygame.display.get_surface()
-        if Images_screen is not None:
-            Images_screen.blit(image, image.get_rect(center=center))
+        screen = pygame.display.get_surface()
+        if screen is not None:
+            screen.blit(image, image.get_rect(center=center))
 
 
 class EnderPearl:

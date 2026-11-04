@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Sequence
 import pygame
 from .block import Block, Mape
 from .creature.spawn_point import Netherite
+from .collectible_visuals import create_diamond, create_nether_star
 from photos.loderimages import Images
 
 if TYPE_CHECKING:
@@ -135,11 +136,11 @@ class WorldRenderer:
             if item.is_eaten:
                 continue
             is_power = isinstance(item, Netherite)
-            radius = max(Block.size // (3 if is_power else 6), 1)
-            diameter = radius * 2 + 2
-            image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
-            color = (255, 165, 0) if is_power else (255, 255, 255)
-            pygame.draw.circle(image, color, (radius + 1, radius + 1), radius)
+            size = max(Block.size // (2 if is_power else 3), 8)
+            image = (
+                create_nether_star(size)
+                if is_power else create_diamond(size)
+            )
             shift = 20 if is_power else 15
             center_x = (
                 mape.origin_x + item.x * Block.size

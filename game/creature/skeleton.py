@@ -47,7 +47,7 @@ class Skeleton(Monster):
         made by: Mohammad Abu Aresh
         """
         size = (
-            max(int(Block.size * 0.6), 1),
+            max(int(Block.size * 0.9), 1),
             max(int(Block.size * 1.8), 1),
         )
         self.front_image = pygame.transform.scale(_SKELETON_FRONT, size)
@@ -97,20 +97,26 @@ class Skeleton(Monster):
             return False
 
         grid = mape.every_cell
+        skeleton_x, skeleton_y = round(self.x), round(self.y)
+        player_x, player_y = round(player.x), round(player.y)
 
-        # Same column check
-        if round(self.x) == round(player.x):
-            min_y, max_y = min(self.y, player.y), max(self.y, player.y)
-            for y in range(round(min_y) + 1, round(max_y)):
-                if grid[y][round(self.x)]:  # true if there is a wall
+        if skeleton_x == player_x:
+            step = 1 if player_y >= skeleton_y else -1
+            for y in range(skeleton_y + step, player_y, step):
+                if not 0 <= y < len(grid):
+                    return False
+                if not 0 <= skeleton_x < len(grid[y]):
+                    return False
+                if grid[y][skeleton_x]:
                     return False
             return True
 
-        # Same row check
-        if round(self.y) == round(player.y):
-            min_x, max_x = min(self.x, player.x), max(self.x, player.x)
-            for x in range(round(min_x) + 1, round(max_x)):
-                if grid[round(self.y)][x]:  # true if there is a wall
+        if skeleton_y == player_y:
+            step = 1 if player_x >= skeleton_x else -1
+            for x in range(skeleton_x + step, player_x, step):
+                if not 0 <= x < len(grid[skeleton_y]):
+                    return False
+                if grid[skeleton_y][x]:
                     return False
             return True
 
@@ -132,9 +138,17 @@ class Skeleton(Monster):
             return
 
         if self.has_line_of_sight(player, mape):
-            direction = (player.x - self.x, player.y - self.y)
-            arrow = Arrow((self.x, self.y), direction)
-            self.active_arrows.append(arrow)
+            if round(self.x) == round(player.x):
+                spawn = (float(round(self.x)), self.y)
+                direction = (
+                    0.0, 1.0 if player.y >= self.y else -1.0
+                )
+            else:
+                spawn = (self.x, float(round(self.y)))
+                direction = (
+                    1.0 if player.x >= self.x else -1.0, 0.0
+                )
+            self.active_arrows.append(Arrow(spawn, direction))
 
     def update_hardcore_ability(
         self, delta_time: float, player: Player, mape: Mape
@@ -143,23 +157,21 @@ class Skeleton(Monster):
         Pause firing and arrow movement while the Skeleton is frightened.
         made by: Mohammad Abu aresh
         """
-        if not self.is_hardcore or not self.live:
+        if not self.is_hardcore:
             self.active_arrows.clear()
             return False
-        if self.frightened:
-            self.active_arrows.clear()
-            return False
-        self.shoot_timer = max(
-            0.0, self.shoot_timer - max(delta_time, 0.0)
-        )
-        if self.shoot_timer <= 0 and not self.active_arrows:
-            self.shoot_arrow(player, mape)
-            if self.active_arrows:
-                self.shoot_timer = self.shoot_cooldown
+        can_attack = self.hardcore_active
+        if can_attack:
+            self.shoot_timer = max(
+                0.0, self.shoot_timer - max(delta_time, 0.0)
+            )
+            if self.shoot_timer <= 0 and not self.active_arrows:
+                self.shoot_arrow(player, mape)
+                if self.active_arrows:
+                    self.shoot_timer = self.shoot_cooldown
         for arrow in self.active_arrows[:]:
             arrow.update(delta_time, mape.every_cell)
-            if arrow.hits_player(player):
-                self.active_arrows.remove(arrow)
+            if can_attack and arrow.hits_player(player):
                 return True
             if not arrow.active:
                 self.active_arrows.remove(arrow)

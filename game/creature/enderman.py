@@ -21,7 +21,7 @@ class Enderman(Monster):
         made by: Mohammad Abu Aresh
         """
         super().__init__(spawn_point, is_hardcore)
-        self.teleport_cooldown: float = 20.0  # every 20 seconds
+        self.teleport_cooldown: float = 15.0  # every 15 seconds
         self.teleport_timer: float = self.teleport_cooldown
         self.current_pearl: EnderPearl | None = None
         self.chaser: Monster | None = None
