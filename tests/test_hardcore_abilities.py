@@ -6,6 +6,9 @@ class MonsterSpeedProbe(Monster):
     def follow(self, player: Player) -> None:
         pass
 
+    def load_size(self) -> None:
+        pass
+
 
 def test_hardcore_monster_loses_abilities_when_frightened() -> None:
     """Disable Hardcore powers while a monster is frightened.
