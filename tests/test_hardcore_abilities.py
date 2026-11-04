@@ -1,3 +1,5 @@
+from typing import cast
+from game.block import Mape
 from game.creature.monster import Monster
 from game.creature.player import Player
 
@@ -80,7 +82,7 @@ def test_arrow_remains_active_after_player_hit() -> None:
     from game.creature.projectiles import Arrow
 
     arrow = Arrow((1.0, 1.0), (1.0, 0.0))
-    player = SimpleNamespace(x=1.0, y=1.0)
+    player = cast(Player, SimpleNamespace(x=1.0, y=1.0))
     assert arrow.hits_player(player)
     assert not arrow.hits_player(player)
     assert arrow.active
@@ -98,9 +100,9 @@ def test_skeleton_can_target_a_distant_player_without_walls() -> None:
     skeleton.live = True
     skeleton.x = 1.0
     skeleton.y = 1.0
-    player = SimpleNamespace(x=28.0, y=1.0)
+    player = cast(Player, SimpleNamespace(x=28.0, y=1.0))
     grid = [[False] * 30 for _ in range(3)]
-    mape = SimpleNamespace(every_cell=grid)
+    mape = cast(Mape, SimpleNamespace(every_cell=grid))
 
     assert skeleton.has_line_of_sight(player, mape)
     grid[1][15] = True
