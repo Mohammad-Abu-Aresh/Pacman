@@ -47,13 +47,18 @@ class Skeleton(Monster):
         made by: Mohammad Abu Aresh
         """
         size = (
-            max(int(Block.size * 0.9), 1),
+            max(int(Block.size * 1.2), 1),
             max(int(Block.size * 1.8), 1),
         )
         self.front_image = pygame.transform.scale(_SKELETON_FRONT, size)
         self.side_image = pygame.transform.scale(_SKELETON_SIDE, size)
         self.back_image = pygame.transform.scale(_SKELETON_BACK, size)
         self.image = self.front_image
+
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        return super().get_render_rect(mape).move(
+            -round(Block.size * 0.15), 0
+        )
 
     def move(
         self,

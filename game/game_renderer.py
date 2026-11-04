@@ -16,11 +16,19 @@ def draw_game(game: GameSystem) -> None:
     made by: Mohammad Abu Aresh
     """
     Images.screen.blit(game.background, (0, 0))
+    draw_arrow_projectiles(game)
     game.world_renderer.draw(
         game.maze_map, game.mobs, game.collectibles
     )
     draw_hardcore_abilities(game)
     draw_hud(game)
+
+
+def draw_arrow_projectiles(game: GameSystem) -> None:
+    if not game.hardcore_mode:
+        return
+    for arrow in game.player_creature.Skeleton.active_arrows:
+        arrow.render(game.maze_map)
 
 
 def draw_hardcore_abilities(game: GameSystem) -> None:
@@ -30,8 +38,6 @@ def draw_hardcore_abilities(game: GameSystem) -> None:
     """
     if not game.hardcore_mode:
         return
-    for arrow in game.player_creature.Skeleton.active_arrows:
-        arrow.render(game.maze_map)
     pearl = game.player_creature.Enderman.current_pearl
     if pearl is not None:
         pearl.render(game.maze_map)
