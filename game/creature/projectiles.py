@@ -46,7 +46,8 @@ class Arrow:
         self.active = True
         self.hit_registered = False
         size = max(int(Block.size * 0.8), 1)
-        scaled = pygame.transform.smoothscale(_ARROW_IMAGE, (size, size))
+        source = _ARROW_IMAGE.convert_alpha()
+        scaled = pygame.transform.smoothscale(source, (size, size))
         self.image = pygame.transform.rotate(scaled, -45)
 
     def update(self, delta_time: float, grid: list[list[bool]]) -> None:
@@ -119,7 +120,8 @@ class EnderPearl:
         self.elapsed = 0.0
         self.active = True
         size = max(int(Block.size * 0.55), 1)
-        self.image = pygame.transform.smoothscale(_PEARL_IMAGE, (size, size))
+        source = _PEARL_IMAGE.convert_alpha()
+        self.image = pygame.transform.smoothscale(source, (size, size))
 
     def update(self, delta_time: float) -> bool:
         """Move the pearl marker toward the selected safe destination.

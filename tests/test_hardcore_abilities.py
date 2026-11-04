@@ -119,3 +119,16 @@ def test_slow_potion_uses_square_fallback() -> None:
     potion = SlowPotion((1.0, 1.0))
     assert potion.image.get_width() == potion.image.get_height()
     assert potion.image.get_at((0, 0))[:3] == (255, 0, 0)
+
+
+def test_projectile_sprites_support_smooth_scaling() -> None:
+    """Create both image-backed projectiles with palette PNG assets.
+    Convert source images before smooth scaling to support indexed PNGs.
+    made by: Mohammad Abu aresh
+    """
+    from game.creature.projectiles import Arrow, EnderPearl
+
+    arrow = Arrow((1.0, 1.0), (1.0, 0.0))
+    pearl = EnderPearl((3, 1), spawn_point=(1.0, 1.0))
+    assert arrow.image.get_size()[0] > 0
+    assert pearl.image.get_size()[0] > 0
