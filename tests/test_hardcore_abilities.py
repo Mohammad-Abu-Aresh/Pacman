@@ -107,3 +107,15 @@ def test_skeleton_can_target_a_distant_player_without_walls() -> None:
     assert skeleton.has_line_of_sight(player, mape)
     grid[1][15] = True
     assert not skeleton.has_line_of_sight(player, mape)
+
+
+def test_slow_potion_uses_square_fallback() -> None:
+    """Use a visible red square when no valid potion sprite is available.
+    Keep the fallback's display dimensions square and tied to cell size.
+    made by: Mohammad Abu aresh
+    """
+    from game.creature.projectiles import SlowPotion
+
+    potion = SlowPotion((1.0, 1.0))
+    assert potion.image.get_width() == potion.image.get_height()
+    assert potion.image.get_at((0, 0))[:3] == (255, 0, 0)

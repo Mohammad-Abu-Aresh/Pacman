@@ -7,7 +7,10 @@ from .player import Player
 
 _ARROW_IMAGE = pygame.image.load("photos/abilities/arrow.png")
 _PEARL_IMAGE = pygame.image.load("photos/abilities/ender_pearl.png")
-_POTION_IMAGE = pygame.image.load("photos/abilities/slow_potion.png")
+_POTION_IMAGE = pygame.Surface((32, 32), pygame.SRCALPHA)
+pygame.draw.rect(
+    _POTION_IMAGE, (255, 0, 0), _POTION_IMAGE.get_rect()
+)
 
 
 def _is_walkable(grid: list[list[bool]], x: float, y: float) -> bool:
@@ -161,11 +164,10 @@ class SlowPotion:
         self.speed = 3.5
         self.lifetime = 5.0
         self.active = True
-        size = (
-            max(int(Block.size * 0.5), 1),
-            max(int(Block.size * 0.75), 1),
+        size = max(int(Block.size * 0.55), 1)
+        self.image = pygame.transform.smoothscale(
+            _POTION_IMAGE, (size, size)
         )
-        self.image = pygame.transform.smoothscale(_POTION_IMAGE, size)
 
     def update(
         self,
