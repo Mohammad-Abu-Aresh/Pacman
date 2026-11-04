@@ -1,7 +1,6 @@
 import pygame
 from .monster import Monster
 from ..block import Block
-from photos import Images
 from .player import Player
 from .projectiles import Arrow
 from ..block import Mape

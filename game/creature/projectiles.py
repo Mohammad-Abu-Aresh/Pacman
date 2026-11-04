@@ -161,8 +161,8 @@ class SlowPotion:
         grid: list[list[bool]],
         player: Player,
     ) -> None:
-        """Guide the potion toward the player and apply a timed slow on contact.
-        Stop the projectile at maze walls or when its lifetime expires.
+        """Guide the potion toward the player and apply a timed slow.
+        Stop it at maze walls or when its lifetime expires.
         made by: Mohammad Abu aresh
         """
         if not self.active:
