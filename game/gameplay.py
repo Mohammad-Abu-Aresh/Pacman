@@ -20,6 +20,7 @@ from .game_renderer import (
     draw_maze as render_maze,
     draw_score as render_score,
     draw_timer as render_timer,
+    draw_lives as render_lives,
 )
 
 
@@ -33,6 +34,14 @@ class GameSystem:
     backphoto: dict[int, Any] = {
         1: Images.level_1,
         2: Images.level_2,
+        3: Images.level_3,
+        4: Images.level_4,
+        5: Images.level_5,
+        6: Images.level_6,
+        7: Images.level_7,
+        8: Images.level_1,
+        9: Images.level_2,
+        10: Images.level_3,
         }
 
     def __init__(
@@ -219,7 +228,16 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         return eat_pacgums(self)
-
+    def _draw_lives(self, x: int, y: int) -> None:
+        """
+        Delegate remaining-life rendering to the game renderer
+        helper.
+        Pass the requested screen coordinates through unchanged.
+        made by: Abdalghani Abtah
+        update by: Mohammad Abu Aresh
+        """
+        render_lives(self, x, y)
+        
     def _draw_hud(self) -> None:
         """
         Delegate status-panel rendering to the game renderer helper.

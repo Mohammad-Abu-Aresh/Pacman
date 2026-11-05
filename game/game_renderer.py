@@ -61,6 +61,25 @@ def draw_hud(game: GameSystem) -> None:
     draw_timer(game, panel_x, panel_y)
     draw_score(game, panel_x, panel_y + spacing_y)
     draw_heart(game, panel_x, panel_y + (spacing_y * 2))
+    draw_lives(game, panel_x, panel_y + (spacing_y * 3))
+    
+
+def draw_lives(game: GameSystem, x: int, y: int) -> None:
+    """
+    Render the player remaining lives using heart images.
+    Show up to three individual hearts or one heart with a count
+    above three.
+    made by: Mohammad Abu Aresh
+    """
+    shadow_surface = game.font.render(
+        f"Level: {game.current_level}", True, (0, 0, 0)
+    )
+    Images.screen.blit(shadow_surface, (x + 2, y + 2))
+
+    text_surface = game.font.render(
+        f"Level: {game.current_level}", True, (255, 255, 255)
+    )
+    Images.screen.blit(text_surface, (x, y))
 
 
 def draw_timer(game: GameSystem, x: int, y: int) -> None:

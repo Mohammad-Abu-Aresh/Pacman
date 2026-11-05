@@ -13,8 +13,13 @@ class Images:
     Home = pygame.image.load("photos/screens/main_creen.jpg")
 
     # background for each level
-    level_1 = pygame.image.load("photos/background/background1.jpg")
-    level_2 = pygame.image.load("photos/background/background2.jpg")
+    level_1 = pygame.image.load("photos/background/background3.jpg")
+    level_2 = pygame.image.load("photos/background/background4.jpg")
+    level_3 = pygame.image.load("photos/background/background5.jpg")
+    level_4 = pygame.image.load("photos/background/background6.jpg")
+    level_5 = pygame.image.load("photos/background/background7.jpg")
+    level_6 = pygame.image.load("photos/background/background8.jpg")
+    level_7 = pygame.image.load("photos/background/background9.jpg")
 
     # wall image
     wall = pygame.image.load("photos/blocks/block-new.png")

@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from .gameplay import GameSystem
 
 
-def eat_pacgums(game: GameSystem) -> bool:
+def eat_pacgums(game) -> bool:
     """Process collectible overlap and apply its score or power effect.
     Advance the level after every collectible on the current maze is eaten.
     made by: Mohammad Abu Aresh

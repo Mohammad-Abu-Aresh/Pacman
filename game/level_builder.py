@@ -20,19 +20,14 @@ def build_level(game: GameSystem) -> None:
     the maze corners.
     made by: Mohammad Abu Aresh
     """
+    image_level = ((game.current_level - 1) % len(game.backphoto)) + 1
+
     if game.current_level == 1:
         game.num += 1
         game.seed = game.config.get("seed", 42)
         game.row = 11
         game.column = 7
-        game.backimage = game.backphoto[game.current_level + 1]
-        game.background = pygame.transform.scale(
-            game.backimage,
-            (
-                Images.width,
-                Images.height,
-            ),
-        )
+
     else:
         game.num += 1
         game.seed = random.randint(1, 2004)
@@ -44,6 +39,14 @@ def build_level(game: GameSystem) -> None:
             game.column += 1
         else:
             game.player_creature.player._super_timer -= 2
+    game.backimage = game.backphoto[image_level]
+    game.background = pygame.transform.scale(
+        game.backimage,
+        (
+            Images.width,
+            Images.height,
+        ),
+    )
     maze = MazeGenerator(
         size=(game.row, game.column), seed=game.seed
     )
