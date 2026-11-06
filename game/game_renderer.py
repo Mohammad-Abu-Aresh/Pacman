@@ -89,7 +89,9 @@ def draw_lives(game: GameSystem, x: int, y: int) -> None:
 def draw_level_story(
     game: GameSystem, x: int, y: int, max_width: int
 ) -> None:
-    story = game.level_story[game.current_level]
+
+    level_index = ((game.current_level - 1) % len(game.level_story)) + 1
+    story = game.level_story[level_index]
     words = story.split()
     lines = []
     line = ""
