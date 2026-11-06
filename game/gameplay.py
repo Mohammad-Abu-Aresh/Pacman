@@ -21,6 +21,7 @@ from .game_renderer import (
     draw_score as render_score,
     draw_timer as render_timer,
     draw_lives as render_lives,
+    draw_level_story as render_level_story
 )
 
 
@@ -39,10 +40,34 @@ class GameSystem:
         5: Images.level_5,
         6: Images.level_6,
         7: Images.level_7,
-        8: Images.level_1,
-        9: Images.level_2,
-        10: Images.level_3,
+        8: Images.level_8,
+        9: Images.level_9,
+        10: Images.level_1,
         }
+    level_story: dict[int, str] = {
+        1: "The hero awakens in an abandoned village and discovers an ancient map revealing a mysterious threat to his world.",
+        2: "The map leads him to ancient ruins, where he discovers a broken portal and secrets about the lost dragon's power.",
+        3: "He climbs the frozen mountains in search of the first crystal and discovers a fragment of the portal's power.",
+        4: "Deep inside the desert temple, he faces ancient traps and discovers a key leading to the world of fire.",
+        5: "He enters the Nether and crosses rivers of lava. Inside the fortress, he obtains an ancient flame.",
+        6: "He returns to a mysterious forest covered in darkness and discovers a clue leading to a buried ancient city.",
+        7: "He descends into the Ancient City, where the Warden guards the second crystal needed to unlock the final path.",
+        8: "He crosses the portal into the End and discovers that the dragon still guards its kingdom above the floating islands.",
+        9: "He travels through the crimson wasteland to find the final piece of power. The crystals unite, and the portal awakens.",
+        10: "The hero enters the final arena and faces the legendary Ender Dragon. The final battle begins to save the world.",
+    }
+    level_title: dict[int, str] = {
+        1: "The Forgotten Village",
+        2: "The Ancient Secret",
+        3: "Frozen Memories",
+        4: "The Desert Trial",
+        5: "Flames of the Nether",
+        6: "The Cursed Forest",
+        7: "City of Darkness",
+        8: "Beyond the Void",
+        9: "The Crimson Awakening",
+        10: "The Last Dragon",
+    }
 
     def __init__(
             self, config: Dict[str, Any],
@@ -204,19 +229,19 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         render_game(self)
-
-    def _draw_maze(
-            self,
-            origin_x: int,
-            origin_y: int
-            ) -> None:
-        """
-        Delegate maze rendering to the game renderer helper.
-        Pass the maze origin coordinates through unchanged.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_maze(self, origin_x, origin_y)
+# يا رجل لا تعتمد على الغباء الاصتناعي واعمل لحالك ريفيو لانه شو كم في ميثود بلا فائدة لانك كله حاطه في render_game
+    # def _draw_maze(
+    #         self,
+    #         origin_x: int,
+    #         origin_y: int
+    #         ) -> None:
+    #     """
+    #     Delegate maze rendering to the game renderer helper.
+    #     Pass the maze origin coordinates through unchanged.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_maze(self, origin_x, origin_y)
 
     def _eat_pacgums(self) -> bool:
         """
@@ -228,54 +253,62 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         return eat_pacgums(self)
-    def _draw_lives(self, x: int, y: int) -> None:
-        """
-        Delegate remaining-life rendering to the game renderer
-        helper.
-        Pass the requested screen coordinates through unchanged.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_lives(self, x, y)
-        
-    def _draw_hud(self) -> None:
-        """
-        Delegate status-panel rendering to the game renderer helper.
-        Keep HUD rendering outside the gameplay coordination logic.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_hud(self)
+    # def _draw_lives(self, x: int, y: int) -> None:
+    #     """
+    #     Delegate remaining-life rendering to the game renderer
+    #     helper.
+    #     Pass the requested screen coordinates through unchanged.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_lives(self, x, y)
+    # def _draw_story(self, x: int, y: int, width: int) -> None:
+    #     """
+    #     Delegate level story rendering to the game renderer helper.
+    #     Pass the requested screen coordinates and width through
+    #     unchanged.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_level_story(self, x, y, width)
+    # def _draw_hud(self) -> None:
+    #     """
+    #     Delegate status-panel rendering to the game renderer helper.
+    #     Keep HUD rendering outside the gameplay coordination logic.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_hud(self)
 
-    def _draw_timer(self, x: int, y: int) -> None:
-        """
-        Delegate timer rendering to the game renderer helper.
-        Pass the requested screen coordinates through unchanged.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_timer(self, x, y)
+    # def _draw_timer(self, x: int, y: int) -> None:
+    #     """
+    #     Delegate timer rendering to the game renderer helper.
+    #     Pass the requested screen coordinates through unchanged.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_timer(self, x, y)
 
-    def _draw_score(self, x: int, y: int) -> None:
-        """
-        Delegate score rendering to the game renderer helper.
-        Keep the score display implementation in the rendering
-        module.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_score(self, x, y)
+    # def _draw_score(self, x: int, y: int) -> None:
+    #     """
+    #     Delegate score rendering to the game renderer helper.
+    #     Keep the score display implementation in the rendering
+    #     module.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_score(self, x, y)
 
-    def _heart(self, x: int, y: int) -> None:
-        """
-        Delegate the remaining-life display to the game renderer
-        helper.
-        Keep heart drawing implementation outside the gameplay
-        update flow.
-        made by: Abdalghani Abtah
-        update by: Mohammad Abu Aresh
-        """
-        render_heart(self, x, y)
+    # def _heart(self, x: int, y: int) -> None:
+    #     """
+    #     Delegate the remaining-life display to the game renderer
+    #     helper.
+    #     Keep heart drawing implementation outside the gameplay
+    #     update flow.
+    #     made by: Abdalghani Abtah
+    #     update by: Mohammad Abu Aresh
+    #     """
+    #     render_heart(self, x, y)
 
     def points(self) -> int:
         """

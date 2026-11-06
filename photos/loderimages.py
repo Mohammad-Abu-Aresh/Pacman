@@ -20,6 +20,9 @@ class Images:
     level_5 = pygame.image.load("photos/background/background7.jpg")
     level_6 = pygame.image.load("photos/background/background8.jpg")
     level_7 = pygame.image.load("photos/background/background9.jpg")
+    level_8 = pygame.image.load("photos/background/background10.jpg")
+    level_9 = pygame.image.load("photos/background/background11.jpg")
+    
 
     # wall image
     wall = pygame.image.load("photos/blocks/block-new.png")

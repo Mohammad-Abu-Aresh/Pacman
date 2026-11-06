@@ -21,7 +21,6 @@ def draw_game(game: GameSystem) -> None:
     )
     draw_hud(game)
 
-
 def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
     """
     Draw the background and wall cells at the supplied maze
@@ -62,6 +61,12 @@ def draw_hud(game: GameSystem) -> None:
     draw_score(game, panel_x, panel_y + spacing_y)
     draw_heart(game, panel_x, panel_y + (spacing_y * 2))
     draw_lives(game, panel_x, panel_y + (spacing_y * 3))
+    draw_level_story(
+        game,
+        panel_x,
+        panel_y + (spacing_y * 4),
+        280
+    )
     
 
 def draw_lives(game: GameSystem, x: int, y: int) -> None:
@@ -81,6 +86,35 @@ def draw_lives(game: GameSystem, x: int, y: int) -> None:
     )
     Images.screen.blit(text_surface, (x, y))
 
+def draw_level_story(
+    game: GameSystem, x: int, y: int, max_width: int
+) -> None:
+    story = game.level_story[game.current_level]
+    words = story.split()
+    lines = []
+    line = ""
+    for word in words:
+        test_line = line + " " + word if line else word
+
+        if game.font.size(test_line)[0] <= max_width:
+            line = test_line
+        else:
+            lines.append(line)
+            line = word
+    if line:
+        lines.append(line)
+
+    for line in lines:
+        shadow_surface = game.font.render(
+            line, True, (0, 0, 0)
+        )
+        Images.screen.blit(shadow_surface, (x + 2, y + 2))
+
+        text_surface = game.font.render(
+            line, True, (255, 255, 255)
+        )
+        Images.screen.blit(text_surface, (x, y))
+        y += 35
 
 def draw_timer(game: GameSystem, x: int, y: int) -> None:
     """
