@@ -42,7 +42,7 @@ class GameSystem:
         7: Images.level_7,
         8: Images.level_8,
         9: Images.level_9,
-        10: Images.level_1,
+        10: Images.level_10,
         }
     level_story: dict[int, str] = {
         1: "The hero awakens in an abandoned village and discovers an ancient map revealing a mysterious threat to his world.",

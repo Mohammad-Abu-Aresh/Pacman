@@ -1,6 +1,7 @@
 from typing import Callable, Optional
 import pygame
 import json
+from photos import Images
 
 
 class Button:
@@ -324,14 +325,16 @@ class Screens:
         Return a callback that draws the prepared result screen.
         made by: Abdalghani Abtah
         """
+        background = (
+            Images.victory_screen if winner
+            else Images.game_over_screen
+        )
+        background = pygame.transform.scale(
+            background, (self.width, self.height)
+        )
         font_title = pygame.font.Font(None, 60)
         font_text = pygame.font.Font(None, 36)
-        status_text = "VICTORY!" if winner else "GAME OVER"
-        title_color = (0, 255, 0) if winner else (255, 0, 0)
-        title_surf = font_title.render(status_text, True, title_color)
-        title_rect = title_surf.get_rect(
-            center=(self.width // 2, int(self.height * 0.3))
-        )
+
         score_surf = font_text.render(
             f"Final Score: {final_score}", True, (255, 255, 255)
         )
@@ -362,8 +365,9 @@ class Screens:
             Display the current user text within the input area.
             made by: Abdalghani Abtah
             """
-            self.screen.fill((0, 0, 0))
-            self.screen.blit(title_surf, title_rect)
+
+
+            self.screen.blit(background ,(0, 0))
             self.screen.blit(score_surf, score_rect)
             self.screen.blit(prompt_surf, prompt_rect)
             pygame.draw.rect(
