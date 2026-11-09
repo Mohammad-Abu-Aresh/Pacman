@@ -37,6 +37,7 @@ def build_level(game: GameSystem) -> None:
         ):
             game.row += 2
             game.column += 1
+            game.level_max_time += 15
         else:
             game.player_creature.player._super_timer -= 2
     game.backimage = game.backphoto[image_level]

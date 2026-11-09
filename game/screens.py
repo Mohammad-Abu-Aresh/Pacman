@@ -143,24 +143,9 @@ class Screens:
         click.
         made by: Abdalghani Abtah
         """
-        font_title = pygame.font.Font(None, 50)
-        font_text = pygame.font.Font(None, 32)
-
-        title_surf = font_title.render("HOW TO PLAY", True, (255, 215, 0))
-        title_rect = title_surf.get_rect(
-            center=(self.width // 2, int(self.height * 0.12))
+        settings_image = pygame.transform.smoothscale(
+            Images.settings_screen, (self.width, self.height)
         )
-
-        instructions = [
-            "Up Arrow     →  Move Up",
-            "Down Arrow   →  Move Down",
-            "Left Arrow   →  Move Left",
-            "Right Arrow  →  Move Right",
-            "",
-            "Eat all the dots to win the level.",
-            "Avoid the ghosts!",
-            "Eat a Power Pellet to chase ghosts.",
-        ]
         exit_button = Button(
             coordinates=(self.width // 2, int(self.height * 0.9)),
             size=(220, 55),
@@ -182,23 +167,7 @@ class Screens:
             Return the exit button click result to the game engine.
             made by: Abdalghani Abtah
             """
-            self.screen.fill((15, 15, 25))
-            self.screen.blit(title_surf, title_rect)
-            pygame.draw.line(
-                self.screen, (255, 215, 0),
-                (self.width // 2 - 160, title_rect.bottom + 10),
-                (self.width // 2 + 160, title_rect.bottom + 10),
-                2,
-            )
-            start_y = int(self.height * 0.28)
-            for i, line in enumerate(instructions):
-                if line == "":
-                    continue
-                surf = font_text.render(line, True, (220, 220, 220))
-                rect = surf.get_rect(
-                    center=(self.width // 2, start_y + i * 40)
-                )
-                self.screen.blit(surf, rect)
+            self.screen.blit(settings_image, (0, 0))
             pygame.draw.rect(
                 self.screen, (60, 80, 130),
                 exit_button.rect, border_radius=10
@@ -223,7 +192,7 @@ class Screens:
         """
         font_title = pygame.font.Font(None, 50)
         font_item = pygame.font.Font(None, 36)
-
+        bast_screen = pygame.transform.smoothscale(Images.best_player_screen, (self.width, self.height))
         title_surf = font_title.render(
             "TOP 10 SCORES", True, (255, 215, 0)
         )
@@ -262,18 +231,10 @@ class Screens:
             made by: Abdalghani Abtah
             update by: Mohammad Abu Aresh
             """
-            self.screen.fill((15, 18, 30))
-            self.screen.blit(title_surf, title_rect)
 
-            pygame.draw.line(
-                self.screen,
-                (255, 215, 0),
-                (self.width // 2 - 160, title_rect.bottom + 10),
-                (self.width // 2 + 160, title_rect.bottom + 10),
-                2,
-            )
+            self.screen.blit(bast_screen, (0, 0))
 
-            start_y = int(self.height * 0.28)
+            start_y = int(self.height * 0.50)
 
             for i, entry in enumerate(data[:10]):
                 name = entry["name"]
@@ -284,6 +245,15 @@ class Screens:
                     (255, 215, 0) if i == 0
                     else (240, 240, 240)
                 )
+
+                shadow_surf = font_item.render(text_str, True, (0, 0, 0))
+                shadow_rect = shadow_surf.get_rect(
+                    center=(
+                        self.width // 2 + 2,
+                        start_y + (i * 40) + 2
+                    )
+                )
+                self.screen.blit(shadow_surf, shadow_rect)
 
                 item_surf = font_item.render(
                     text_str, True, color
