@@ -21,6 +21,7 @@ def draw_game(game: GameSystem) -> None:
     )
     draw_hud(game)
 
+
 def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
     """
     Draw the background and wall cells at the supplied maze
@@ -67,7 +68,7 @@ def draw_hud(game: GameSystem) -> None:
         panel_y + (spacing_y * 4),
         280
     )
-    
+
 
 def draw_lives(game: GameSystem, x: int, y: int) -> None:
     """
@@ -85,6 +86,7 @@ def draw_lives(game: GameSystem, x: int, y: int) -> None:
         f"Level: {game.current_level}", True, (255, 255, 255)
     )
     Images.screen.blit(text_surface, (x, y))
+
 
 def draw_level_story(
     game: GameSystem, x: int, y: int, max_width: int
@@ -117,6 +119,7 @@ def draw_level_story(
         )
         Images.screen.blit(text_surface, (x, y))
         y += 35
+
 
 def draw_timer(game: GameSystem, x: int, y: int) -> None:
     """

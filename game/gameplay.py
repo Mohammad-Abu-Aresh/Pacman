@@ -15,13 +15,6 @@ from .level_builder import build_level
 from .world_render import WorldRenderer
 from .game_renderer import (
     draw_game as render_game,
-    draw_heart as render_heart,
-    draw_hud as render_hud,
-    draw_maze as render_maze,
-    draw_score as render_score,
-    draw_timer as render_timer,
-    draw_lives as render_lives,
-    draw_level_story as render_level_story
 )
 
 
@@ -45,16 +38,46 @@ class GameSystem:
         10: Images.level_10,
         }
     level_story: dict[int, str] = {
-        1: "The hero awakens in an abandoned village and discovers an ancient map revealing a mysterious threat to his world.",
-        2: "The map leads him to ancient ruins, where he discovers a broken portal and secrets about the lost dragon's power.",
-        3: "He climbs the frozen mountains in search of the first crystal and discovers a fragment of the portal's power.",
-        4: "Deep inside the desert temple, he faces ancient traps and discovers a key leading to the world of fire.",
-        5: "He enters the Nether and crosses rivers of lava. Inside the fortress, he obtains an ancient flame.",
-        6: "He returns to a mysterious forest covered in darkness and discovers a clue leading to a buried ancient city.",
-        7: "He descends into the Ancient City, where the Warden guards the second crystal needed to unlock the final path.",
-        8: "He crosses the portal into the End and discovers that the dragon still guards its kingdom above the floating islands.",
-        9: "He travels through the crimson wasteland to find the final piece of power. The crystals unite, and the portal awakens.",
-        10: "The hero enters the final arena and faces the legendary Ender Dragon. The final battle begins to save the world.",
+        1: (
+            "The hero awakens in an abandoned village and discovers "
+            "an ancient map revealing a mysterious threat to his world."
+        ),
+        2: (
+            "The map leads him to ancient ruins, where he discovers "
+            "a broken portal and secrets about the lost dragon's power."
+        ),
+        3: (
+            "He climbs the frozen mountains in search of the first "
+            "crystal and discovers a fragment of the portal's power."
+        ),
+        4: (
+            "Deep inside the desert temple, he faces ancient traps "
+            "and discovers a key leading to the world of fire."
+        ),
+        5: (
+            "He enters the Nether and crosses rivers of lava. "
+            "Inside the fortress, he obtains an ancient flame."
+        ),
+        6: (
+            "He returns to a mysterious forest covered in darkness "
+            "and discovers a clue leading to a buried ancient city."
+        ),
+        7: (
+            "He descends into the Ancient City, where the Warden "
+            "guards the second crystal needed to unlock the final path."
+        ),
+        8: (
+            "He crosses the portal into the End and discovers that "
+            "the dragon still guards its kingdom above the floating islands."
+        ),
+        9: (
+            "He travels through the crimson wasteland to find the final "
+            "piece of power. The crystals unite, and the portal awakens."
+        ),
+        10: (
+            "The hero enters the final arena and faces the legendary "
+            "Ender Dragon. The final battle begins to save the world."
+        ),
     }
     level_title: dict[int, str] = {
         1: "The Forgotten Village",
@@ -229,7 +252,9 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         render_game(self)
-# يا رجل لا تعتمد على الغباء الاصتناعي واعمل لحالك ريفيو لانه شو كم في ميثود بلا فائدة لانك كله حاطه في render_game
+
+# يا رجل لا تعتمد على الغباء الاصتناعي واعمل لحالك ريفيو لانه
+#  شو كم في ميثود بلا فائدة لانك كله حاطه في render_game
     # def _draw_maze(
     #         self,
     #         origin_x: int,

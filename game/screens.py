@@ -190,14 +190,10 @@ class Screens:
         made by: Abdalghani Abtah
         update by: Mohammad Abu Aresh
         """
-        font_title = pygame.font.Font(None, 50)
+
         font_item = pygame.font.Font(None, 36)
-        bast_screen = pygame.transform.smoothscale(Images.best_player_screen, (self.width, self.height))
-        title_surf = font_title.render(
-            "TOP 10 SCORES", True, (255, 215, 0)
-        )
-        title_rect = title_surf.get_rect(
-            center=(self.width // 2, int(self.height * 0.15))
+        bast_screen = pygame.transform.smoothscale(
+            Images.best_player_screen, (self.width, self.height)
         )
 
         try:
@@ -302,9 +298,8 @@ class Screens:
         background = pygame.transform.scale(
             background, (self.width, self.height)
         )
-        font_title = pygame.font.Font(None, 60)
-        font_text = pygame.font.Font(None, 36)
 
+        font_text = pygame.font.Font(None, 36)
         score_surf = font_text.render(
             f"Final Score: {final_score}", True, (255, 255, 255)
         )
@@ -336,8 +331,7 @@ class Screens:
             made by: Abdalghani Abtah
             """
 
-
-            self.screen.blit(background ,(0, 0))
+            self.screen.blit(background, (0, 0))
             self.screen.blit(score_surf, score_rect)
             self.screen.blit(prompt_surf, prompt_rect)
             pygame.draw.rect(

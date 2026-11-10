@@ -36,17 +36,39 @@ class ConfigLoader:
         made by: Abdalghani Abtah
         update by: Mohammad Abu Aresh
         """
-        with open(self.fileName, "r") as f:
-            content = "".join([self.__parse_line(line) for line in f])
-        user_data = json.loads(content)
+        try:
+            with open(self.fileName, "r") as f:
+                content = "".join([self.__parse_line(line) for line in f])
+            user_data = json.loads(content)
+            if not isinstance(user_data, dict):
+                print(
+                    "Error: Configuration file content is not a "
+                    "valid JSON object. Using default settings."
+                )
+                user_data = {}
+        except (FileNotFoundError, json.JSONDecodeError, Exception) as e:
+            print(
+                f"Error: Problem reading or parsing configuration "
+                f"file '{self.fileName}' ({e}). Using default settings."
+            )
+            user_data = {}
 
-        config = self.default_config.copy()  # rename key, value
-        for key, v in user_data.items():
-            if key in config:
-                if isinstance(self.default_config[key], int) and isinstance(
+        config = self.default_config.copy()
+        for key, default_val in self.default_config.items():
+            if key not in user_data:
+                print(
+                    f"Notice: '{key}' was not found in the config file. "
+                    f"Using default value: {default_val}"
+                )
+            else:
+                v = user_data[key]
+                if isinstance(default_val, int) and isinstance(
                         v, str
                         ):
-                    print(f"Error: '{key}' must be an int, not a string!")
+                    print(
+                        f"Error: '{key}' must be an int, not a string! "
+                        f"Using default value: {default_val}"
+                    )
                     continue
                 config[key] = v
         if config["max_levels"] < 3 or config["max_levels"] > 15:
