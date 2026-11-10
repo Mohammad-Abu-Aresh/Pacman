@@ -25,6 +25,7 @@ all: install
 # Create venv if not exists, upgrade pip, install poetry and all requirements
 .PHONY: install
 install: venv
+	python3 -m pip install --upgrade pyinstaller
 	@echo "Installing dependencies using poetry in virtual environment..."
 	@$(VENV_PIP) install --upgrade pip
 	@$(VENV_PIP) install poetry
