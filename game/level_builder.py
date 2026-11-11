@@ -52,9 +52,7 @@ def build_level(game: GameSystem) -> None:
         size=(game.row, game.column), seed=game.seed
     )
     game.maze_map = Mape(maze)
-    Images._update_size(
-        "wall", size=(Block.size * 2.1, Block.size * 1.85)
-    )
+    Images._update_wall(Block.size)
     game.time_left = game.level_max_time
     movement.traffic_update(Direction.none)
 

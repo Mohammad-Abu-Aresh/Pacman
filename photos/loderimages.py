@@ -69,6 +69,22 @@ class Images:
         Images.screen.blit(image, cast(tuple[int, int], location))
 
     @classmethod
+    def _update_wall(cls, size: int) -> None:
+        box = cls.wall.get_bounding_rect()
+        width, height = cls.wall.get_size()
+        scale_x = size * 2.1 / width
+        scale_y = size * 1.85 / height
+        block = pygame.transform.scale(
+            cls.wall.subsurface(box),
+            (size + 1, round(box.height * scale_y)),
+        )
+        canvas = pygame.Surface(
+            (int(width * scale_x), int(height * scale_y)), pygame.SRCALPHA
+        )
+        canvas.blit(block, (round(box.x * scale_x), round(box.y * scale_y)))
+        cls.wall_new = canvas
+
+    @classmethod
     def _update_size(
         cls, image_name: str,
         size: tuple[int | float, int | float]
