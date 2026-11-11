@@ -157,6 +157,14 @@ class SkeletonShootingTests(unittest.TestCase):
         self.skeleton.shoot_arrow(self.player(5, 1), self.mape)
         self.assertEqual(self.skeleton.active_arrows, [])
 
+    def test_does_not_shoot_while_frightened(self) -> None:
+        self.skeleton.frightened = True
+        self.skeleton.shoot_arrow(self.player(5, 1), self.mape)
+        self.assertEqual(self.skeleton.active_arrows, [])
+        self.skeleton.frightened = False
+        self.skeleton.shoot_arrow(self.player(5, 1), self.mape)
+        self.assertEqual(len(self.skeleton.active_arrows), 1)
+
     def test_hit_is_reported_once_and_arrow_survives(self) -> None:
         self.skeleton.shoot_arrow(self.player(10, 1), self.mape)
         player = self.player(10, 1)

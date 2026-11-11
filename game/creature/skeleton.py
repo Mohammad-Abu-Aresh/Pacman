@@ -83,7 +83,7 @@ class Skeleton(Monster):
         Do not create another arrow while one is already active.
         made by: Mohammad Abu Aresh
         """
-        if not self.is_hardcore or not self.live:
+        if not self.is_hardcore or not self.live or self.frightened:
             return
 
         if len(self.active_arrows) > 0 or self.shoot_timer > 0:
