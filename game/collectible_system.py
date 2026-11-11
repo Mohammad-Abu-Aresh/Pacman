@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from .creature.spawn_point import Netherite
 
@@ -5,7 +6,7 @@ if TYPE_CHECKING:
     from .gameplay import GameSystem
 
 
-def eat_pacgums(game) -> bool:
+def eat_pacgums(game: GameSystem) -> bool:
     """Process collectible overlap and apply its score or power effect.
     Advance the level after every collectible on the current maze is eaten.
     made by: Mohammad Abu Aresh
