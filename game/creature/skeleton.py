@@ -112,14 +112,14 @@ class Skeleton(Monster):
         player: Player,
         mape: Mape,
         delta_time: float,
-        can_attack: bool = True,
+        can_hurt: bool = True,
     ) -> bool:
         self.shoot_timer = max(self.shoot_timer - delta_time, 0.0)
         player_cell = (round(player.x), round(player.y))
         player_hit = False
         for arrow in self.active_arrows:
             arrow.move(mape.every_cell, delta_time)
-            if can_attack and not arrow.hit_player and arrow.hits(
+            if can_hurt and not arrow.hit_player and arrow.hits(
                 player_cell
             ):
                 arrow.hit_player = True
@@ -127,8 +127,7 @@ class Skeleton(Monster):
         self.active_arrows = [
             arrow for arrow in self.active_arrows if arrow.active
         ]
-        if can_attack:
-            self.shoot_arrow(player, mape)
+        self.shoot_arrow(player, mape)
         return player_hit
 
     def reset_ai(self) -> None:

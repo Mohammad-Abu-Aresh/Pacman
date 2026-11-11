@@ -229,12 +229,12 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def update_abilities(self, delta_time: float) -> bool:
-        can_attack = self.frightened_timer <= 0
-        self.BabyZombie.sync_super_speed(not can_attack)
+        self.BabyZombie.sync_hardcore_speed()
         self.player.update_slow(delta_time)
-        self.witch.update_potion(self.player, delta_time, can_attack)
+        self.witch.update_potion(self.player, delta_time)
         return self.Skeleton.update_arrows(
-            self.player, self.maze_mape, delta_time, can_attack
+            self.player, self.maze_mape, delta_time,
+            self.frightened_timer <= 0,
         )
 
     def check_collision(self, points_per_ghost: int = 200) -> bool:
