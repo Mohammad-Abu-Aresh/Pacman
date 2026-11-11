@@ -111,7 +111,7 @@ class Monster(Creature, ABC):
             return None
         if not self.live:
             return PathFinder.next_step(grid, current_cell, self.target_point)
-        if self.frightened:
+        if self.frightened or self.player_is_super:
             return PathFinder.next_step_frightened(
                 grid,
                 current_cell,
@@ -211,6 +211,10 @@ class Monster(Creature, ABC):
         self.locaion = (self.x, self.y)
         if (self.x, self.y) == self.next_point:
             self.next_point = None
+
+    @property
+    def player_is_super(self) -> bool:
+        return self.lifecycle.mode_clock_paused
 
     def set_hardcore_mode(self, enabled: bool) -> None:
         """

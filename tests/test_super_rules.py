@@ -2,12 +2,17 @@ import os
 import unittest
 from types import SimpleNamespace
 from typing import Any
+from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
 from game.block import Block  # noqa: E402
+from game.creature import monster as monster_module  # noqa: E402
 from game.creature.babyzombie import BabyZombie  # noqa: E402
+from game.creature.ghost_state import (  # noqa: E402
+    check_ghost_collisions,
+)
 from game.creature.player import Player  # noqa: E402
 from game.creature.skeleton import Skeleton  # noqa: E402
 from game.creature.witch import Witch  # noqa: E402
@@ -71,6 +76,65 @@ class SuperAbilityTests(unittest.TestCase):
         self.assertEqual(player.speed, 0.1)
         witch.update_potion(player, 1 / 60, True)
         self.assertAlmostEqual(player.speed, 0.035)
+
+
+class SuperSafetyTests(unittest.TestCase):
+    def setUp(self) -> None:
+        Block.size = 40
+
+    def controller(self, timer: float) -> Any:
+        monsters = [
+            Skeleton((1, 1), True),
+            BabyZombie((30, 1), True),
+            Skeleton((31, 1), True),
+            Skeleton((32, 1), True),
+        ]
+        return SimpleNamespace(
+            player=SimpleNamespace(x=1.0, y=1.0, eat=lambda points: points),
+            Skeleton=monsters[0],
+            BabyZombie=monsters[1],
+            Enderman=monsters[2],
+            witch=monsters[3],
+            frightened_cycle=1,
+            frightened_timer=timer,
+        )
+
+    def test_monster_contact_is_safe_during_super(self) -> None:
+        controller = self.controller(5.0)
+        self.assertFalse(check_ghost_collisions(controller, 200))
+
+    def test_monster_contact_is_deadly_outside_super(self) -> None:
+        controller = self.controller(0.0)
+        self.assertTrue(check_ghost_collisions(controller, 200))
+
+    def test_monsters_flee_instead_of_chasing_during_super(self) -> None:
+        skeleton = Skeleton((1, 1), True)
+        skeleton.target_point = (5, 5)
+        grid = [[False] * 8 for _ in range(8)]
+        skeleton.lifecycle.mode_clock_paused = True
+        with patch.object(
+            monster_module.PathFinder, "next_step_frightened",
+            return_value=(2, 1),
+        ) as flee, patch.object(
+            monster_module.PathFinder, "next_step_towards",
+            return_value=(1, 2),
+        ) as chase:
+            step = skeleton._choose_next_point(grid, (1, 1))
+        self.assertEqual(step, (2, 1))
+        flee.assert_called_once()
+        chase.assert_not_called()
+
+    def test_monsters_chase_again_after_super(self) -> None:
+        skeleton = Skeleton((1, 1), True)
+        skeleton.target_point = (5, 5)
+        grid = [[False] * 8 for _ in range(8)]
+        with patch.object(
+            monster_module.PathFinder, "next_step_towards",
+            return_value=(1, 2),
+        ) as chase:
+            step = skeleton._choose_next_point(grid, (1, 1))
+        self.assertEqual(step, (1, 2))
+        chase.assert_called_once()
 
 
 if __name__ == "__main__":

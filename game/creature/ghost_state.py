@@ -197,8 +197,7 @@ def check_ghost_collisions(
         dy = controller.player.y - monster.y
         if dx * dx + dy * dy > 0.4:
             continue
-        if not mark_monster_eaten(
-            controller, monster, points_per_ghost
-        ):
+        eaten = mark_monster_eaten(controller, monster, points_per_ghost)
+        if not eaten and controller.frightened_timer <= 0:
             player_hit = True
     return player_hit
