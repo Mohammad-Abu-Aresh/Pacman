@@ -228,6 +228,11 @@ class Control_creature:
 
         # def update_spown_point(obj: str) -> None:
 
+    def update_abilities(self, delta_time: float) -> bool:
+        return self.Skeleton.update_arrows(
+            self.player, self.maze_mape, delta_time
+        )
+
     def check_collision(self, points_per_ghost: int = 200) -> bool:
         """
         Delegate monster collision checks and frightened-ghost

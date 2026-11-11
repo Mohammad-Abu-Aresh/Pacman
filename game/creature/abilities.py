@@ -1,4 +1,5 @@
-from .player import Player
+import math
+from .player import Direction, Player
 from abc import ABC, abstractmethod
 import pygame
 
@@ -37,10 +38,12 @@ class Abilities(ABC):
 
 
 class Arrow(Abilities):
+    BASE_SPEED: float = 5.0
+    WALL_MARGIN: float = 0.001
 
     def __init__(
         self, spawn_point: tuple[float, float],
-        direction: int, speed: int = 300
+        direction: tuple[int, int], speed: int = 300
     ) -> None:
         """
         Store the arrow spawn coordinates, direction, and movement
@@ -48,18 +51,63 @@ class Arrow(Abilities):
         Use the supplied speed or the default projectile speed.
         made by: Mohammad Abu Aresh
         """
-        self.x: float = spawn_point[0]
-        self.y: float = spawn_point[1]
-        self.direction: int = direction
+        self.x: float = float(round(spawn_point[0]))
+        self.y: float = float(round(spawn_point[1]))
+        self.direction: tuple[int, int] = direction
         self.speed: int = speed  # 300% of player speed
+        self.active: bool = direction != Direction.none
+        self.hit_player: bool = False
+        self.swept_cells: list[tuple[int, int]] = [self.cell()]
 
-    def move(self) -> None:
+    @staticmethod
+    def _to_cell(value: float) -> int:
+        return math.floor(value + 0.5)
+
+    def cell(self) -> tuple[int, int]:
+        return self._to_cell(self.x), self._to_cell(self.y)
+
+    def hits(self, cell: tuple[int, int]) -> bool:
+        return cell in self.swept_cells
+
+    @staticmethod
+    def _is_blocked(grid: list[list[bool]], x: int, y: int) -> bool:
+        return not (
+            0 <= y < len(grid) and 0 <= x < len(grid[y])
+        ) or grid[y][x]
+
+    def move(
+        self,
+        grid: list[list[bool]] | None = None,
+        delta_time: float = 0.0,
+    ) -> None:
         """
         Provide the movement hook for an Arrow instance.
         No projectile movement is implemented in this method yet.
         made by: Mohammad Abu Aresh
         """
-        pass
+        self.swept_cells = [self.cell()]
+        if grid is None or not self.active:
+            return
+        step = self.direction[0] + self.direction[1]
+        along_x = self.direction[0] != 0
+        position = self.x if along_x else self.y
+        lane = self.cell()[1] if along_x else self.cell()[0]
+        distance = self.BASE_SPEED * self.speed / 100.0 * max(delta_time, 0.0)
+        target = position + step * distance
+        first = self._to_cell(position) + step
+        last = self._to_cell(target) + step
+        for index in range(first, last, step):
+            x, y = (index, lane) if along_x else (lane, index)
+            if self._is_blocked(grid, x, y):
+                self.active = False
+                stop = index - step * (0.5 + self.WALL_MARGIN)
+                target = stop if (stop - position) * step > 0 else position
+                break
+            self.swept_cells.append((x, y))
+        if along_x:
+            self.x = target
+        else:
+            self.y = target
 
     def draw(self, image: pygame.Surface) -> None:
         """

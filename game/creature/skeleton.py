@@ -1,7 +1,7 @@
 from .monster import Monster
 from ..block import Block
 from photos import Images
-from .player import Player
+from .player import Direction, Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
@@ -22,7 +22,8 @@ class Skeleton(Monster):
         super().__init__(spawn_point, is_hardcore)
         self.shoot_cooldown: float = 3.0  # cooldown between shots in seconds
         self.active_arrows: list[Arrow] = []  # if len(arr) > 0 dont shot again
-        self.direction: int = 0
+        self.direction: tuple[int, int] = Direction.none
+        self.shoot_timer: float = 0.0
         self.load_size()
         self.next_point: tuple[int, int] | None = None
 
@@ -85,12 +86,48 @@ class Skeleton(Monster):
         if not self.is_hardcore or not self.live:
             return
 
-        if len(self.active_arrows) > 0:
+        if len(self.active_arrows) > 0 or self.shoot_timer > 0:
             return
 
-        if self.has_line_of_sight(player, mape):
+        direction = self._aim(player)
+        if direction != Direction.none and self.has_line_of_sight(
+            player, mape
+        ):
+            self.direction = direction
             arrow = Arrow((self.x, self.y), self.direction)
             self.active_arrows.append(arrow)
+            self.shoot_timer = self.shoot_cooldown
+
+    def _aim(self, player: Player) -> tuple[int, int]:
+        delta_x = round(player.x) - round(self.x)
+        delta_y = round(player.y) - round(self.y)
+        if delta_y == 0 and delta_x != 0:
+            return Direction.right if delta_x > 0 else Direction.left
+        if delta_x == 0 and delta_y != 0:
+            return Direction.down if delta_y > 0 else Direction.up
+        return Direction.none
+
+    def update_arrows(
+        self, player: Player, mape: Mape, delta_time: float
+    ) -> bool:
+        self.shoot_timer = max(self.shoot_timer - delta_time, 0.0)
+        player_cell = (round(player.x), round(player.y))
+        player_hit = False
+        for arrow in self.active_arrows:
+            arrow.move(mape.every_cell, delta_time)
+            if not arrow.hit_player and arrow.hits(player_cell):
+                arrow.hit_player = True
+                player_hit = True
+        self.active_arrows = [
+            arrow for arrow in self.active_arrows if arrow.active
+        ]
+        self.shoot_arrow(player, mape)
+        return player_hit
+
+    def reset_ai(self) -> None:
+        super().reset_ai()
+        self.active_arrows.clear()
+        self.shoot_timer = 0.0
 
 #    def move(self, grid: list[list[bool]] | None = None) -> None:
 #        if grid is None or self.target_point is None:

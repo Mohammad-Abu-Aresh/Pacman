@@ -215,7 +215,8 @@ class GameSystem:
         player_hit = self.player_creature.check_collision(
             self.config.get("points_per_ghost", 200)
         )
-        if not cheating and player_hit:
+        arrow_hit = self.player_creature.update_abilities(time)
+        if not cheating and (player_hit or arrow_hit):
             self._handle_player_death()
             return
         if keys[pygame.K_n] and cheating:
