@@ -42,6 +42,10 @@ class BabyZombie(Monster):
         )
         self.image = Images.zombie_new
 
+    def sync_super_speed(self, is_super: bool) -> None:
+        if self.live:
+            self.speed = 110 if self.is_hardcore and not is_super else 65
+
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
         """
         Return the zombie image rectangle at its current maze position.

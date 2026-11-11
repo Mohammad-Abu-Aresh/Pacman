@@ -59,9 +59,15 @@ class Witch(Monster):
         potion.apply_effect(player)
         return True
 
-    def update_potion(self, player: Player, delta_time: float) -> None:
+    def update_potion(
+        self, player: Player, delta_time: float, can_attack: bool = True
+    ) -> None:
         self.potion_timer = max(self.potion_timer - delta_time, 0.0)
-        if self.potion_timer == 0.0 and self.throw_slow_potion(player):
+        if (
+            can_attack
+            and self.potion_timer == 0.0
+            and self.throw_slow_potion(player)
+        ):
             self.potion_timer = self.potion_cooldown
 
     def _choose_next_point(
