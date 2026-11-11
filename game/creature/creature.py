@@ -164,10 +164,16 @@ class Control_creature:
             maze_map.spawn_point["player"]
             )
 
-        self.witch = Witch(maze_map.spawn_point["witch"])
-        self.Skeleton = Skeleton(maze_map.spawn_point["skeleton"])
-        self.BabyZombie = BabyZombie(maze_map.spawn_point["zombie"])
-        self.Enderman = Enderman(maze_map.spawn_point["enderman"])
+        self.witch = Witch(maze_map.spawn_point["witch"], is_hardcore)
+        self.Skeleton = Skeleton(
+            maze_map.spawn_point["skeleton"], is_hardcore
+        )
+        self.BabyZombie = BabyZombie(
+            maze_map.spawn_point["zombie"], is_hardcore
+        )
+        self.Enderman = Enderman(
+            maze_map.spawn_point["enderman"], is_hardcore
+        )
         self.Enderman.chaser = self.BabyZombie
         self.mobs: tuple[Creature, ...] = (
             self.player,

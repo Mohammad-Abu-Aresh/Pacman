@@ -121,7 +121,7 @@ class GameSystem:
         self.font = pygame.font.SysFont(None, 36)
         self.player_creature = Control_creature(
             maze_map=self.maze_map, lives=self.lives,
-            super_timer=15
+            super_timer=15, is_hardcore=hardcore_mode
         )
         self.mobs: tuple[Creature, ...] = (
                 self.player_creature.player,
