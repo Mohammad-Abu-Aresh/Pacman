@@ -62,12 +62,15 @@ class Arrow(Abilities):
         self.image: pygame.Surface = self._build_image()
 
     def _build_image(self) -> pygame.Surface:
-        length = max(Block.size // 2, 4)
-        thickness = max(Block.size // 8, 2)
-        image = pygame.Surface((length, thickness), pygame.SRCALPHA)
-        image.fill((120, 85, 40))
-        tip = pygame.Rect(length - thickness, 0, thickness, thickness)
-        pygame.draw.rect(image, (190, 190, 190), tip)
+        length = max(Block.size * 9 // 10, 12)
+        head = max(Block.size // 4, 6)
+        image = pygame.Surface((length, head), pygame.SRCALPHA)
+        shaft = pygame.Rect(0, head // 3, length - head, max(head // 3, 2))
+        pygame.draw.rect(image, (120, 85, 40), shaft)
+        tip = [(length - head, 0), (length, head // 2), (length - head, head)]
+        pygame.draw.polygon(image, (205, 205, 210), tip)
+        tail = pygame.Rect(0, head // 6, max(head // 3, 2), head * 2 // 3)
+        pygame.draw.rect(image, (210, 60, 60), tail)
         angles = {
             Direction.right: 0, Direction.up: 90,
             Direction.left: 180, Direction.down: 270,
