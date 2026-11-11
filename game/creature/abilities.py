@@ -1,6 +1,7 @@
 import math
 from .player import Direction, Player
-from ..block import Block, Mape
+from ..block import Mape
+from .effects import build_arrow_image, render_rect
 from abc import ABC, abstractmethod
 import pygame
 
@@ -59,28 +60,10 @@ class Arrow(Abilities):
         self.active: bool = direction != Direction.none
         self.hit_player: bool = False
         self.swept_cells: list[tuple[int, int]] = [self.cell()]
-        self.image: pygame.Surface = self._build_image()
-
-    def _build_image(self) -> pygame.Surface:
-        length = max(Block.size * 9 // 10, 12)
-        head = max(Block.size // 4, 6)
-        image = pygame.Surface((length, head), pygame.SRCALPHA)
-        shaft = pygame.Rect(0, head // 3, length - head, max(head // 3, 2))
-        pygame.draw.rect(image, (120, 85, 40), shaft)
-        tip = [(length - head, 0), (length, head // 2), (length - head, head)]
-        pygame.draw.polygon(image, (205, 205, 210), tip)
-        tail = pygame.Rect(0, head // 6, max(head // 3, 2), head * 2 // 3)
-        pygame.draw.rect(image, (210, 60, 60), tail)
-        angles = {
-            Direction.right: 0, Direction.up: 90,
-            Direction.left: 180, Direction.down: 270,
-        }
-        return pygame.transform.rotate(image, angles.get(self.direction, 0))
+        self.image: pygame.Surface = build_arrow_image(direction)
 
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
-        px = mape.origin_x + (self.x + 1.0) * Block.size
-        py = mape.origin_y + (self.y + 0.8) * Block.size
-        return self.image.get_rect(center=(int(px), int(py)))
+        return render_rect(self.image, self.x, self.y, mape)
 
     @staticmethod
     def _to_cell(value: float) -> int:
