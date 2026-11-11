@@ -1,5 +1,6 @@
 import math
 from .player import Direction, Player
+from ..block import Block, Mape
 from abc import ABC, abstractmethod
 import pygame
 
@@ -58,6 +59,25 @@ class Arrow(Abilities):
         self.active: bool = direction != Direction.none
         self.hit_player: bool = False
         self.swept_cells: list[tuple[int, int]] = [self.cell()]
+        self.image: pygame.Surface = self._build_image()
+
+    def _build_image(self) -> pygame.Surface:
+        length = max(Block.size // 2, 4)
+        thickness = max(Block.size // 8, 2)
+        image = pygame.Surface((length, thickness), pygame.SRCALPHA)
+        image.fill((120, 85, 40))
+        tip = pygame.Rect(length - thickness, 0, thickness, thickness)
+        pygame.draw.rect(image, (190, 190, 190), tip)
+        angles = {
+            Direction.right: 0, Direction.up: 90,
+            Direction.left: 180, Direction.down: 270,
+        }
+        return pygame.transform.rotate(image, angles.get(self.direction, 0))
+
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        px = mape.origin_x + (self.x + 1.0) * Block.size
+        py = mape.origin_y + (self.y + 0.8) * Block.size
+        return self.image.get_rect(center=(int(px), int(py)))
 
     @staticmethod
     def _to_cell(value: float) -> int:

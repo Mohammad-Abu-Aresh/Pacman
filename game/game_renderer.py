@@ -5,6 +5,8 @@ from photos.loderimages import Images
 from .block import Block
 
 if TYPE_CHECKING:
+    from .creature.abilities import Arrow
+    from .creature.creature import Creature
     from .gameplay import GameSystem
 
 
@@ -16,9 +18,10 @@ def draw_game(game: GameSystem) -> None:
     made by: Mohammad Abu Aresh
     """
     Images.screen.blit(game.background, (0, 0))
-    game.world_renderer.draw(
-        game.maze_map, game.mobs, game.collectibles
-    )
+    actors: list[Creature | Arrow] = [
+        *game.mobs, *game.player_creature.Skeleton.active_arrows
+    ]
+    game.world_renderer.draw(game.maze_map, actors, game.collectibles)
     draw_hud(game)
 
 

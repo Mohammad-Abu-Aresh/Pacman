@@ -6,6 +6,7 @@ from .creature.spawn_point import Netherite
 from photos.loderimages import Images
 
 if TYPE_CHECKING:
+    from .creature.abilities import Arrow
     from .creature.creature import Creature
     from .creature.spawn_point import pacgum
 
@@ -62,7 +63,7 @@ class WorldRenderer:
     def draw(
         self,
         mape: Mape,
-        actors: Sequence[Creature],
+        actors: Sequence[Creature | Arrow],
         collectibles: Sequence[pacgum],
     ) -> None:
         """
@@ -85,7 +86,7 @@ class WorldRenderer:
     def _rebuild(
         self,
         mape: Mape,
-        actors: Sequence[Creature],
+        actors: Sequence[Creature | Arrow],
         collectibles: Sequence[pacgum],
     ) -> None:
         """
@@ -157,7 +158,7 @@ class WorldRenderer:
             self._collectible_sprites[id(item)] = sprite
 
     def _add_actors(
-        self, mape: Mape, actors: Sequence[Creature]
+        self, mape: Mape, actors: Sequence[Creature | Arrow]
     ) -> None:
         """
         Register creature sprites using their existing image placement.
@@ -172,7 +173,7 @@ class WorldRenderer:
             self._actor_sprites[id(actor)] = sprite
 
     def _sync_actors(
-        self, mape: Mape, actors: Sequence[Creature]
+        self, mape: Mape, actors: Sequence[Creature | Arrow]
     ) -> None:
         """
         Update actor sprites from their current positions and images.
