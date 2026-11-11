@@ -229,6 +229,8 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def update_abilities(self, delta_time: float) -> bool:
+        self.player.update_slow(delta_time)
+        self.witch.update_potion(self.player, delta_time)
         return self.Skeleton.update_arrows(
             self.player, self.maze_mape, delta_time
         )

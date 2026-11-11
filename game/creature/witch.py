@@ -20,6 +20,7 @@ class Witch(Monster):
         """
         super().__init__(spawn_point, is_hardcore)
         self.potion_cooldown: float = 30.0  # cooldown in seconds
+        self.potion_timer: float = 0.0
         # i need to define the potion in a hardcore fun
         self.radius_check: int = 4  # 4-block radius
         self._is_fleeing = False
@@ -38,7 +39,7 @@ class Witch(Monster):
         )
         self.image = Images.witch_new
 
-    def throw_slow_potion(self, player: Player) -> None:
+    def throw_slow_potion(self, player: Player) -> bool:
         """
         Apply a slow potion when a living hardcore Witch is near the
         player.
@@ -47,14 +48,21 @@ class Witch(Monster):
         made by: Mohammad Abu Aresh
         """
         if not self.is_hardcore or not self.live:
-            return
+            return False
 
         distance = math.sqrt(
             (self.x - player.x) ** 2 + (self.y - player.y) ** 2
         )
-        if distance <= self.radius_check:
-            potion = SlowPotion((self.x, self.y), duration=5)
-            potion.apply_effect(player)
+        if distance > self.radius_check:
+            return False
+        potion = SlowPotion((self.x, self.y), duration=5)
+        potion.apply_effect(player)
+        return True
+
+    def update_potion(self, player: Player, delta_time: float) -> None:
+        self.potion_timer = max(self.potion_timer - delta_time, 0.0)
+        if self.potion_timer == 0.0 and self.throw_slow_potion(player):
+            self.potion_timer = self.potion_cooldown
 
     def _choose_next_point(
         self,

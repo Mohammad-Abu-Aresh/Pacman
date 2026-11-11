@@ -83,6 +83,8 @@ class Player(Creature):
 
         self.score: int = 0
         self.speed: float = Block.size / 550
+        self._normal_speed: float = self.speed
+        self._slow_left: float = 0.0
         self._is_super = False
         self.load_size()
         # if is_hardcore:
@@ -236,3 +238,14 @@ class Player(Creature):
         made by: Mohammad Abu Aresh
         """
         self._speed = new_speed
+        if self._slow_left <= 0:
+            self._normal_speed = self.speed
+        self.speed = self._normal_speed * new_speed / 100
+        self._slow_left = float(time)
+
+    def update_slow(self, delta_time: float) -> None:
+        if self._slow_left <= 0:
+            return
+        self._slow_left -= delta_time
+        if self._slow_left <= 0:
+            self.speed = self._normal_speed
