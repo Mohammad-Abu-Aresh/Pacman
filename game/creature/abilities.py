@@ -2,7 +2,8 @@ import math
 from .player import Direction, Player
 from ..block import Mape
 from .effects import (
-    build_arrow_image, build_flask_image, render_rect,
+    build_arrow_image, build_flask_image, build_pearl_image,
+    render_rect,
 )
 from abc import ABC, abstractmethod
 import pygame
@@ -146,7 +147,13 @@ class Arrow(Abilities):
 
 
 class EnderPearl(Abilities):
-    def __init__(self, target_point: tuple[int, int]) -> None:
+    FLIGHT_SPEED: float = 12.0
+
+    def __init__(
+        self,
+        target_point: tuple[int, int],
+        start_point: tuple[float, float] | None = None,
+    ) -> None:
         """
         Store the destination coordinates for an EnderPearl ability.
         The values are retained for the teleport action that uses
@@ -155,15 +162,26 @@ class EnderPearl(Abilities):
         """
         self.target_x: int = target_point[0]
         self.target_y: int = target_point[1]
+        start = start_point or (float(target_point[0]), float(target_point[1]))
+        self.x: float = start[0]
+        self.y: float = start[1]
+        self.arrived: bool = start_point is None
+        self.image: pygame.Surface = build_pearl_image()
 
-    def move(self) -> None:
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        return render_rect(self.image, self.x, self.y, mape)
+
+    def move(self, delta_time: float = 0.0) -> None:
         """
         Provide the movement hook for an EnderPearl instance.
         The current implementation does not update the pearl
         position.
         made by: Mohammad Abu Aresh
         """
-        pass
+        goal = (float(self.target_x), float(self.target_y))
+        self.x, self.y, self.arrived = fly_towards(
+            (self.x, self.y), goal, self.FLIGHT_SPEED, delta_time
+        )
 
     def draw(self, image: pygame.Surface) -> None:
         """

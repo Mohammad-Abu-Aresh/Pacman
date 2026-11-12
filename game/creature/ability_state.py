@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from .effects import POTION_COLOR
+from .effects import ENDER_COLOR, POTION_COLOR
 
 if TYPE_CHECKING:
     from .creature import Control_creature
@@ -18,6 +18,10 @@ def update_group_abilities(
         controller.effects.trail(
             player.x, player.y, POTION_COLOR, delta_time
         )
+    for x, y in controller.Enderman.update_teleport(
+        player, controller.maze_mape.every_cell, delta_time
+    ):
+        controller.effects.burst(x, y, ENDER_COLOR)
     controller.effects.update(delta_time)
     return controller.Skeleton.update_arrows(
         player, controller.maze_mape, delta_time,

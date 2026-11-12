@@ -5,7 +5,7 @@ from photos.loderimages import Images
 from .block import Block
 
 if TYPE_CHECKING:
-    from .creature.abilities import Arrow, SlowPotion
+    from .creature.abilities import Arrow, EnderPearl, SlowPotion
     from .creature.creature import Creature
     from .gameplay import GameSystem
 
@@ -28,7 +28,9 @@ def draw_game(game: GameSystem) -> None:
 
 def draw_effects(game: GameSystem) -> None:
     creatures = game.player_creature
-    flying: list[SlowPotion] = [*creatures.witch.potions]
+    flying: list[SlowPotion | EnderPearl] = [*creatures.witch.potions]
+    if creatures.Enderman.current_pearl is not None:
+        flying.append(creatures.Enderman.current_pearl)
     for item in flying:
         Images.screen.blit(item.image, item.get_render_rect(game.maze_map))
     creatures.effects.draw(game.maze_map)

@@ -3,13 +3,14 @@ import pygame
 
 from .abilities import EnderPearl
 from .monster import Monster
-from .player import Player
+from .player import Direction, Player
 from ..block import Mape, Block
 from photos import Images
 from .algo_monster import AlgoMonster
 
 
 class Enderman(Monster):
+    SAFE_DISTANCE: int = 4
 
     def __init__(
         self, spawn_point: tuple[int, int], is_hardcore: bool = False
@@ -21,7 +22,8 @@ class Enderman(Monster):
         made by: Mohammad Abu Aresh
         """
         super().__init__(spawn_point, is_hardcore)
-        self.teleport_cooldown: float = 20.0  # every 20 seconds
+        self.teleport_cooldown: float = 10.0  # every 20 seconds
+        self.teleport_timer: float = self.teleport_cooldown
         self.current_pearl: EnderPearl | None = None
         self.chaser: Monster | None = None
         self.load_size()
@@ -60,22 +62,75 @@ class Enderman(Monster):
         Images._drow(self.image, location=(px, py))
         self._draw_front_blocks(mape)
 
-    def throw_pearl_and_teleport(self, maze_bounds: tuple[int, int]) -> None:
+    def throw_pearl_and_teleport(
+        self, grid: list[list[bool]], player: Player
+    ) -> bool:
         """
         Create an EnderPearl destination and move a living hardcore
         Enderman.
         Choose random coordinates within the supplied maze bounds.
         made by: Mohammad Abu Aresh
         """
-        if not self.is_hardcore or not self.live:
-            return
+        if not self.is_hardcore or not self.live or self.frightened:
+            return False
 
-        rand_x = random.randint(0, maze_bounds[0])
-        rand_y = random.randint(0, maze_bounds[1])
+        destination = self._pick_destination(grid, player)
+        if destination is None:
+            return False
 
-        self.current_pearl = EnderPearl((rand_x, rand_y))
-        self.x = rand_x
-        self.y = rand_y
+        self.current_pearl = EnderPearl(destination, (self.x, self.y))
+        return True
+
+    def _pick_destination(
+        self, grid: list[list[bool]], player: Player
+    ) -> tuple[int, int] | None:
+        here = (round(self.x), round(self.y))
+        open_cells = [
+            (x, y)
+            for y, row in enumerate(grid)
+            for x, is_wall in enumerate(row)
+            if not is_wall and (x, y) != here
+        ]
+        far_cells = [
+            cell for cell in open_cells
+            if abs(cell[0] - round(player.x))
+            + abs(cell[1] - round(player.y)) >= self.SAFE_DISTANCE
+        ]
+        choices = far_cells or open_cells
+        return random.choice(choices) if choices else None
+
+    def update_teleport(
+        self, player: Player, grid: list[list[bool]], delta_time: float
+    ) -> list[tuple[float, float]]:
+        bursts: list[tuple[float, float]] = []
+        self.teleport_timer = max(self.teleport_timer - delta_time, 0.0)
+        pearl = self.current_pearl
+        if pearl is not None:
+            pearl.move(delta_time)
+            if pearl.arrived:
+                self.current_pearl = None
+                if self.live:
+                    self._land(pearl)
+                    bursts.append((self.x, self.y))
+        elif self.teleport_timer == 0.0:
+            origin = (self.x, self.y)
+            if self.throw_pearl_and_teleport(grid, player):
+                self.teleport_timer = self.teleport_cooldown
+                bursts.append(origin)
+        return bursts
+
+    def _land(self, pearl: EnderPearl) -> None:
+        self.x = float(pearl.target_x)
+        self.y = float(pearl.target_y)
+        self.locaion = (self.x, self.y)
+        self.next_point = None
+        self.movement_direction = Direction.none
+        self.reverse_pending = False
+
+    def reset_ai(self) -> None:
+        super().reset_ai()
+        self.current_pearl = None
+        self.teleport_timer = self.teleport_cooldown
 
     def follow(
         self,

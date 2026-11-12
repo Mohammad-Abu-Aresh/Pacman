@@ -6,6 +6,7 @@ from ..block import Block, Mape
 
 Color = tuple[int, int, int]
 POTION_COLOR: Color = (140, 175, 235)
+ENDER_COLOR: Color = (170, 60, 220)
 
 
 def cell_center(mape: Mape, x: float, y: float) -> tuple[int, int]:
@@ -44,6 +45,15 @@ def build_flask_image() -> pygame.Surface:
     pygame.draw.rect(image, (235, 240, 255), neck)
     shine = pygame.Rect(size // 4, size * 2 // 5, max(size // 7, 2), size // 4)
     pygame.draw.rect(image, (255, 255, 255), shine)
+    return image
+
+
+def build_pearl_image() -> pygame.Surface:
+    size = max(Block.size // 3, 8)
+    image = pygame.Surface((size, size), pygame.SRCALPHA)
+    center = (size // 2, size // 2)
+    pygame.draw.circle(image, (25, 90, 80), center, size // 2)
+    pygame.draw.circle(image, (80, 210, 170), center, max(size // 4, 2))
     return image
 
 
