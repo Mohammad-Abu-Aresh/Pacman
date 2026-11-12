@@ -56,14 +56,19 @@ def build_flask_image() -> pygame.Surface:
     Scale the sprite from the current block size.
     made by: Mohammad Abu Aresh
     """
-    size = max(Block.size // 2, 10)
+    size = max(Block.size * 4 // 5, 16)
     image = pygame.Surface((size, size), pygame.SRCALPHA)
-    body = pygame.Rect(size // 6, size // 3, size * 2 // 3, size * 2 // 3)
-    pygame.draw.rect(image, POTION_COLOR, body)
-    pygame.draw.rect(image, (235, 240, 255), body, 1)
-    neck = pygame.Rect(size * 3 // 8, 0, max(size // 4, 2), size // 3 + 1)
+    pygame.draw.circle(
+        image, (*POTION_COLOR, 90), (size // 2, size // 2), size // 2
+    )
+    body = pygame.Rect(size // 5, size // 3, size * 3 // 5, size * 3 // 5)
+    pygame.draw.rect(image, POTION_COLOR, body, border_radius=size // 8)
+    pygame.draw.rect(image, (255, 255, 255), body, 2, border_radius=size // 8)
+    neck = pygame.Rect(size * 2 // 5, size // 10, size // 5, size // 4)
     pygame.draw.rect(image, (235, 240, 255), neck)
-    shine = pygame.Rect(size // 4, size * 2 // 5, max(size // 7, 2), size // 4)
+    cork = pygame.Rect(size * 3 // 8, 0, size // 4, size // 8 + 1)
+    pygame.draw.rect(image, (150, 105, 60), cork)
+    shine = pygame.Rect(size // 4, size * 2 // 5, max(size // 7, 3), size // 4)
     pygame.draw.rect(image, (255, 255, 255), shine)
     return image
 
@@ -74,11 +79,14 @@ def build_pearl_image() -> pygame.Surface:
     Scale the sprite from the current block size.
     made by: Mohammad Abu Aresh
     """
-    size = max(Block.size // 3, 8)
+    size = max(Block.size * 3 // 5, 12)
     image = pygame.Surface((size, size), pygame.SRCALPHA)
     center = (size // 2, size // 2)
-    pygame.draw.circle(image, (25, 90, 80), center, size // 2)
-    pygame.draw.circle(image, (80, 210, 170), center, max(size // 4, 2))
+    pygame.draw.circle(image, (*ENDER_COLOR, 110), center, size // 2)
+    pygame.draw.circle(image, (20, 70, 65), center, size * 3 // 8)
+    pygame.draw.circle(image, (80, 210, 170), center, size // 4)
+    shine = (size * 5 // 12, size * 5 // 12)
+    pygame.draw.circle(image, (230, 255, 245), shine, max(size // 10, 2))
     return image
 
 
