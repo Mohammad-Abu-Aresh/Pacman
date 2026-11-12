@@ -60,7 +60,8 @@ class MonsterAbilityStateTests(unittest.TestCase):
     def test_frightened_skeleton_does_not_shoot(self) -> None:
         skeleton = Skeleton((1, 1), True)
         skeleton.frightened = True
-        skeleton.update_arrows(SimpleNamespace(x=10, y=1), open_lane(), 0.1)
+        player: Any = SimpleNamespace(x=10, y=1)
+        skeleton.update_arrows(player, open_lane(), 0.1)
         self.assertEqual(skeleton.active_arrows, [])
 
     def test_red_skeleton_shoots_even_while_super_is_running(self) -> None:
