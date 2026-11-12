@@ -70,6 +70,11 @@ class Images:
 
     @classmethod
     def _update_wall(cls, size: int) -> None:
+        """
+        Rescale the wall image so neighbouring walls touch seamlessly.
+        Crop the transparent border and keep the old visible position.
+        made by: Mohammad Abu Aresh
+        """
         box = cls.wall.get_bounding_rect()
         width, height = cls.wall.get_size()
         scale_x = size * 2.1 / width

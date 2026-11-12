@@ -27,6 +27,11 @@ def draw_game(game: GameSystem) -> None:
 
 
 def draw_effects(game: GameSystem) -> None:
+    """
+    Draw the flying potions, the ender pearl and the particles.
+    Paint them over the maze so they stay visible above blocks.
+    made by: Mohammad Abu Aresh
+    """
     creatures = game.player_creature
     flying: list[SlowPotion | EnderPearl] = [*creatures.witch.potions]
     if creatures.Enderman.current_pearl is not None:
