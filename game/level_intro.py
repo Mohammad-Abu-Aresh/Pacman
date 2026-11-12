@@ -123,6 +123,22 @@ class LevelIntro:
         return HIDDEN_SECONDS + REVEAL_SECONDS
 
 
+def reveal_lines(lines: list[str], chars: int) -> list[str]:
+    """
+    Return the part of the wrapped story that is typed so far.
+    Count one extra character for the space removed by each wrap.
+    made by: Mohammad Abu Aresh
+    """
+    shown: list[str] = []
+    remaining = chars
+    for line in lines:
+        if remaining <= 0:
+            break
+        shown.append(line[:remaining])
+        remaining -= len(line) + 1
+    return shown
+
+
 def announce_spawns(game: GameSystem, delta_time: float) -> None:
     """
     Burst particles where a creature has just spawned.

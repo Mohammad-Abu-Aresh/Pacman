@@ -7,7 +7,11 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
 from game.creature.effects import ParticleEffects  # noqa: E402
-from game.level_intro import LevelIntro, announce_spawns  # noqa: E402
+from game.level_intro import (  # noqa: E402
+    LevelIntro,
+    announce_spawns,
+    reveal_lines,
+)
 
 
 def intro_at(seconds: float) -> LevelIntro:
@@ -129,6 +133,40 @@ class LevelIntroTimelineTests(unittest.TestCase):
         self.assertEqual(intro_at(0.0).story_chars(140), 0)
         self.assertEqual(intro_at(1.0).story_chars(140), 30)
         self.assertEqual(intro_at(60.0).story_chars(140), 140)
+
+
+class RevealLinesTests(unittest.TestCase):
+    def test_nothing_is_shown_before_typing_starts(self) -> None:
+        """Verify no line appears when no character is typed.
+        Check the very start of the level.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(reveal_lines(["ab cd", "ef"], 0), [])
+
+    def test_first_line_is_typed_character_by_character(self) -> None:
+        """Verify a partial first line is cut at the typed length.
+        Check two lengths inside the first line.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(reveal_lines(["ab cd", "ef"], 2), ["ab"])
+        self.assertEqual(reveal_lines(["ab cd", "ef"], 5), ["ab cd"])
+
+    def test_next_line_starts_after_the_wrapped_space(self) -> None:
+        """Verify the second line waits for the space removed by wrapping.
+        Check the last character of the first line and the next ones.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(reveal_lines(["ab cd", "ef"], 6), ["ab cd"])
+        self.assertEqual(reveal_lines(["ab cd", "ef"], 7), ["ab cd", "e"])
+
+    def test_full_story_is_shown_at_the_end(self) -> None:
+        """Verify every line is shown once all characters are typed.
+        Use the exact length of the joined words.
+        made by: Mohammad Abu Aresh
+        """
+        lines = ["ab cd", "ef"]
+        self.assertEqual(reveal_lines(lines, 8), lines)
+        self.assertEqual(reveal_lines(lines, 999), lines)
 
 
 class SpawnAnnouncementTests(unittest.TestCase):

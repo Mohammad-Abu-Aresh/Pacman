@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import pygame
 from photos.loderimages import Images
 from .block import Block
+from .level_intro import reveal_lines
 from .scene_layers import draw_countdown, draw_maze_layer
 
 if TYPE_CHECKING:
@@ -125,7 +126,8 @@ def draw_level_story(
     if line:
         lines.append(line)
 
-    for line in lines:
+    typed = game.intro.story_chars(len(" ".join(words)))
+    for line in reveal_lines(lines, typed):
         shadow_surface = game.font.render(
             line, True, (0, 0, 0)
         )
