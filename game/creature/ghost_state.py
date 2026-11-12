@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from .creature import Control_creature
     from .monster import Monster
 
+RESPAWN_SECONDS = 3.0
+
 
 def set_monster_frightened_visual(
     monster: Monster, enabled: bool
@@ -175,6 +177,42 @@ def reactivate_monster_at_home(monster: Monster) -> bool:
     made by: Mohammad Abu Aresh
     """
     return reactivate_eaten_monster(monster)
+
+
+def _return_speed(monster: Monster, grid: list[list[bool]]) -> float:
+    """
+    Compute the speed that brings an eaten monster home in time.
+    Divide its shortest path length by the remaining respawn time.
+    made by: Mohammad Abu Aresh
+    """
+    from .bfs import PathFinder
+
+    start = (round(monster.x), round(monster.y))
+    path = PathFinder.find_path(grid, start, monster.spawn_point)
+    length = len(path) - 1 if path else 0
+    return length / max(monster.respawn_left, 0.001)
+
+
+def update_eaten_return(
+    monster: Monster, grid: list[list[bool]], delta_time: float
+) -> bool:
+    """
+    Count the fixed respawn time of an eaten monster.
+    Place it on its spawn and revive it exactly when the time ends.
+    made by: Mohammad Abu Aresh
+    """
+    if monster.live:
+        return False
+    if monster.return_speed < 0:
+        monster.return_speed = _return_speed(monster, grid)
+    monster.respawn_left -= delta_time
+    if monster.respawn_left > 0:
+        return False
+    spawn_x, spawn_y = monster.spawn_point
+    monster.x = float(spawn_x)
+    monster.y = float(spawn_y)
+    monster.locaion = (monster.x, monster.y)
+    return reactivate_monster_at_home(monster)
 
 
 def check_ghost_collisions(

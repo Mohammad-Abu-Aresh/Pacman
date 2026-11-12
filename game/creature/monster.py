@@ -111,7 +111,7 @@ class Monster(Creature, ABC):
             return None
         if not self.live:
             return PathFinder.next_step(grid, current_cell, self.target_point)
-        if self.frightened or self.player_is_super:
+        if self.frightened or self.lifecycle.mode_clock_paused:
             return PathFinder.next_step_frightened(
                 grid,
                 current_cell,
@@ -153,10 +153,11 @@ class Monster(Creature, ABC):
         elif not self.lifecycle.mode_clock_paused:
             self._update_mode(delta_time)
 
+        if ghost_state.update_eaten_return(self, grid, delta_time):
+            return
+
         delta_time = min(delta_time, 0.05)
         current_cell = (round(self.x), round(self.y))
-        if ghost_state.reactivate_monster_at_home(self):
-            return
         if self.target_point is None:
             return
 
@@ -198,6 +199,8 @@ class Monster(Creature, ABC):
         step = 5.0 * (self.speed / 100.0) * delta_time
         if self.frightened:
             step *= 0.5
+        if not self.live:
+            step = self.return_speed * delta_time
 
         if next_y == self.y:
             self.x = self._step_towards(
@@ -211,15 +214,6 @@ class Monster(Creature, ABC):
         self.locaion = (self.x, self.y)
         if (self.x, self.y) == self.next_point:
             self.next_point = None
-
-    @property
-    def player_is_super(self) -> bool:
-        """
-        Report whether a Power Pellet is currently active.
-        The mode clock is paused exactly while the player is super.
-        made by: Mohammad Abu Aresh
-        """
-        return self.lifecycle.mode_clock_paused
 
     def set_hardcore_mode(self, enabled: bool) -> None:
         """
@@ -239,6 +233,8 @@ class Monster(Creature, ABC):
         made by: Mohammad Abu Aresh
         """
         self.live = False
+        self.respawn_left = ghost_state.RESPAWN_SECONDS
+        self.return_speed = -1.0
         self.is_following = False
         self.target_point = self.spawn_point
         self.next_point = None
