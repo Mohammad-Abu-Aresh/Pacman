@@ -202,6 +202,14 @@ class Player(Creature):
         self.score += points
         return self.score
 
+    def add_life(self) -> None:
+        """
+        Give the player one extra life.
+        Use it for the heart cheat in cheating mode.
+        made by: Mohammad Abu Aresh
+        """
+        self._lives += 1
+
     def respawn(self) -> None:
         """
         Return the player to its configured spawn point.

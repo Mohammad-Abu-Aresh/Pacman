@@ -10,6 +10,7 @@ from photos.loderimages import Images
 from typing import Dict, Any
 from .block import Mape
 from .game_modes import Mod
+from .cheat_codes import apply_heart_cheat
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .world_render import WorldRenderer
@@ -113,6 +114,7 @@ class GameSystem:
         self.level_max_time: int = self.config.get("level_max_time", 90)
         self.hardcore_mode = hardcore_mode
         self.cheating = cheating
+        self.heart_key_down: bool = False
         self.row = 7
         self.column = 7
         self.load_level()
@@ -175,6 +177,8 @@ class GameSystem:
         made by: Abdalghani Abtah
         update by: Mohammad Abu Aresh
         """
+        keys = pygame.key.get_pressed()
+        apply_heart_cheat(self, cheating and keys[pygame.K_h])
         if self.wait_timer > 0:
             self.wait_timer -= time
             if self.wait_timer <= 0:
@@ -186,7 +190,6 @@ class GameSystem:
             self.time_left -= time
         else:
             Mod.updatemod(Mod.GAME_OVER_SCREEN)
-        keys = pygame.key.get_pressed()
         self.player_creature.player.change_diric()
         self.player_creature.player.move()
         if self._eat_pacgums():
