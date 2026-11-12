@@ -98,8 +98,10 @@ class MonsterAbilityStateTests(unittest.TestCase):
         witch.frightened = True
         witch.update_potion(player, 1 / 60)
         self.assertEqual(player.speed, 0.1)
+        self.assertEqual(witch.potions, [])
         witch.frightened = False
-        witch.update_potion(player, 1 / 60)
+        for _ in range(60):
+            witch.update_potion(player, 1 / 60)
         self.assertAlmostEqual(player.speed, 0.035)
 
 

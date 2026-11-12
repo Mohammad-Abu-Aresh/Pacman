@@ -1,7 +1,9 @@
 import math
 from .player import Direction, Player
 from ..block import Mape
-from .effects import build_arrow_image, render_rect
+from .effects import (
+    build_arrow_image, build_flask_image, render_rect,
+)
 from abc import ABC, abstractmethod
 import pygame
 
@@ -37,6 +39,25 @@ class Abilities(ABC):
         made by: Mohammad Abu Aresh
         """
         pass
+
+
+def fly_towards(
+    position: tuple[float, float],
+    goal: tuple[float, float],
+    speed: float,
+    delta_time: float,
+) -> tuple[float, float, bool]:
+    dx = goal[0] - position[0]
+    dy = goal[1] - position[1]
+    distance = math.hypot(dx, dy)
+    step = speed * max(delta_time, 0.0)
+    if distance <= step:
+        return goal[0], goal[1], True
+    return (
+        position[0] + dx / distance * step,
+        position[1] + dy / distance * step,
+        False,
+    )
 
 
 class Arrow(Abilities):
@@ -154,6 +175,8 @@ class EnderPearl(Abilities):
 
 
 class SlowPotion(Abilities):
+    FLIGHT_SPEED: float = 14.0
+
     def __init__(
             self, position: tuple[float, float], duration: int = 5
             ) -> None:
@@ -166,6 +189,11 @@ class SlowPotion(Abilities):
         self.x: float = position[0]
         self.y: float = position[1]
         self.duration: int = duration  # slowdown duration in seconds
+        self.arrived: bool = False
+        self.image: pygame.Surface = build_flask_image()
+
+    def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        return render_rect(self.image, self.x, self.y, mape)
 
     def apply_effect(self, player: Player) -> None:
         """
@@ -175,13 +203,21 @@ class SlowPotion(Abilities):
         """
         player.update_speed(35, self.duration)  # slow down the player
 
-    def move(self) -> None:
+    def move(
+        self,
+        target: tuple[float, float] | None = None,
+        delta_time: float = 0.0,
+    ) -> None:
         """
         Provide the movement hook for a SlowPotion instance.
         No potion movement is implemented in this method yet.
         made by: Mohammad Abu Aresh
         """
-        pass
+        if target is None:
+            return
+        self.x, self.y, self.arrived = fly_towards(
+            (self.x, self.y), target, self.FLIGHT_SPEED, delta_time
+        )
 
     def draw(self, image: pygame.Surface) -> None:
         """

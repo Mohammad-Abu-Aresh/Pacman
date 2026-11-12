@@ -243,6 +243,10 @@ class Player(Creature):
         self.speed = self._normal_speed * new_speed / 100
         self._slow_left = float(time)
 
+    @property
+    def is_slowed(self) -> bool:
+        return self._slow_left > 0
+
     def update_slow(self, delta_time: float) -> None:
         if self._slow_left <= 0:
             return
