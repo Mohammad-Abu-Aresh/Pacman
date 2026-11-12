@@ -13,6 +13,7 @@ from .game_modes import Mod
 from .cheat_codes import apply_heart_cheat
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
+from .level_intro import LevelIntro, announce_spawns
 from .world_render import WorldRenderer
 from .game_renderer import (
     draw_game as render_game,
@@ -133,7 +134,8 @@ class GameSystem:
                 self.player_creature.witch,
                 )
         self.world_renderer = WorldRenderer()
-        self.wait_timer: float = 2.0
+        self.intro = LevelIntro()
+        self.wait_timer: float = 0.0
         self.pending_action: str | None = None
 
     def load_level(self) -> None:
@@ -166,8 +168,7 @@ class GameSystem:
         self.load_level()
         movement.traffic_update(Direction.none)
         self.player_creature.refresh(self.maze_map, self.current_level)
-        self.wait_timer = 1.0
-        self.pending_action = "frozen"
+        self.intro.restart()
 
     def update(self, time: float, cheating: bool = False) -> None:
         """
@@ -179,6 +180,11 @@ class GameSystem:
         """
         keys = pygame.key.get_pressed()
         apply_heart_cheat(self, cheating and keys[pygame.K_h])
+        if self.intro.update(time):
+            announce_spawns(self, time)
+            if keys[pygame.K_ESCAPE]:
+                Mod.updatemod(Mod.MAIN_MENU_SCREEN)
+            return
         if self.wait_timer > 0:
             self.wait_timer -= time
             if self.wait_timer <= 0:

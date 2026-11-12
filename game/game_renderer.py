@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pygame
 from photos.loderimages import Images
 from .block import Block
+from .scene_layers import draw_countdown, draw_maze_layer
 
 if TYPE_CHECKING:
-    from .creature.abilities import Arrow, EnderPearl, SlowPotion
-    from .creature.creature import Creature
+    from .creature.abilities import EnderPearl, SlowPotion
     from .gameplay import GameSystem
 
 
@@ -18,30 +18,10 @@ def draw_game(game: GameSystem) -> None:
     made by: Mohammad Abu Aresh
     """
     Images.screen.blit(game.background, (0, 0))
-    draw_backdrop(game)
-    actors: list[Creature | Arrow] = [
-        *game.mobs, *game.player_creature.Skeleton.active_arrows
-    ]
-    game.world_renderer.draw(game.maze_map, actors, game.collectibles)
+    draw_maze_layer(game)
     draw_effects(game)
     draw_hud(game)
-
-
-def draw_backdrop(game: GameSystem) -> None:
-    """
-    Fill the area behind the maze with solid black.
-    Cover the wall footprint so floors and gums stand out clearly.
-    made by: Mohammad Abu Aresh
-    """
-    mape = game.maze_map
-    rows = len(mape.every_cell)
-    columns = len(mape.every_cell[0])
-    left = mape.origin_x + int(Block.size * 0.55)
-    top = mape.origin_y + int(Block.size * 0.38)
-    area = pygame.Rect(
-        left, top, columns * Block.size, int((rows + 0.2) * Block.size)
-    )
-    pygame.draw.rect(Images.screen, (0, 0, 0), area)
+    draw_countdown(game)
 
 
 def draw_effects(game: GameSystem) -> None:
