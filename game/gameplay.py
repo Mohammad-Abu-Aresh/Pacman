@@ -254,8 +254,8 @@ class GameSystem:
         """
         render_game(self)
 
-# يا رجل لا تعتمد على الغباء الاصتناعي واعمل لحالك ريفيو لانه
-#  شو كم في ميثود بلا فائدة لانك كله حاطه في render_game
+# Do not rely on AI, review the code yourself, because
+#  there are several useless methods, as everything is in render_game
     # def _draw_maze(
     #         self,
     #         origin_x: int,
