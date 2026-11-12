@@ -5,7 +5,7 @@ from photos.loderimages import Images
 from .block import Block
 
 if TYPE_CHECKING:
-    from .creature.abilities import Arrow
+    from .creature.abilities import Arrow, SlowPotion
     from .creature.creature import Creature
     from .gameplay import GameSystem
 
@@ -22,7 +22,16 @@ def draw_game(game: GameSystem) -> None:
         *game.mobs, *game.player_creature.Skeleton.active_arrows
     ]
     game.world_renderer.draw(game.maze_map, actors, game.collectibles)
+    draw_effects(game)
     draw_hud(game)
+
+
+def draw_effects(game: GameSystem) -> None:
+    creatures = game.player_creature
+    flying: list[SlowPotion] = [*creatures.witch.potions]
+    for item in flying:
+        Images.screen.blit(item.image, item.get_render_rect(game.maze_map))
+    creatures.effects.draw(game.maze_map)
 
 
 def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:

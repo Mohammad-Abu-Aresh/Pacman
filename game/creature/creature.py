@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from ..block import Mape, Block
 from photos.loderimages import Images
+from .ability_state import update_group_abilities
+from .effects import ParticleEffects
 from .ghost_modes import set_group_level
 from .ghost_state import (
     activate_group_frightened,
@@ -184,6 +186,7 @@ class Control_creature:
         )
         self.frightened_timer = 0.0
         self.frightened_cycle = 0
+        self.effects = ParticleEffects()
 
     def activate_frightened(self, duration: float) -> None:
         """
@@ -229,13 +232,7 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def update_abilities(self, delta_time: float) -> bool:
-        self.BabyZombie.sync_hardcore_speed()
-        self.player.update_slow(delta_time)
-        self.witch.update_potion(self.player, delta_time)
-        return self.Skeleton.update_arrows(
-            self.player, self.maze_mape, delta_time,
-            self.frightened_timer <= 0,
-        )
+        return update_group_abilities(self, delta_time)
 
     def check_collision(self, points_per_ghost: int = 200) -> bool:
         """
@@ -261,6 +258,7 @@ class Control_creature:
         self.player.direction = Direction.none
 
         reset_group_frightened(self)
+        self.effects.clear()
         for mob in (
             self.BabyZombie,
             self.Skeleton,
