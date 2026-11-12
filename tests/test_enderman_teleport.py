@@ -97,10 +97,10 @@ class EndermanTeleportTests(unittest.TestCase):
         """
         run(self.enderman, self.player, self.grid, 10.0)
         run(self.enderman, self.player, self.grid, 5.0)
-        run(self.enderman, self.player, self.grid, 4.5)
-        self.assertIsNone(self.enderman.current_pearl)
-        run(self.enderman, self.player, self.grid, 1.0)
-        self.assertIsNotNone(self.enderman.current_pearl)
+        early = run(self.enderman, self.player, self.grid, 4.5)
+        self.assertEqual(early, [])
+        later = run(self.enderman, self.player, self.grid, 1.0)
+        self.assertGreaterEqual(len(later), 1)
 
     def test_waits_while_frightened_then_teleports_when_red(self) -> None:
         """Verify a frightened Enderman does not teleport.
