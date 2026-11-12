@@ -214,6 +214,11 @@ class Monster(Creature, ABC):
 
     @property
     def player_is_super(self) -> bool:
+        """
+        Report whether a Power Pellet is currently active.
+        The mode clock is paused exactly while the player is super.
+        made by: Mohammad Abu Aresh
+        """
         return self.lifecycle.mode_clock_paused
 
     def set_hardcore_mode(self, enabled: bool) -> None:

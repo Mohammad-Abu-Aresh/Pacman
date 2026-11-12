@@ -84,6 +84,11 @@ class Enderman(Monster):
     def _pick_destination(
         self, grid: list[list[bool]], player: Player
     ) -> tuple[int, int] | None:
+        """
+        Choose a random open cell for the next teleport.
+        Prefer cells far from the player and fall back to any open cell.
+        made by: Mohammad Abu Aresh
+        """
         here = (round(self.x), round(self.y))
         open_cells = [
             (x, y)
@@ -102,6 +107,11 @@ class Enderman(Monster):
     def update_teleport(
         self, player: Player, grid: list[list[bool]], delta_time: float
     ) -> list[tuple[float, float]]:
+        """
+        Count the teleport cooldown and move the thrown ender pearl.
+        Return grid positions where particles should burst this frame.
+        made by: Mohammad Abu Aresh
+        """
         bursts: list[tuple[float, float]] = []
         self.teleport_timer = max(self.teleport_timer - delta_time, 0.0)
         pearl = self.current_pearl
@@ -120,6 +130,11 @@ class Enderman(Monster):
         return bursts
 
     def _land(self, pearl: EnderPearl) -> None:
+        """
+        Place the Enderman on the pearl target after it lands.
+        Clear the stored movement so the next route starts fresh.
+        made by: Mohammad Abu Aresh
+        """
         self.x = float(pearl.target_x)
         self.y = float(pearl.target_y)
         self.locaion = (self.x, self.y)
@@ -128,6 +143,11 @@ class Enderman(Monster):
         self.reverse_pending = False
 
     def reset_ai(self) -> None:
+        """
+        Reset the monster AI and discard any pearl in flight.
+        Restart the teleport cooldown from its full value.
+        made by: Mohammad Abu Aresh
+        """
         super().reset_ai()
         self.current_pearl = None
         self.teleport_timer = self.teleport_cooldown

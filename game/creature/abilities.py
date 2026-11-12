@@ -48,6 +48,11 @@ def fly_towards(
     speed: float,
     delta_time: float,
 ) -> tuple[float, float, bool]:
+    """
+    Move a point toward a goal by at most speed times delta time.
+    Return the new position and whether the goal was reached.
+    made by: Mohammad Abu Aresh
+    """
     dx = goal[0] - position[0]
     dy = goal[1] - position[1]
     distance = math.hypot(dx, dy)
@@ -85,20 +90,45 @@ class Arrow(Abilities):
         self.image: pygame.Surface = build_arrow_image(direction)
 
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the screen rectangle centered on the arrow position.
+        Delegate the cell to pixel conversion to the effects helper.
+        made by: Mohammad Abu Aresh
+        """
         return render_rect(self.image, self.x, self.y, mape)
 
     @staticmethod
     def _to_cell(value: float) -> int:
+        """
+        Convert a float coordinate to its half open grid cell index.
+        Cell i covers values from i minus 0.5 up to i plus 0.5.
+        made by: Mohammad Abu Aresh
+        """
         return math.floor(value + 0.5)
 
     def cell(self) -> tuple[int, int]:
+        """
+        Return the grid cell currently occupied by the arrow.
+        Use the same half open cell rule as the sweep collision.
+        made by: Mohammad Abu Aresh
+        """
         return self._to_cell(self.x), self._to_cell(self.y)
 
     def hits(self, cell: tuple[int, int]) -> bool:
+        """
+        Report whether the arrow crossed the given cell in this update.
+        Use the swept cells so a fast frame cannot skip the player.
+        made by: Mohammad Abu Aresh
+        """
         return cell in self.swept_cells
 
     @staticmethod
     def _is_blocked(grid: list[list[bool]], x: int, y: int) -> bool:
+        """
+        Return True when a grid cell is a wall or outside the maze.
+        Index the grid as grid[y][x] like the rest of the project.
+        made by: Mohammad Abu Aresh
+        """
         return not (
             0 <= y < len(grid) and 0 <= x < len(grid[y])
         ) or grid[y][x]
@@ -169,6 +199,11 @@ class EnderPearl(Abilities):
         self.image: pygame.Surface = build_pearl_image()
 
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the screen rectangle centered on the pearl position.
+        Delegate the cell to pixel conversion to the effects helper.
+        made by: Mohammad Abu Aresh
+        """
         return render_rect(self.image, self.x, self.y, mape)
 
     def move(self, delta_time: float = 0.0) -> None:
@@ -211,6 +246,11 @@ class SlowPotion(Abilities):
         self.image: pygame.Surface = build_flask_image()
 
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
+        """
+        Return the screen rectangle centered on the potion position.
+        Delegate the cell to pixel conversion to the effects helper.
+        made by: Mohammad Abu Aresh
+        """
         return render_rect(self.image, self.x, self.y, mape)
 
     def apply_effect(self, player: Player) -> None:

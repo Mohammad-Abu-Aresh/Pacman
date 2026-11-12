@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 def update_group_abilities(
     controller: Control_creature, delta_time: float
 ) -> bool:
+    """
+    Advance zombie speed, slow effect, potion, teleport and arrows.
+    Return True when an arrow hit the player in this update.
+    made by: Mohammad Abu Aresh
+    """
     player = controller.player
     controller.BabyZombie.sync_hardcore_speed()
     player.update_slow(delta_time)

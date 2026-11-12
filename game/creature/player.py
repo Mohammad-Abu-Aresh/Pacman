@@ -245,9 +245,19 @@ class Player(Creature):
 
     @property
     def is_slowed(self) -> bool:
+        """
+        Report whether a slow potion effect is still active.
+        Use it to keep emitting particles around the player.
+        made by: Mohammad Abu Aresh
+        """
         return self._slow_left > 0
 
     def update_slow(self, delta_time: float) -> None:
+        """
+        Count down the slow potion effect with the frame time.
+        Restore the normal speed when the effect has expired.
+        made by: Mohammad Abu Aresh
+        """
         if self._slow_left <= 0:
             return
         self._slow_left -= delta_time

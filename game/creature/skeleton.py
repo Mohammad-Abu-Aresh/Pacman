@@ -99,6 +99,11 @@ class Skeleton(Monster):
             self.shoot_timer = self.shoot_cooldown
 
     def _aim(self, player: Player) -> tuple[int, int]:
+        """
+        Return the straight direction from the skeleton to the player.
+        Return no direction unless both share a row or a column.
+        made by: Mohammad Abu Aresh
+        """
         delta_x = round(player.x) - round(self.x)
         delta_y = round(player.y) - round(self.y)
         if delta_y == 0 and delta_x != 0:
@@ -114,6 +119,11 @@ class Skeleton(Monster):
         delta_time: float,
         can_hurt: bool = True,
     ) -> bool:
+        """
+        Move the arrows, register one hit per arrow and try to shoot.
+        Return True when an arrow hit the player and can hurt him.
+        made by: Mohammad Abu Aresh
+        """
         self.shoot_timer = max(self.shoot_timer - delta_time, 0.0)
         player_cell = (round(player.x), round(player.y))
         player_hit = False
@@ -131,6 +141,11 @@ class Skeleton(Monster):
         return player_hit
 
     def reset_ai(self) -> None:
+        """
+        Reset the monster AI and remove every arrow in flight.
+        Clear the shooting cooldown as well.
+        made by: Mohammad Abu Aresh
+        """
         super().reset_ai()
         self.active_arrows.clear()
         self.shoot_timer = 0.0

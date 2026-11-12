@@ -60,6 +60,11 @@ class Witch(Monster):
         return True
 
     def update_potion(self, player: Player, delta_time: float) -> bool:
+        """
+        Fly the thrown potions toward the player and throw a new one.
+        Return True when a potion landed and slowed the player.
+        made by: Mohammad Abu Aresh
+        """
         self.potion_timer = max(self.potion_timer - delta_time, 0.0)
         landed = False
         for potion in self.potions:
@@ -73,6 +78,11 @@ class Witch(Monster):
         return landed
 
     def reset_ai(self) -> None:
+        """
+        Reset the monster AI and remove every potion in flight.
+        The potion cooldown keeps its current value.
+        made by: Mohammad Abu Aresh
+        """
         super().reset_ai()
         self.potions.clear()
 

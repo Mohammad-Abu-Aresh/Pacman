@@ -43,6 +43,11 @@ class BabyZombie(Monster):
         self.image = Images.zombie_new
 
     def sync_hardcore_speed(self) -> None:
+        """
+        Apply the hardcore speed boost only while the zombie is red.
+        A frightened or dead zombie keeps the normal speed.
+        made by: Mohammad Abu Aresh
+        """
         if self.live:
             fast = self.is_hardcore and not self.frightened
             self.speed = 110 if fast else 65

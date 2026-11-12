@@ -232,6 +232,11 @@ class Control_creature:
         # def update_spown_point(obj: str) -> None:
 
     def update_abilities(self, delta_time: float) -> bool:
+        """
+        Run the hardcore abilities of every monster for one frame.
+        Delegate to the ability state helper and report arrow hits.
+        made by: Mohammad Abu Aresh
+        """
         return update_group_abilities(self, delta_time)
 
     def check_collision(self, points_per_ghost: int = 200) -> bool:
