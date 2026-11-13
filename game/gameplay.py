@@ -14,6 +14,7 @@ from .cheat_codes import apply_heart_cheat
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .level_intro import LevelIntro, announce_spawns
+from .pause_menu import PauseMenu
 from .world_render import WorldRenderer
 from .game_renderer import (
     draw_game as render_game,
@@ -135,6 +136,7 @@ class GameSystem:
                 )
         self.world_renderer = WorldRenderer()
         self.intro = LevelIntro()
+        self.pause = PauseMenu(Images.width, Images.height)
         self.wait_timer: float = 0.0
         self.pending_action: str | None = None
 
@@ -179,11 +181,11 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         keys = pygame.key.get_pressed()
+        if self.pause.update(keys[pygame.K_ESCAPE]):
+            return
         apply_heart_cheat(self, cheating and keys[pygame.K_h])
         if self.intro.update(time):
             announce_spawns(self, time)
-            if keys[pygame.K_ESCAPE]:
-                Mod.updatemod(Mod.MAIN_MENU_SCREEN)
             return
         if self.wait_timer > 0:
             self.wait_timer -= time
@@ -230,8 +232,6 @@ class GameSystem:
             return
         if keys[pygame.K_n] and cheating:
             self.next_level()
-        if keys[pygame.K_ESCAPE]:
-            Mod.updatemod(Mod.MAIN_MENU_SCREEN)
 
     def _handle_player_death(self) -> None:
         """

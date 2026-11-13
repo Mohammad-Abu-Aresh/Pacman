@@ -23,6 +23,7 @@ def draw_game(game: GameSystem) -> None:
     draw_effects(game)
     draw_hud(game)
     draw_countdown(game)
+    game.pause.draw(Images.screen)
 
 
 def draw_effects(game: GameSystem) -> None:
