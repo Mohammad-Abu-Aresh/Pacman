@@ -184,6 +184,8 @@ class GameSystem:
         if self.pause.update(keys[pygame.K_ESCAPE]):
             return
         apply_heart_cheat(self, cheating and keys[pygame.K_h])
+        if not keys[pygame.K_ESCAPE]:
+            self.intro.skip_on_key(keys)
         if self.intro.update(time):
             announce_spawns(self, time)
             return

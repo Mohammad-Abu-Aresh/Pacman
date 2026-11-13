@@ -135,6 +135,63 @@ class LevelIntroTimelineTests(unittest.TestCase):
         self.assertEqual(intro_at(60.0).story_chars(140), 140)
 
 
+class IntroSkipTests(unittest.TestCase):
+    def test_new_key_press_skips_everything(self) -> None:
+        """Verify a new key press jumps to the end of the intro.
+        Check the maze, the creatures, the gums and the countdown.
+        made by: Mohammad Abu Aresh
+        """
+        intro = LevelIntro()
+        intro.skip_on_key((False, False))
+        intro.update(0.5)
+        intro.skip_on_key((False, True))
+        self.assertFalse(intro.active)
+        self.assertEqual(intro.maze_progress(), 1.0)
+        self.assertEqual(intro.visible_actor_count(5), 5)
+        self.assertEqual(intro.visible_collectible_count(200), 200)
+        self.assertIsNone(intro.countdown_number())
+
+    def test_keys_held_from_the_start_do_not_skip(self) -> None:
+        """Verify keys that stay held do not count as a new press.
+        Check two frames with the same key state.
+        made by: Mohammad Abu Aresh
+        """
+        intro = LevelIntro()
+        intro.skip_on_key((True, False))
+        intro.skip_on_key((True, False))
+        self.assertTrue(intro.active)
+
+    def test_releasing_a_key_does_not_skip(self) -> None:
+        """Verify letting go of a key is not a new press.
+        Check a press followed by a release before the skip.
+        made by: Mohammad Abu Aresh
+        """
+        intro = LevelIntro()
+        intro.skip_on_key((True, False))
+        intro.skip_on_key((False, False))
+        self.assertTrue(intro.active)
+
+    def test_restart_forgets_the_held_keys(self) -> None:
+        """Verify a restart clears the remembered key state.
+        Keys held at the start of the next level must not skip it.
+        made by: Mohammad Abu Aresh
+        """
+        intro = LevelIntro()
+        intro.skip_on_key((False, False))
+        intro.restart()
+        intro.skip_on_key((True, True))
+        self.assertTrue(intro.active)
+
+    def test_skip_keeps_the_time_when_already_finished(self) -> None:
+        """Verify skipping never moves the clock backward.
+        Use an intro that has long been over.
+        made by: Mohammad Abu Aresh
+        """
+        intro = intro_at(60.0)
+        intro.skip()
+        self.assertEqual(intro.elapsed, 60.0)
+
+
 class RevealLinesTests(unittest.TestCase):
     def test_nothing_is_shown_before_typing_starts(self) -> None:
         """Verify no line appears when no character is typed.

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 if TYPE_CHECKING:
     from .gameplay import GameSystem
@@ -23,6 +23,7 @@ class LevelIntro:
         """
         self.elapsed: float = 0.0
         self.announced: int = 0
+        self.held: tuple[bool, ...] = ()
 
     def restart(self) -> None:
         """
@@ -32,6 +33,31 @@ class LevelIntro:
         """
         self.elapsed = 0.0
         self.announced = 0
+        self.held = ()
+
+    def skip(self) -> None:
+        """
+        Jump to the end of the intro so the gameplay starts at once.
+        The maze, creatures and gums are fully shown afterwards.
+        made by: Mohammad Abu Aresh
+        """
+        self.elapsed = max(self.elapsed, self._duration())
+
+    def skip_on_key(self, keys: Sequence[bool]) -> None:
+        """
+        Skip the intro when a key is newly pressed during it.
+        Keys already held when the level starts do not count.
+        made by: Mohammad Abu Aresh
+        """
+        if not self.active:
+            return
+        pressed = tuple(keys)
+        fresh = any(
+            now and not before for now, before in zip(pressed, self.held)
+        )
+        self.held = pressed
+        if fresh:
+            self.skip()
 
     def update(self, delta_time: float) -> bool:
         """
@@ -49,9 +75,7 @@ class LevelIntro:
         The intro ends after the countdown has reached zero.
         made by: Mohammad Abu Aresh
         """
-        return self.elapsed < self._spawn_start() + (
-            SPAWN_SECONDS + COUNTDOWN_SECONDS
-        )
+        return self.elapsed < self._duration()
 
     def maze_progress(self) -> float:
         """
@@ -113,6 +137,14 @@ class LevelIntro:
         made by: Mohammad Abu Aresh
         """
         return min(total, int(self.elapsed * STORY_SPEED))
+
+    def _duration(self) -> float:
+        """
+        Return the total length of the intro in seconds.
+        Add the spawn phase and the countdown to the hidden phase.
+        made by: Mohammad Abu Aresh
+        """
+        return self._spawn_start() + SPAWN_SECONDS + COUNTDOWN_SECONDS
 
     def _spawn_start(self) -> float:
         """
