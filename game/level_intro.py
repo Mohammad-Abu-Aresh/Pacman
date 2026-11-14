@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
+import pygame
 
 if TYPE_CHECKING:
     from .gameplay import GameSystem
@@ -12,6 +13,10 @@ ACTOR_INTERVAL = 0.25
 COLLECTIBLE_STEPS = 10
 STORY_SPEED = 30.0
 SPAWN_COLOR = (235, 235, 255)
+KEY_CODES: tuple[int, ...] = tuple(sorted({
+    value for name, value in vars(pygame).items()
+    if name.startswith("K_") and isinstance(value, int)
+}))
 
 
 class LevelIntro:
@@ -153,6 +158,21 @@ class LevelIntro:
         made by: Mohammad Abu Aresh
         """
         return HIDDEN_SECONDS + REVEAL_SECONDS
+
+
+def pressed_keys(keys: Any) -> tuple[bool, ...]:
+    """
+    Read the state of every known key by index.
+    Never iterate the pygame key state because some versions refuse it.
+    made by: Mohammad Abu Aresh
+    """
+    states = []
+    for code in KEY_CODES:
+        try:
+            states.append(bool(keys[code]))
+        except (IndexError, KeyError):
+            states.append(False)
+    return tuple(states)
 
 
 def reveal_lines(lines: list[str], chars: int) -> list[str]:

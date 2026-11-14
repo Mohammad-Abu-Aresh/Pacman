@@ -1,6 +1,7 @@
 import os
 import unittest
 from types import SimpleNamespace
+from collections.abc import Iterator
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -8,6 +9,7 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
 from game import gameplay as gameplay_module  # noqa: E402
+from game import level_intro as intro_module  # noqa: E402
 from game import pause_menu as pause_module  # noqa: E402
 from game.creature.effects import ParticleEffects  # noqa: E402
 from game.gameplay import GameSystem  # noqa: E402
@@ -34,6 +36,29 @@ def make_game() -> Any:
     return game
 
 
+class KeyState:
+    def __init__(self, flags: tuple[bool, ...]) -> None:
+        """Store the key flags of one fake frame.
+        Mimic the pygame key state that can only be indexed.
+        made by: Mohammad Abu Aresh
+        """
+        self.flags = flags
+
+    def __getitem__(self, index: int) -> bool:
+        """Return whether the key at this index is pressed.
+        Index it like the real pygame key state.
+        made by: Mohammad Abu Aresh
+        """
+        return self.flags[index]
+
+    def __iter__(self) -> Iterator[bool]:
+        """Refuse iteration like recent pygame versions do.
+        Raise the same message the game crashed with.
+        made by: Mohammad Abu Aresh
+        """
+        raise TypeError("Iterating over key states is not supported")
+
+
 def fake_pygame(pressed: set[str]) -> Any:
     """Create a stand in for pygame with a chosen set of pressed keys.
     The key state is a plain tuple indexed by the fake key constants.
@@ -42,7 +67,7 @@ def fake_pygame(pressed: set[str]) -> Any:
     index = {"h": 0, "esc": 1, "n": 2, "x": 3}
     flags = tuple(i in {index[name] for name in pressed} for i in range(4))
     return SimpleNamespace(
-        key=SimpleNamespace(get_pressed=lambda: flags),
+        key=SimpleNamespace(get_pressed=lambda: KeyState(flags)),
         K_h=0,
         K_ESCAPE=1,
         K_n=2,
@@ -50,6 +75,15 @@ def fake_pygame(pressed: set[str]) -> Any:
 
 
 class IntroGatingTests(unittest.TestCase):
+    def setUp(self) -> None:
+        """Limit the watched keys to the four fake key indexes.
+        Restore the real list after every test.
+        made by: Mohammad Abu Aresh
+        """
+        patcher = patch.object(intro_module, "KEY_CODES", (0, 1, 2, 3))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_level_timer_and_player_stay_frozen_during_intro(self) -> None:
         """Verify the level timer and the player do not move in the intro.
         Check one update that is shorter than the intro.

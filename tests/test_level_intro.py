@@ -1,17 +1,44 @@
 import os
 import unittest
+from collections.abc import Iterator
 from types import SimpleNamespace
 from typing import Any
+from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
+from game import level_intro as intro_module  # noqa: E402
 from game.creature.effects import ParticleEffects  # noqa: E402
 from game.level_intro import (  # noqa: E402
     LevelIntro,
     announce_spawns,
+    pressed_keys,
     reveal_lines,
 )
+
+
+class IndexOnlyKeys:
+    def __init__(self, flags: tuple[bool, ...]) -> None:
+        """Store the key flags of one fake frame.
+        Mimic the pygame key state that can only be indexed.
+        made by: Mohammad Abu Aresh
+        """
+        self.flags = flags
+
+    def __getitem__(self, index: int) -> bool:
+        """Return whether the key at this index is pressed.
+        Raise an index error for an unknown key.
+        made by: Mohammad Abu Aresh
+        """
+        return self.flags[index]
+
+    def __iter__(self) -> Iterator[bool]:
+        """Refuse iteration like recent pygame versions do.
+        Raise the same message the game crashed with.
+        made by: Mohammad Abu Aresh
+        """
+        raise TypeError("Iterating over key states is not supported")
 
 
 def intro_at(seconds: float) -> LevelIntro:
@@ -190,6 +217,28 @@ class IntroSkipTests(unittest.TestCase):
         intro = intro_at(60.0)
         intro.skip()
         self.assertEqual(intro.elapsed, 60.0)
+
+
+class PressedKeysTests(unittest.TestCase):
+    def test_keys_are_read_by_index_without_iterating(self) -> None:
+        """Verify the key state is never iterated.
+        The stand in raises the real crash message when iterated.
+        made by: Mohammad Abu Aresh
+        """
+        state = IndexOnlyKeys((True, False, True))
+        with self.assertRaises(TypeError):
+            tuple(state)
+        with patch.object(intro_module, "KEY_CODES", (0, 1, 2)):
+            self.assertEqual(pressed_keys(state), (True, False, True))
+
+    def test_unknown_key_index_counts_as_released(self) -> None:
+        """Verify a key missing from the state is treated as released.
+        Check an index beyond the end of the fake state.
+        made by: Mohammad Abu Aresh
+        """
+        state = IndexOnlyKeys((True,))
+        with patch.object(intro_module, "KEY_CODES", (0, 7)):
+            self.assertEqual(pressed_keys(state), (True, False))
 
 
 class RevealLinesTests(unittest.TestCase):

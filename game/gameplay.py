@@ -13,7 +13,7 @@ from .game_modes import Mod
 from .cheat_codes import apply_heart_cheat
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
-from .level_intro import LevelIntro, announce_spawns
+from .level_intro import LevelIntro, announce_spawns, pressed_keys
 from .pause_menu import PauseMenu
 from .world_render import WorldRenderer
 from .game_renderer import (
@@ -185,7 +185,7 @@ class GameSystem:
             return
         apply_heart_cheat(self, cheating and keys[pygame.K_h])
         if not keys[pygame.K_ESCAPE]:
-            self.intro.skip_on_key(keys)
+            self.intro.skip_on_key(pressed_keys(keys))
         if self.intro.update(time):
             announce_spawns(self, time)
             return
