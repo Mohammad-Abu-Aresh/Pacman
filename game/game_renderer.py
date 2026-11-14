@@ -41,30 +41,30 @@ def draw_effects(game: GameSystem) -> None:
     creatures.effects.draw(game.maze_map)
 
 
-def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
-    """
-    Draw the background and wall cells at the supplied maze
-    origin.
-    Draw collectibles before painting the wall grid.
-    made by: Mohammad Abu Aresh
-    """
-    maze_bool = game.maze_map.every_cell
-    cell_size = Block.size
-    for item in game.collectibles:
-        item.draw(game.maze_map)
+# def draw_maze(game: GameSystem, origin_x: int, origin_y: int) -> None:
+#     """
+#     Draw the background and wall cells at the supplied maze
+#     origin.
+#     Draw collectibles before painting the wall grid.
+#     made by: Mohammad Abu Aresh
+#     """
+#     maze_bool = game.maze_map.every_cell
+#     cell_size = Block.size
+#     for item in game.collectibles:
+#         item.draw(game.maze_map)
 
-    Images.screen.blit(game.background, (0, 0))
-    for y, row in enumerate(maze_bool):
-        for x, cell in enumerate(row):
-            location_x = origin_x + (x * cell_size)
-            location_y = origin_y + (y * cell_size)
-            if cell:
-                Images._drow(
-                    Images.wall_new,
-                    location=(location_x, location_y)
-                )
-            else:
-                continue
+#     Images.screen.blit(game.background, (0, 0))
+#     for y, row in enumerate(maze_bool):
+#         for x, cell in enumerate(row):
+#             location_x = origin_x + (x * cell_size)
+#             location_y = origin_y + (y * cell_size)
+#             if cell:
+#                 Images._drow(
+#                     Images.wall_new,
+#                     location=(location_x, location_y)
+#                 )
+#             else:
+#                 continue
 
 
 def draw_hud(game: GameSystem) -> None:
@@ -74,7 +74,7 @@ def draw_hud(game: GameSystem) -> None:
     vertically.
     made by: Mohammad Abu Aresh
     """
-    panel_x = 1480
+    panel_x = Images.width - 350
     panel_y = 100
     spacing_y = 50
     draw_timer(game, panel_x, panel_y)

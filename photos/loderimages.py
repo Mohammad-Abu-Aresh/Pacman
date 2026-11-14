@@ -31,6 +31,8 @@ class Images:
     settings_screen = pygame.image.load("photos/background/settings.jpg")
     # wall image
     wall = pygame.image.load("photos/blocks/block-new.png")
+    daimon = pygame.image.load("photos/blocks/jewels/daimon.png")
+    netherite = pygame.image.load("photos/blocks/jewels/netherite_Ingot.png")
 
     player = pygame.image.load("photos/player/steve.png")
     player_heart = pygame.image.load("photos/player/heart/full_heart.png")

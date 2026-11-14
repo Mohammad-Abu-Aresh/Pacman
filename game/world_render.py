@@ -82,6 +82,8 @@ class WorldRenderer:
         self._sync_actors(mape, actors)
         self._remove_eaten_collectibles(collectibles)
         self._group.draw(Images.screen)
+        for item in collectibles:
+            item.draw(mape)
 
     def _rebuild(
         self,
@@ -135,27 +137,7 @@ class WorldRenderer:
         for item in collectibles:
             if item.is_eaten:
                 continue
-            is_power = isinstance(item, Netherite)
-            radius = max(Block.size // (3 if is_power else 6), 1)
-            diameter = radius * 2 + 2
-            image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
-            color = (255, 165, 0) if is_power else (255, 255, 255)
-            pygame.draw.circle(image, color, (radius + 1, radius + 1), radius)
-            shift = 20 if is_power else 15
-            center_x = (
-                mape.origin_x + item.x * Block.size
-                + Block.size // 2 + shift
-            )
-            center_y = (
-                mape.origin_y + item.y * Block.size
-                + Block.size // 2 + shift
-            )
-            center = (int(center_x), int(center_y))
-            rect = image.get_rect(center=center)
-            depth = self._depth_layer(mape, item.y)
-            sprite = WorldSprite(image, rect, depth)
-            self._group.add(sprite, layer=depth)
-            self._collectible_sprites[id(item)] = sprite
+            self._collectible_sprites[id(item)] = item
 
     def _add_actors(
         self, mape: Mape, actors: Sequence[Creature | Arrow]
@@ -208,6 +190,4 @@ class WorldRenderer:
         for item in collectibles:
             if not item.is_eaten:
                 continue
-            sprite = self._collectible_sprites.pop(id(item), None)
-            if sprite is not None:
-                self._group.remove(sprite)
+            self._collectible_sprites.pop(id(item), None)
