@@ -2,6 +2,7 @@ from typing import Callable, Optional
 import pygame
 import json
 from photos import Images
+from .overlay import make_shade, names_panel_box
 
 
 class Button:
@@ -203,6 +204,14 @@ class Screens:
             data = []
 
         data = sorted(data, key=lambda x: x["score"], reverse=True)
+        texts = [
+            f"{i + 1}. {entry['name']} - {entry['score']} p"
+            for i, entry in enumerate(data[:10])
+        ]
+        panel_box = names_panel_box(
+            [font_item.size(text)[0] for text in texts],
+            self.width // 2, int(self.height * 0.50), 40,
+        )
 
         exit_button = Button(
             coordinates=(self.width // 2, int(self.height * 0.9)),
@@ -229,14 +238,14 @@ class Screens:
             """
 
             self.screen.blit(bast_screen, (0, 0))
+            if panel_box:
+                self.screen.blit(
+                    make_shade(panel_box[2:], 0.5), panel_box[:2]
+                )
 
             start_y = int(self.height * 0.50)
 
-            for i, entry in enumerate(data[:10]):
-                name = entry["name"]
-                score = entry["score"]
-
-                text_str = f"{i + 1}. {name} - {score} p"
+            for i, text_str in enumerate(texts):
                 color = (
                     (255, 215, 0) if i == 0
                     else (240, 240, 240)
