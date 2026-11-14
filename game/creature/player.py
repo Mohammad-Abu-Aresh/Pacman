@@ -217,6 +217,7 @@ class Player(Creature):
         made by: Mohammad Abu Aresh
         """
         self.telport(self.spawn_point)
+        self.clear_slow()
         self._lives -= 1
 
     def telport(self, point: tuple[int, int]) -> None:
@@ -250,6 +251,16 @@ class Player(Creature):
             self._normal_speed = self.speed
         self.speed = self._normal_speed * new_speed / 100
         self._slow_left = float(time)
+
+    def clear_slow(self) -> None:
+        """
+        Remove any active slow potion effect at once.
+        Restore the normal speed and stop the slow timer.
+        made by: Mohammad Abu Aresh
+        """
+        if self._slow_left > 0:
+            self.speed = self._normal_speed
+        self._slow_left = 0.0
 
     @property
     def is_slowed(self) -> bool:

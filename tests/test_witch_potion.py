@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import MagicMock
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
@@ -159,6 +160,50 @@ class WitchPotionTests(unittest.TestCase):
         self.witch.throw_slow_potion(make_player(6, 5))
         self.witch.reset_ai()
         self.assertEqual(self.witch.potions, [])
+
+
+class SlowClearTests(unittest.TestCase):
+    def test_death_removes_the_slow_effect(self) -> None:
+        """Verify respawning after a death removes the slow potion.
+        Check the speed, the slowed flag and the lost life.
+        made by: Mohammad Abu Aresh
+        """
+        player = make_player(6, 5)
+        player._lives = 3
+        player.spawn_point = (1, 1)
+        player.telport = MagicMock()
+        SlowPotion((5, 5)).apply_effect(player)
+        self.assertTrue(player.is_slowed)
+        player.respawn()
+        self.assertFalse(player.is_slowed)
+        self.assertEqual(player.speed, 0.1)
+        self.assertEqual(player._lives, 2)
+        player.update_slow(10.0)
+        self.assertEqual(player.speed, 0.1)
+
+    def test_clearing_without_a_slow_keeps_the_speed(self) -> None:
+        """Verify clearing a player that is not slowed changes nothing.
+        Check the speed stays at its normal value.
+        made by: Mohammad Abu Aresh
+        """
+        player = make_player(6, 5)
+        player.clear_slow()
+        self.assertEqual(player.speed, 0.1)
+        self.assertFalse(player.is_slowed)
+
+    def test_monster_reset_after_death_removes_flying_potions(self) -> None:
+        """Verify the witch drops every potion in flight on a reset.
+        A potion thrown before the death must not land afterwards.
+        made by: Mohammad Abu Aresh
+        """
+        Block.size = 40
+        witch = Witch((5, 5), True)
+        player = make_player(6, 5)
+        witch.throw_slow_potion(player)
+        witch.reset_ai()
+        witch.potion_timer = witch.potion_cooldown
+        land(witch, player, 30)
+        self.assertFalse(player.is_slowed)
 
 
 if __name__ == "__main__":
