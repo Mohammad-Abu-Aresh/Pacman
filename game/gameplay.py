@@ -15,6 +15,7 @@ from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .level_intro import LevelIntro, announce_spawns, pressed_keys
 from .pause_menu import PauseMenu
+from .scoring import final_score
 from .world_render import WorldRenderer
 from .game_renderer import (
     draw_game as render_game,
@@ -354,4 +355,6 @@ class GameSystem:
         controller.
         made by: Abdalghani Abtah
         """
-        return self.player_creature.player.score
+        return final_score(
+            self.player_creature.player.score, self.hardcore_mode
+        )

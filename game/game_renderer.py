@@ -5,6 +5,7 @@ from photos.loderimages import Images
 from .block import Block
 from .level_intro import reveal_lines
 from .scene_layers import draw_countdown, draw_maze_layer
+from .scoring import score_multiplier_label
 
 if TYPE_CHECKING:
     from .creature.abilities import EnderPearl, SlowPotion
@@ -175,6 +176,12 @@ def draw_score(game: GameSystem, x: int, y: int) -> None:
         f"Score: {score}", True, (255, 255, 255)
     )
     Images.screen.blit(text_surface, (x, y))
+    label = score_multiplier_label(game.hardcore_mode)
+    if label:
+        left = x + game.font.size(f"Score: {score}")[0] + 12
+        for color, offset in (((0, 0, 0), 2), ((255, 215, 0), 0)):
+            surface = game.font.render(label, True, color)
+            Images.screen.blit(surface, (left + offset, y + offset))
 
 
 def draw_heart(game: GameSystem, x: int, y: int) -> None:
