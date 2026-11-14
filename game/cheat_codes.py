@@ -17,3 +17,16 @@ def apply_heart_cheat(game: GameSystem, pressed: bool) -> bool:
         game.player_creature.player.add_life()
         game.lives = game.player_creature.player._lives
     return gained
+
+
+def apply_next_level_cheat(game: GameSystem, pressed: bool) -> bool:
+    """
+    Jump to the next level when the level cheat key is newly pressed.
+    Work during the intro, the countdown and the gameplay alike.
+    made by: Mohammad Abu Aresh
+    """
+    jumped = pressed and not game.next_key_down
+    game.next_key_down = pressed
+    if jumped:
+        game.next_level()
+    return jumped

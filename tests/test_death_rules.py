@@ -63,6 +63,20 @@ class DeathRuleTests(unittest.TestCase):
             game.update(1 / 60, cheating)
         return death
 
+    def test_next_level_cheat_works_during_the_gameplay(self) -> None:
+        """Verify the level cheat also jumps while the game is running.
+        The intro is already over and the cheating mode is on.
+        made by: Mohammad Abu Aresh
+        """
+        game = make_game(False, False)
+        with patch.object(
+            gameplay_module, "pygame", fake_pygame({"n"})
+        ), patch.object(
+            GameSystem, "_eat_pacgums", return_value=False
+        ), patch.object(GameSystem, "next_level") as next_level:
+            game.update(1 / 60, True)
+        next_level.assert_called_once()
+
     def test_monster_contact_kills_the_player(self) -> None:
         """Verify a dangerous contact starts the death handling.
         The cheating mode is off.

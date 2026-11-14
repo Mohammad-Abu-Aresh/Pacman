@@ -2,11 +2,15 @@ import os
 import unittest
 from types import SimpleNamespace
 from typing import Any
+from unittest.mock import MagicMock
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
-from game.cheat_codes import apply_heart_cheat  # noqa: E402
+from game.cheat_codes import (  # noqa: E402
+    apply_heart_cheat,
+    apply_next_level_cheat,
+)
 from game.creature.player import Player  # noqa: E402
 
 
@@ -63,6 +67,45 @@ class HeartCheatTests(unittest.TestCase):
         game = make_game(3)
         self.assertFalse(apply_heart_cheat(game, False))
         self.assertEqual(game.lives, 3)
+
+
+class NextLevelCheatTests(unittest.TestCase):
+    def game(self) -> Any:
+        """Create a light game that counts its level changes.
+        The next level method is a mock.
+        made by: Mohammad Abu Aresh
+        """
+        return SimpleNamespace(next_key_down=False, next_level=MagicMock())
+
+    def test_pressing_the_key_changes_the_level_once(self) -> None:
+        """Verify one press jumps to the next level.
+        Check that holding the key does not jump again.
+        made by: Mohammad Abu Aresh
+        """
+        game = self.game()
+        for _ in range(10):
+            apply_next_level_cheat(game, True)
+        game.next_level.assert_called_once()
+
+    def test_every_new_press_changes_the_level(self) -> None:
+        """Verify releasing and pressing again jumps once more.
+        Check two separate presses.
+        made by: Mohammad Abu Aresh
+        """
+        game = self.game()
+        apply_next_level_cheat(game, True)
+        apply_next_level_cheat(game, False)
+        apply_next_level_cheat(game, True)
+        self.assertEqual(game.next_level.call_count, 2)
+
+    def test_no_jump_without_the_key(self) -> None:
+        """Verify nothing happens while the key is not pressed.
+        The pressed flag is False when the cheating mode is off.
+        made by: Mohammad Abu Aresh
+        """
+        game = self.game()
+        self.assertFalse(apply_next_level_cheat(game, False))
+        game.next_level.assert_not_called()
 
 
 if __name__ == "__main__":

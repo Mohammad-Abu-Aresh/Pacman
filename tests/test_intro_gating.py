@@ -26,6 +26,7 @@ def make_game() -> Any:
     game.intro = LevelIntro()
     game.wait_timer = 0.0
     game.heart_key_down = False
+    game.next_key_down = False
     game.pause = PauseMenu(1920, 1080)
     game.time_left = 90.0
     game.lives = 3
@@ -127,6 +128,41 @@ class IntroGatingTests(unittest.TestCase):
             game.update(0.1)
             game.update(0.1)
         self.assertTrue(game.intro.active)
+
+    def jump(self, game: Any, cheating: bool) -> MagicMock:
+        """Press the next level key for one frame and return the mock.
+        Replace the real level change by a mock.
+        made by: Mohammad Abu Aresh
+        """
+        with patch.object(
+            gameplay_module, "pygame", fake_pygame({"n"})
+        ), patch.object(GameSystem, "next_level") as next_level:
+            game.update(0.1, cheating)
+        return next_level
+
+    def test_next_level_cheat_works_while_the_maze_is_hidden(self) -> None:
+        """Verify the cheat jumps during the hidden maze animation.
+        The cheating mode is on.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertTrue(self.jump(make_game(), True).called)
+
+    def test_next_level_cheat_works_during_the_countdown(self) -> None:
+        """Verify the cheat jumps during the three two one countdown.
+        Move the intro clock into the countdown first.
+        made by: Mohammad Abu Aresh
+        """
+        game = make_game()
+        game.intro.update(6.0)
+        self.assertEqual(game.intro.countdown_number(), 3)
+        self.assertTrue(self.jump(game, True).called)
+
+    def test_next_level_key_does_nothing_without_cheating(self) -> None:
+        """Verify the key is ignored when the cheating mode is off.
+        Check it during the intro.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertFalse(self.jump(make_game(), False).called)
 
     def test_heart_cheat_works_during_intro(self) -> None:
         """Verify the heart cheat key is read before the intro freeze.

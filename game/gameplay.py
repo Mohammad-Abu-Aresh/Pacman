@@ -10,7 +10,7 @@ from photos.loderimages import Images
 from typing import Dict, Any
 from .block import Mape
 from .game_modes import Mod
-from .cheat_codes import apply_heart_cheat
+from .cheat_codes import apply_heart_cheat, apply_next_level_cheat
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .level_intro import LevelIntro, announce_spawns, pressed_keys
@@ -117,6 +117,7 @@ class GameSystem:
         self.hardcore_mode = hardcore_mode
         self.cheating = cheating
         self.heart_key_down: bool = False
+        self.next_key_down: bool = False
         self.row = 7
         self.column = 7
         self.load_level()
@@ -184,6 +185,7 @@ class GameSystem:
         if self.pause.update(keys[pygame.K_ESCAPE]):
             return
         apply_heart_cheat(self, cheating and keys[pygame.K_h])
+        apply_next_level_cheat(self, cheating and keys[pygame.K_n])
         if not keys[pygame.K_ESCAPE]:
             self.intro.skip_on_key(pressed_keys(keys))
         if self.intro.update(time):
@@ -232,8 +234,6 @@ class GameSystem:
         if not cheating and (player_hit or arrow_hit):
             self._handle_player_death()
             return
-        if keys[pygame.K_n] and cheating:
-            self.next_level()
 
     def _handle_player_death(self) -> None:
         """
