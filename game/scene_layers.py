@@ -4,6 +4,9 @@ from typing import TYPE_CHECKING
 import pygame
 from photos.loderimages import Images
 from .block import Block
+from .overlay import make_shade, maze_backdrop_box
+
+BACKDROP_OPACITY = 0.7
 
 if TYPE_CHECKING:
     from .creature.abilities import Arrow
@@ -11,21 +14,28 @@ if TYPE_CHECKING:
     from .gameplay import GameSystem
 
 
+@lru_cache(maxsize=4)
+def _backdrop_shade(size: tuple[int, int]) -> pygame.Surface:
+    """
+    Create the translucent black surface of the maze backdrop.
+    Cache it by size because building a surface each frame is slow.
+    made by: Mohammad Abu Aresh
+    """
+    return make_shade(size, BACKDROP_OPACITY)
+
+
 def draw_backdrop(game: GameSystem) -> None:
     """
-    Fill the area behind the maze with solid black.
-    Cover the wall footprint so floors and gums stand out clearly.
+    Fill the area behind the maze with translucent black.
+    Cover the wall footprint and let a faint trace of the level show.
     made by: Mohammad Abu Aresh
     """
     mape = game.maze_map
-    rows = len(mape.every_cell)
-    columns = len(mape.every_cell[0])
-    left = mape.origin_x + int(Block.size * 0.55)
-    top = mape.origin_y + int(Block.size * 0.38)
-    area = pygame.Rect(
-        left, top, columns * Block.size, int((rows + 0.2) * Block.size)
+    left, top, width, height = maze_backdrop_box(
+        len(mape.every_cell), len(mape.every_cell[0]),
+        (mape.origin_x, mape.origin_y), Block.size,
     )
-    pygame.draw.rect(Images.screen, (0, 0, 0), area)
+    Images.screen.blit(_backdrop_shade((width, height)), (left, top))
 
 
 def reveal_clip(game: GameSystem, progress: float) -> pygame.Rect | None:

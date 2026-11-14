@@ -39,3 +39,16 @@ def names_panel_box(
     height = len(widths) * row_gap + margin
     top = start_y - row_gap // 2 - margin // 2
     return center_x - width // 2, top, width, height
+
+
+def maze_backdrop_box(
+    rows: int, columns: int, origin: tuple[int, int], block: int
+) -> Box:
+    """
+    Compute the screen rectangle covered by the maze backdrop.
+    Match the footprint of the wall images drawn for the maze.
+    made by: Mohammad Abu Aresh
+    """
+    left = origin[0] + int(block * 0.55)
+    top = origin[1] + int(block * 0.38)
+    return left, top, columns * block, int((rows + 0.2) * block)
