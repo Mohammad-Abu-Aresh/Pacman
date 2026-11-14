@@ -111,7 +111,7 @@ class Monster(Creature, ABC):
             return None
         if not self.live:
             return PathFinder.next_step(grid, current_cell, self.target_point)
-        if self.frightened or self.lifecycle.mode_clock_paused:
+        if self.frightened:
             return PathFinder.next_step_frightened(
                 grid,
                 current_cell,

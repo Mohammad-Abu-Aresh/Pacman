@@ -106,7 +106,7 @@ class GroupAbilitiesWiringTests(unittest.TestCase):
                 update_teleport=lambda p, grid, dt: teleports
             ),
             Skeleton=SimpleNamespace(
-                update_arrows=lambda p, m, dt, hurt: hurt
+                update_arrows=lambda p, m, dt: True
             ),
             maze_mape=SimpleNamespace(every_cell=[[False]]),
             effects=ParticleEffects(),
@@ -131,15 +131,14 @@ class GroupAbilitiesWiringTests(unittest.TestCase):
         update_group_abilities(controller, 0.01)
         self.assertEqual(len(controller.effects.particles), 1)
 
-    def test_arrow_result_depends_on_super_state(self) -> None:
-        """Verify arrows can hurt only while the player is not super.
-        Check the returned value follows the frightened timer.
+    def test_arrow_hit_is_reported_to_the_game(self) -> None:
+        """Verify the arrow result reaches the caller unchanged.
+        The super timer does not change the arrow damage.
         made by: Mohammad Abu Aresh
         """
         controller = self.controller(False, [])
-        self.assertTrue(update_group_abilities(controller, 0.01))
         controller.frightened_timer = 5.0
-        self.assertFalse(update_group_abilities(controller, 0.01))
+        self.assertTrue(update_group_abilities(controller, 0.01))
 
 
 if __name__ == "__main__":

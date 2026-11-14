@@ -113,15 +113,11 @@ class Skeleton(Monster):
         return Direction.none
 
     def update_arrows(
-        self,
-        player: Player,
-        mape: Mape,
-        delta_time: float,
-        can_hurt: bool = True,
+        self, player: Player, mape: Mape, delta_time: float
     ) -> bool:
         """
         Move the arrows, register one hit per arrow and try to shoot.
-        Return True when an arrow hit the player and can hurt him.
+        Return True when an arrow hit the player in this update.
         made by: Mohammad Abu Aresh
         """
         self.shoot_timer = max(self.shoot_timer - delta_time, 0.0)
@@ -129,9 +125,7 @@ class Skeleton(Monster):
         player_hit = False
         for arrow in self.active_arrows:
             arrow.move(mape.every_cell, delta_time)
-            if can_hurt and not arrow.hit_player and arrow.hits(
-                player_cell
-            ):
+            if not arrow.hit_player and arrow.hits(player_cell):
                 arrow.hit_player = True
                 player_hit = True
         self.active_arrows = [

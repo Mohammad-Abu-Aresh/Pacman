@@ -29,6 +29,5 @@ def update_group_abilities(
         controller.effects.burst(x, y, ENDER_COLOR)
     controller.effects.update(delta_time)
     return controller.Skeleton.update_arrows(
-        player, controller.maze_mape, delta_time,
-        controller.frightened_timer <= 0,
+        player, controller.maze_mape, delta_time
     )

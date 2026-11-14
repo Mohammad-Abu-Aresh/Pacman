@@ -8,6 +8,7 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
 from game.block import Block  # noqa: E402
+from game.creature import ghost_lifecycle as lifecycle_module  # noqa: E402
 from game.creature import monster as monster_module  # noqa: E402
 from game.creature.babyzombie import BabyZombie  # noqa: E402
 from game.creature.ghost_state import (  # noqa: E402
@@ -96,7 +97,7 @@ class MonsterAbilityStateTests(unittest.TestCase):
         skeleton = Skeleton((1, 1), True)
         skeleton.frightened = False
         player: Any = SimpleNamespace(x=10, y=1)
-        skeleton.update_arrows(player, open_lane(), 0.1, False)
+        skeleton.update_arrows(player, open_lane(), 0.1)
         self.assertEqual(len(skeleton.active_arrows), 1)
 
     def test_respawned_skeleton_turns_red_and_shoots_again(self) -> None:
@@ -110,24 +111,22 @@ class MonsterAbilityStateTests(unittest.TestCase):
         self.assertTrue(reactivate_monster_at_home(skeleton))
         self.assertFalse(skeleton.frightened)
         player: Any = SimpleNamespace(x=10, y=1)
-        skeleton.update_arrows(player, open_lane(), 0.1, False)
+        skeleton.update_arrows(player, open_lane(), 0.1)
         self.assertEqual(len(skeleton.active_arrows), 1)
 
-    def test_arrows_cannot_hurt_while_super_is_running(self) -> None:
-        """Verify arrows cannot hurt the player during the super.
-        Check no hit is registered on the arrow.
+    def test_red_skeleton_arrows_hurt_while_super_is_running(self) -> None:
+        """Verify an arrow of a red skeleton still hurts during the super.
+        Only the color of the skeleton decides, not the super timer.
         made by: Mohammad Abu Aresh
         """
         skeleton = Skeleton((1, 1), True)
         mape = open_lane()
         player: Any = SimpleNamespace(x=10, y=1)
-        skeleton.update_arrows(player, mape, 1 / 60, False)
+        skeleton.update_arrows(player, mape, 1 / 60)
         hits = [
-            skeleton.update_arrows(player, mape, 1 / 60, False)
-            for _ in range(60)
+            skeleton.update_arrows(player, mape, 1 / 60) for _ in range(60)
         ]
-        self.assertNotIn(True, hits)
-        self.assertFalse(skeleton.active_arrows[0].hit_player)
+        self.assertEqual(hits.count(True), 1)
 
     def test_frightened_witch_does_not_throw_but_red_one_does(self) -> None:
         """Verify a frightened witch throws no potion.
@@ -146,17 +145,22 @@ class MonsterAbilityStateTests(unittest.TestCase):
         self.assertAlmostEqual(player.speed, 0.035)
 
 
-class SuperSafetyTests(unittest.TestCase):
+class CollisionRuleTests(unittest.TestCase):
     def setUp(self) -> None:
-        """Set the block size used by the monster constructors.
-        Run it before every safety test.
+        """Set the block size and silence the eaten sprite drawing.
+        Run it before every collision test.
         made by: Mohammad Abu Aresh
         """
         Block.size = 40
+        patcher = patch.object(
+            lifecycle_module, "set_monster_eaten_visual"
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def controller(self, timer: float) -> Any:
         """Build a light controller with the player on a skeleton.
-        The other monsters stay far away from the player.
+        The other monsters stay far away and the player records points.
         made by: Mohammad Abu Aresh
         """
         monsters = [
@@ -165,8 +169,12 @@ class SuperSafetyTests(unittest.TestCase):
             Skeleton((31, 1), True),
             Skeleton((32, 1), True),
         ]
+        player = SimpleNamespace(x=1.0, y=1.0, points=0)
+        player.eat = lambda points: setattr(
+            player, "points", player.points + points
+        )
         return SimpleNamespace(
-            player=SimpleNamespace(x=1.0, y=1.0, eat=lambda points: points),
+            player=player,
             Skeleton=monsters[0],
             BabyZombie=monsters[1],
             Enderman=monsters[2],
@@ -175,31 +183,91 @@ class SuperSafetyTests(unittest.TestCase):
             frightened_timer=timer,
         )
 
-    def test_monster_contact_is_safe_during_super(self) -> None:
-        """Verify touching a monster is harmless during the super.
-        No collision may be reported while the timer is running.
+    def test_red_monster_kills_while_super_is_running(self) -> None:
+        """Verify touching a red monster hurts even during the super.
+        The monster stays alive because it is not frightened.
         made by: Mohammad Abu Aresh
         """
         controller = self.controller(5.0)
-        self.assertFalse(check_ghost_collisions(controller, 200))
+        self.assertTrue(check_ghost_collisions(controller, 200))
+        self.assertTrue(controller.Skeleton.live)
 
-    def test_monster_contact_is_deadly_outside_super(self) -> None:
-        """Verify touching a red monster hurts outside the super.
+    def test_red_monster_kills_outside_super(self) -> None:
+        """Verify touching a red monster hurts without any super.
         The collision must be reported with a stopped timer.
         made by: Mohammad Abu Aresh
         """
         controller = self.controller(0.0)
         self.assertTrue(check_ghost_collisions(controller, 200))
 
-    def test_monsters_flee_instead_of_chasing_during_super(self) -> None:
-        """Verify monsters use the frightened route during the super.
-        The chase route must not be used.
+    def test_blue_monster_dies_and_the_player_survives(self) -> None:
+        """Verify touching a frightened monster eats it.
+        The player gets the points and is not hit.
         made by: Mohammad Abu Aresh
         """
-        skeleton = Skeleton((1, 1), True)
-        skeleton.target_point = (5, 5)
-        grid = [[False] * 8 for _ in range(8)]
-        skeleton.lifecycle.mode_clock_paused = True
+        controller = self.controller(5.0)
+        controller.Skeleton.frightened = True
+        controller.Skeleton.lifecycle.active_cycle = 1
+        self.assertFalse(check_ghost_collisions(controller, 200))
+        self.assertFalse(controller.Skeleton.live)
+        self.assertEqual(controller.player.points, 200)
+
+    def test_blue_monster_never_kills_the_player(self) -> None:
+        """Verify a frightened monster is harmless even if not edible.
+        Use a monster that belongs to an older power pellet cycle.
+        made by: Mohammad Abu Aresh
+        """
+        controller = self.controller(5.0)
+        controller.Skeleton.frightened = True
+        controller.Skeleton.lifecycle.active_cycle = 0
+        self.assertFalse(check_ghost_collisions(controller, 200))
+        self.assertTrue(controller.Skeleton.live)
+
+    def test_exactly_one_of_them_dies_on_contact(self) -> None:
+        """Verify a contact kills either the player or the monster.
+        Check both a red and a frightened monster.
+        made by: Mohammad Abu Aresh
+        """
+        for frightened in (False, True):
+            controller = self.controller(5.0)
+            controller.Skeleton.frightened = frightened
+            controller.Skeleton.lifecycle.active_cycle = 1
+            hit = check_ghost_collisions(controller, 200)
+            self.assertNotEqual(hit, not controller.Skeleton.live)
+
+    def test_eaten_monster_respawns_red_and_kills_during_super(self) -> None:
+        """Verify an eaten monster is dangerous again when it respawns.
+        The super timer is still running when it touches the player.
+        made by: Mohammad Abu Aresh
+        """
+        controller = self.controller(5.0)
+        skeleton = controller.Skeleton
+        skeleton.frightened = True
+        skeleton.lifecycle.active_cycle = 1
+        check_ghost_collisions(controller, 200)
+        self.assertFalse(skeleton.live)
+        skeleton.x, skeleton.y = 1.0, 1.0
+        self.assertTrue(reactivate_monster_at_home(skeleton))
+        self.assertFalse(skeleton.frightened)
+        self.assertTrue(check_ghost_collisions(controller, 200))
+
+
+class ChaseRuleTests(unittest.TestCase):
+    def setUp(self) -> None:
+        """Set the block size and prepare a skeleton with a target.
+        Patch both path routines to return different steps.
+        made by: Mohammad Abu Aresh
+        """
+        Block.size = 40
+        self.skeleton = Skeleton((1, 1), True)
+        self.skeleton.target_point = (5, 5)
+        self.grid = [[False] * 8 for _ in range(8)]
+
+    def routes(self) -> tuple[Any, Any, Any]:
+        """Run one route choice with both path routines replaced.
+        Return the chosen step and the two replaced routines.
+        made by: Mohammad Abu Aresh
+        """
         with patch.object(
             monster_module.PathFinder, "next_step_frightened",
             return_value=(2, 1),
@@ -207,24 +275,35 @@ class SuperSafetyTests(unittest.TestCase):
             monster_module.PathFinder, "next_step_towards",
             return_value=(1, 2),
         ) as chase:
-            step = skeleton._choose_next_point(grid, (1, 1))
+            step = self.skeleton._choose_next_point(self.grid, (1, 1))
+        return step, flee, chase
+
+    def test_blue_monsters_flee(self) -> None:
+        """Verify a frightened monster uses the frightened route.
+        The chase route must not be used.
+        made by: Mohammad Abu Aresh
+        """
+        self.skeleton.frightened = True
+        step, flee, chase = self.routes()
         self.assertEqual(step, (2, 1))
-        flee.assert_called_once()
         chase.assert_not_called()
 
-    def test_monsters_chase_again_after_super(self) -> None:
-        """Verify monsters use the chase route after the super ends.
+    def test_red_monsters_keep_chasing_while_super_is_running(self) -> None:
+        """Verify a red monster chases while the super timer runs.
+        Only the monster color decides the route.
+        made by: Mohammad Abu Aresh
+        """
+        self.skeleton.lifecycle.mode_clock_paused = True
+        step, flee, chase = self.routes()
+        self.assertEqual(step, (1, 2))
+        flee.assert_not_called()
+
+    def test_monsters_chase_after_super(self) -> None:
+        """Verify monsters use the chase route without any super.
         The frightened route must not be used.
         made by: Mohammad Abu Aresh
         """
-        skeleton = Skeleton((1, 1), True)
-        skeleton.target_point = (5, 5)
-        grid = [[False] * 8 for _ in range(8)]
-        with patch.object(
-            monster_module.PathFinder, "next_step_towards",
-            return_value=(1, 2),
-        ) as chase:
-            step = skeleton._choose_next_point(grid, (1, 1))
+        step, flee, chase = self.routes()
         self.assertEqual(step, (1, 2))
         chase.assert_called_once()
 
