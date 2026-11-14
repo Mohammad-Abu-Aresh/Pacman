@@ -163,20 +163,45 @@ class LevelIntroTimelineTests(unittest.TestCase):
 
 
 class IntroSkipTests(unittest.TestCase):
-    def test_new_key_press_skips_everything(self) -> None:
-        """Verify a new key press jumps to the end of the intro.
-        Check the maze, the creatures, the gums and the countdown.
+    def test_new_key_press_skips_only_the_animation(self) -> None:
+        """Verify a new key press jumps to the start of the countdown.
+        Check the maze, the creatures and the gums are fully shown.
         made by: Mohammad Abu Aresh
         """
         intro = LevelIntro()
         intro.skip_on_key((False, False))
         intro.update(0.5)
         intro.skip_on_key((False, True))
-        self.assertFalse(intro.active)
+        self.assertTrue(intro.active)
         self.assertEqual(intro.maze_progress(), 1.0)
         self.assertEqual(intro.visible_actor_count(5), 5)
         self.assertEqual(intro.visible_collectible_count(200), 200)
-        self.assertIsNone(intro.countdown_number())
+        self.assertEqual(intro.countdown_number(), 3)
+
+    def test_countdown_still_runs_after_a_skip(self) -> None:
+        """Verify the three two one countdown is not skipped.
+        Check the numbers and the end after the skip.
+        made by: Mohammad Abu Aresh
+        """
+        intro = LevelIntro()
+        intro.skip_on_key((False,))
+        intro.skip_on_key((True,))
+        self.assertTrue(intro.update(1.0))
+        self.assertEqual(intro.countdown_number(), 2)
+        self.assertTrue(intro.update(1.0))
+        self.assertEqual(intro.countdown_number(), 1)
+        self.assertFalse(intro.update(1.0))
+
+    def test_key_press_during_the_countdown_changes_nothing(self) -> None:
+        """Verify pressing a key in the countdown does not end it.
+        The clock must stay where it was.
+        made by: Mohammad Abu Aresh
+        """
+        intro = intro_at(6.0)
+        intro.skip_on_key((False,))
+        intro.skip_on_key((True,))
+        self.assertEqual(intro.elapsed, 6.0)
+        self.assertEqual(intro.countdown_number(), 3)
 
     def test_keys_held_from_the_start_do_not_skip(self) -> None:
         """Verify keys that stay held do not count as a new press.

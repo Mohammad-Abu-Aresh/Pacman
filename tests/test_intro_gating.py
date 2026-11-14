@@ -138,9 +138,9 @@ class IntroGatingTests(unittest.TestCase):
         self.assertEqual(game.intro.elapsed, 0.0)
         game.player_creature.player.add_life.assert_not_called()
 
-    def test_any_new_key_skips_the_intro(self) -> None:
-        """Verify a newly pressed key ends the intro animation.
-        Check the maze is fully shown right after the skip.
+    def test_any_new_key_skips_the_animation(self) -> None:
+        """Verify a newly pressed key skips the intro animation.
+        Check the maze is fully shown and the countdown starts.
         made by: Mohammad Abu Aresh
         """
         game = make_game()
@@ -150,8 +150,9 @@ class IntroGatingTests(unittest.TestCase):
         self.assertTrue(game.intro.active)
         with patch.object(gameplay_module, "pygame", fake_pygame({"x"})):
             game.update(0.1)
-        self.assertFalse(game.intro.active)
+        self.assertTrue(game.intro.active)
         self.assertEqual(game.intro.maze_progress(), 1.0)
+        self.assertEqual(game.intro.countdown_number(), 3)
 
     def test_key_held_since_the_level_start_does_not_skip(self) -> None:
         """Verify a key that was already held does not skip the intro.

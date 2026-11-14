@@ -42,15 +42,15 @@ class LevelIntro:
 
     def skip(self) -> None:
         """
-        Jump to the end of the intro so the gameplay starts at once.
-        The maze, creatures and gums are fully shown afterwards.
+        Skip the animation and jump to the start of the countdown.
+        The maze, creatures and gums are fully shown and 3, 2, 1 still runs.
         made by: Mohammad Abu Aresh
         """
-        self.elapsed = max(self.elapsed, self._duration())
+        self.elapsed = max(self.elapsed, self._spawn_start() + SPAWN_SECONDS)
 
     def skip_on_key(self, keys: Sequence[bool]) -> None:
         """
-        Skip the intro when a key is newly pressed during it.
+        Skip the animation when a key is newly pressed during it.
         Keys already held when the level starts do not count.
         made by: Mohammad Abu Aresh
         """
