@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from cmath import rect
-from email.mime import image
 import pygame
 from game.block import Block
 from game.block import Mape
 from photos.loderimages import Images
+
 
 class pacgum(ABC):
     def __init__(
@@ -104,7 +103,6 @@ class Diamond(pacgum):
         Images._drow(self._scaled, (px, py))
 
 
-
 class Netherite(pacgum):
     def __init__(
             self, screen: pygame.Surface, config: dict, x: int, y: int
@@ -136,7 +134,11 @@ class Netherite(pacgum):
             self._scaled_size = size
         shift_x = 20
         shift_y = 20
-        px = int(mape.origin_x + (self.x * Block.size) + (Block.size // 2) + shift_x)
-        py = int(mape.origin_y + (self.y * Block.size) + (Block.size // 2) + shift_y)
+        px = int(
+            mape.origin_x + (self.x * Block.size) + (Block.size // 2) + shift_x
+            )
+        py = int(
+            mape.origin_y + (self.y * Block.size) + (Block.size // 2) + shift_y
+            )
 
         Images._drow(self._scaled, (px, py))

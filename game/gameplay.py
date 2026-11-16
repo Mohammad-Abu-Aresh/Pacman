@@ -266,21 +266,6 @@ class GameSystem:
         """
         render_game(self)
 
-# Do not rely on AI, review the code yourself, because
-#  there are several useless methods, as everything is in render_game
-    # def _draw_maze(
-    #         self,
-    #         origin_x: int,
-    #         origin_y: int
-    #         ) -> None:
-    #     """
-    #     Delegate maze rendering to the game renderer helper.
-    #     Pass the maze origin coordinates through unchanged.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_maze(self, origin_x, origin_y)
-
     def _eat_pacgums(self) -> bool:
         """
         Check whether the player occupies an uneaten collectible
@@ -291,62 +276,6 @@ class GameSystem:
         update by: Mohammad Abu Aresh
         """
         return eat_pacgums(self)
-    # def _draw_lives(self, x: int, y: int) -> None:
-    #     """
-    #     Delegate remaining-life rendering to the game renderer
-    #     helper.
-    #     Pass the requested screen coordinates through unchanged.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_lives(self, x, y)
-    # def _draw_story(self, x: int, y: int, width: int) -> None:
-    #     """
-    #     Delegate level story rendering to the game renderer helper.
-    #     Pass the requested screen coordinates and width through
-    #     unchanged.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_level_story(self, x, y, width)
-    # def _draw_hud(self) -> None:
-    #     """
-    #     Delegate status-panel rendering to the game renderer helper.
-    #     Keep HUD rendering outside the gameplay coordination logic.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_hud(self)
-
-    # def _draw_timer(self, x: int, y: int) -> None:
-    #     """
-    #     Delegate timer rendering to the game renderer helper.
-    #     Pass the requested screen coordinates through unchanged.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_timer(self, x, y)
-
-    # def _draw_score(self, x: int, y: int) -> None:
-    #     """
-    #     Delegate score rendering to the game renderer helper.
-    #     Keep the score display implementation in the rendering
-    #     module.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_score(self, x, y)
-
-    # def _heart(self, x: int, y: int) -> None:
-    #     """
-    #     Delegate the remaining-life display to the game renderer
-    #     helper.
-    #     Keep heart drawing implementation outside the gameplay
-    #     update flow.
-    #     made by: Abdalghani Abtah
-    #     update by: Mohammad Abu Aresh
-    #     """
-    #     render_heart(self, x, y)
 
     def points(self) -> int:
         """

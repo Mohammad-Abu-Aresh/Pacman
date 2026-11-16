@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import pygame
 from photos.loderimages import Images
-from .block import Block
 from .level_intro import reveal_lines
 from .scene_layers import draw_countdown, draw_maze_layer
 from .scoring import score_multiplier_label

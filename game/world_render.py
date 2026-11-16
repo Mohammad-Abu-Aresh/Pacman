@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence
 import pygame
 from .block import Block, Mape
-from .creature.spawn_point import Netherite
 from photos.loderimages import Images
 
 if TYPE_CHECKING:

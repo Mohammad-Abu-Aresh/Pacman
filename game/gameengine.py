@@ -134,9 +134,8 @@ class GameEngine:
                     Mod.updatemod(Mod.SETTINGS_SCREEN)
 
                 elif drawing_copy["quit_game"]:
-                    print("QUIT GAME")
                     pygame.quit()
-                    sys.exit(0)
+                    sys.exit("QUIT GAME")
 
             elif Mod.state_variable == Mod.GAME_SCREEN:
                 if not self.game_session:
