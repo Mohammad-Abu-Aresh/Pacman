@@ -1,6 +1,6 @@
 import os
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
@@ -171,10 +171,10 @@ class SlowClearTests(unittest.TestCase):
         player = make_player(6, 5)
         player._lives = 3
         player.spawn_point = (1, 1)
-        player.telport = MagicMock()
         SlowPotion((5, 5)).apply_effect(player)
         self.assertTrue(player.is_slowed)
-        player.respawn()
+        with patch.object(Player, "telport"):
+            player.respawn()
         self.assertFalse(player.is_slowed)
         self.assertEqual(player.speed, 0.1)
         self.assertEqual(player._lives, 2)
