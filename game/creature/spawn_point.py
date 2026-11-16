@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+from cmath import rect
+from email.mime import image
 import pygame
 from game.block import Block
 from game.block import Mape
-
+from photos.loderimages import Images
 
 class pacgum(ABC):
     def __init__(
@@ -67,6 +69,7 @@ class Diamond(pacgum):
         """
         super().__init__(screen, config, x, y)
         self.points = config.get("points_per_pacgum", 10)
+        self.image = Images.daimon
 
     def draw(self, mape: Mape) -> None:
         """
@@ -78,6 +81,11 @@ class Diamond(pacgum):
         """
         if self.is_eaten:
             return
+
+        size = (Block.size // 2, Block.size // 2)
+        if not hasattr(self, "_scaled") or self._scaled_size != size:
+            self._scaled = pygame.transform.scale(self.image, size)
+            self._scaled_size = size
 
         shift_x = 15
         shift_y = 15
@@ -93,9 +101,8 @@ class Diamond(pacgum):
                 ) + (Block.size // 2) + shift_y
                 )
 
-        pygame.draw.circle(
-            self.screen, (255, 255, 255), (px, py), Block.size // 6
-            )
+        Images._drow(self._scaled, (px, py))
+
 
 
 class Netherite(pacgum):
@@ -110,6 +117,7 @@ class Netherite(pacgum):
         """
         super().__init__(screen, config, x, y)
         self.points = config.get("points_per_super_pacgum", 50)
+        self.image = Images.netherite
 
     def draw(self, mape: Mape) -> None:
         """
@@ -121,18 +129,14 @@ class Netherite(pacgum):
         """
         if self.is_eaten:
             return
+
+        size = (Block.size // 2, Block.size // 2)
+        if not hasattr(self, "_scaled") or self._scaled_size != size:
+            self._scaled = pygame.transform.scale(self.image, size)
+            self._scaled_size = size
         shift_x = 20
         shift_y = 20
-        px = int(
-            mape.origin_x + (
-                self.x * Block.size
-                ) + (Block.size // 2) + shift_x
-                )
-        py = int(
-            mape.origin_y + (
-                self.y * Block.size
-                ) + (Block.size // 2) + shift_y
-                )
-        pygame.draw.circle(
-            self.screen, (255, 165, 0), (px, py), Block.size // 3
-            )
+        px = int(mape.origin_x + (self.x * Block.size) + (Block.size // 2) + shift_x)
+        py = int(mape.origin_y + (self.y * Block.size) + (Block.size // 2) + shift_y)
+
+        Images._drow(self._scaled, (px, py))

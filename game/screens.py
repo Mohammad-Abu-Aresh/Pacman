@@ -57,6 +57,8 @@ class Button:
                 self.clicked = True
                 action = True
                 print('CLICKED')
+            elif not pygame.mouse.get_pressed()[0]:
+                self.clicked = False
         else:
             self.clicked = False
         screen.blit(
