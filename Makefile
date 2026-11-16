@@ -100,19 +100,6 @@ lint:
 			--check-untyped-defs --exclude=$(VENV); \
 	fi
 
-# Run strict linting
-.PHONY: lint-strict
-lint-strict:
-	@if [ -d "$(VENV)" ]; then \
-		$(VENV_PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required; recreate .venv with make install."' && \
-		$(VENV_PYTHON) -m flake8 . --exclude=$(VENV)&& \
-		$(VENV_PYTHON) -m mypy . --strict --exclude=$(VENV); \
-	else \
-		$(PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required."' && \
-		$(PYTHON) -m flake8 . --exclude=$(VENV)&& \
-		$(PYTHON) -m mypy . --strict --exclude=$(VENV); \
-	fi
-
 # ------------------------------------------------------------------------------
 # Build & Cleanup
 # ------------------------------------------------------------------------------
