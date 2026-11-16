@@ -32,15 +32,6 @@ class Abilities(ABC):
         """
         pass
 
-    @abstractmethod
-    def draw(self, image: pygame.Surface) -> None:
-        """
-        Declare the drawing interface for ability visuals.
-        Concrete abilities provide their own rendering behavior.
-        made by: Mohammad Abu Aresh
-        """
-        pass
-
 
 def fly_towards(
     position: tuple[float, float],
@@ -167,14 +158,6 @@ class Arrow(Abilities):
         else:
             self.y = target
 
-    def draw(self, image: pygame.Surface) -> None:
-        """
-        Provide the rendering hook for an Arrow instance.
-        No arrow image is drawn by the current implementation.
-        made by: Mohammad Abu Aresh
-        """
-        pass
-
 
 class EnderPearl(Abilities):
     FLIGHT_SPEED: float = 12.0
@@ -217,14 +200,6 @@ class EnderPearl(Abilities):
         self.x, self.y, self.arrived = fly_towards(
             (self.x, self.y), goal, self.FLIGHT_SPEED, delta_time
         )
-
-    def draw(self, image: pygame.Surface) -> None:
-        """
-        Provide the rendering hook for an EnderPearl instance.
-        The current implementation does not draw a pearl image.
-        made by: Mohammad Abu Aresh
-        """
-        pass
 
 
 class SlowPotion(Abilities):
@@ -276,11 +251,3 @@ class SlowPotion(Abilities):
         self.x, self.y, self.arrived = fly_towards(
             (self.x, self.y), target, self.FLIGHT_SPEED, delta_time
         )
-
-    def draw(self, image: pygame.Surface) -> None:
-        """
-        Provide the rendering hook for a SlowPotion instance.
-        No potion visual is drawn by the current implementation.
-        made by: Mohammad Abu Aresh
-        """
-        pass

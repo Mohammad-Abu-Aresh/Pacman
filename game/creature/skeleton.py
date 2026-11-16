@@ -144,33 +144,6 @@ class Skeleton(Monster):
         self.active_arrows.clear()
         self.shoot_timer = 0.0
 
-#    def move(self, grid: list[list[bool]] | None = None) -> None:
-#        if grid is None or self.target_point is None:
-#            return
-#
-#        if self.next_point is None:
-#            self.next_point = PathFinder.next_step(
-#                grid,
-#                (round(self.x), round(self.y)),
-#                self.target_point
-#            )
-#        if self.next_point is None:
-#            return
-#
-#        next_x, next_y = self.next_point
-#        step = Block.size / 150 * self.speed / 100
-#
-#        if next_x != self.x:
-#            self.y = float(round(self.y))
-#            self.x += max(-step, min(step, next_x - self.x))
-#        else:
-#            self.x = float(round(self.x))
-#            self.y += max(-step, min(step, next_y - self.y))
-#
-#        self.locaion = (self.x, self.y)
-#        if (self.x, self.y) == self.next_point:
-#            self.next_point = None
-
     def follow(
         self, player: Player,
         grid: list[list[bool]] | None = None
