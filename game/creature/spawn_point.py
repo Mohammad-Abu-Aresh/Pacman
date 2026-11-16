@@ -21,6 +21,8 @@ class pacgum(ABC):
         self.x = x
         self.y = y
         self.is_eaten = False
+        self._scaled: pygame.Surface = pygame.Surface((0, 0))
+        self._scaled_size: tuple[int, int] = (0, 0)
 
     @abstractmethod
     def draw(self, mape: Mape) -> None:
