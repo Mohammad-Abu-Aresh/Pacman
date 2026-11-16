@@ -55,7 +55,7 @@ class WorldRenderer:
         )
         self._map: Mape | None = None
         self._actor_sprites: dict[int, WorldSprite] = {}
-        self._collectible_sprites: dict[int, WorldSprite] = {}
+        self._collectible_sprites: dict[int, pacgum] = {}
         self._actor_ids: tuple[int, ...] = ()
         self._collectible_ids: tuple[int, ...] = ()
 
