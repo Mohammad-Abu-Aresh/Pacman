@@ -2,6 +2,24 @@ import pygame
 from typing import cast
 
 
+WALK_FRAME_NAMES = (
+    "", "_walking", "_up", "_up_walking",
+    "_r_stoped", "_r_front", "_r_back",
+)
+
+
+def _load_frames(folder: str, prefix: str) -> dict[str, pygame.Surface]:
+    """
+    Load every walking frame of one creature from its folder.
+    Key each image by the suffix that follows the creature name.
+    made by: Mohammad Abu Aresh
+    """
+    return {
+        suffix: pygame.image.load(f"{folder}/{prefix}{suffix}.png")
+        for suffix in WALK_FRAME_NAMES
+    }
+
+
 class Images:
     pygame.init()
 
@@ -44,6 +62,12 @@ class Images:
     witch = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     skeleton = pygame.image.load("photos/monsters/babyzombie/red.jpg")
     enderman = pygame.image.load("photos/monsters/babyzombie/red.jpg")
+
+    steve_frames = _load_frames("photos/player", "steve")
+    zombie_frames = _load_frames("photos/monsters/zombie", "zombie")
+    skeleton_frames = _load_frames("photos/monsters/skeleton", "skeleton")
+    enderman_frames = _load_frames("photos/monsters/enderman", "enderman")
+    witch_frames = _load_frames("photos/monsters/witch", "witch")
 
     # for mypy error handeling the _new image
     wall_new = wall
