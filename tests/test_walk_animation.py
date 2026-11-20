@@ -1,7 +1,7 @@
 import os
 import unittest
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 from unittest.mock import patch
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
@@ -20,6 +20,7 @@ from game.creature.walk_animation import (  # noqa: E402
     frame_set,
     paste_position,
     sheet_size,
+    tint_frame,
 )
 
 NAMES = (
@@ -322,6 +323,41 @@ class FrameBuildTests(unittest.TestCase):
         self.assertEqual(len(sizes), 1)
         self.assertEqual(calls[0], (52, 100))
         self.assertEqual(frames[""].pasted[0][1][1], 0)
+
+
+class TintTests(unittest.TestCase):
+    def test_tint_multiplies_then_adds_a_blue_color(self) -> None:
+        """Verify the tint leans toward blue and keeps transparency.
+        Check the two fills and the blend flags used for them.
+        made by: Mohammad Abu Aresh
+        """
+        fills: list[Any] = []
+
+        class Frame:
+            def copy(self) -> Any:
+                """Return the same fake frame as the copy.
+                The test records the fills made on it.
+                made by: Mohammad Abu Aresh
+                """
+                return self
+
+            def fill(self, color: Any, special_flags: Any) -> None:
+                """Record the color and the blend flag of a fill.
+                The test reads the record afterwards.
+                made by: Mohammad Abu Aresh
+                """
+                fills.append((color, special_flags))
+
+        fake = SimpleNamespace(BLEND_RGBA_MULT="mult", BLEND_RGBA_ADD="add")
+        with patch.object(walk_module, "pygame", fake):
+            tint_frame(cast(Any, Frame()))
+        self.assertEqual([flag for _, flag in fills], ["mult", "add"])
+        multiply, add = fills[0][0], fills[1][0]
+        self.assertGreater(multiply[2], multiply[0])
+        self.assertGreater(multiply[2], multiply[1])
+        self.assertGreater(add[2], add[0])
+        self.assertEqual(multiply[3], 255)
+        self.assertEqual(add[3], 0)
 
 
 if __name__ == "__main__":

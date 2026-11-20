@@ -14,6 +14,9 @@ from game.creature import skeleton as skeleton_module  # noqa: E402
 from game.creature import witch as witch_module  # noqa: E402
 from game.creature.babyzombie import BabyZombie  # noqa: E402
 from game.creature.enderman import Enderman  # noqa: E402
+from game.creature.ghost_state import (  # noqa: E402
+    set_monster_frightened_visual,
+)
 from game.creature.skeleton import Skeleton  # noqa: E402
 from game.creature.walk_animation import (  # noqa: E402
     WalkAnimation,
@@ -180,6 +183,55 @@ class AnimateCreaturesTests(unittest.TestCase):
         monster.x += 0.25
         animate_creatures(controller)
         self.assertEqual(monster.image, "n-a")
+
+
+class FrightenedLookTests(unittest.TestCase):
+    def monster(self) -> Any:
+        """Create a light monster that owns a real walk animation.
+        The frames are readable strings with a normal and a tinted look.
+        made by: Mohammad Abu Aresh
+        """
+        return SimpleNamespace(
+            walk=WalkAnimation(fake_frames()), image="old"
+        )
+
+    def test_fear_switches_to_the_blue_look(self) -> None:
+        """Verify a frightened monster shows the tinted frame.
+        The pose stays the same and only the color changes.
+        made by: Mohammad Abu Aresh
+        """
+        monster = self.monster()
+        set_monster_frightened_visual(monster, True)
+        self.assertEqual(monster.image, "t-idle")
+
+    def test_end_of_fear_restores_the_normal_look(self) -> None:
+        """Verify a calm monster shows the normal frame again.
+        Switch the fear on and off.
+        made by: Mohammad Abu Aresh
+        """
+        monster = self.monster()
+        set_monster_frightened_visual(monster, True)
+        set_monster_frightened_visual(monster, False)
+        self.assertEqual(monster.image, "n-idle")
+
+    def test_walking_frightened_monster_stays_blue(self) -> None:
+        """Verify the animation keeps the tint while the monster flees.
+        Walk a few steps and read the frame after each one.
+        made by: Mohammad Abu Aresh
+        """
+        monster = self.monster()
+        monster.live, monster.frightened = True, True
+        monster.x, monster.y = 0.0, 0.0
+        controller = SimpleNamespace(
+            BabyZombie=monster, Skeleton=monster,
+            Enderman=monster, witch=monster,
+        )
+        shown = []
+        for step in range(4):
+            monster.x = step * 0.25
+            animate_creatures(controller)
+            shown.append(monster.image)
+        self.assertTrue(all(frame.startswith("t-") for frame in shown))
 
 
 if __name__ == "__main__":

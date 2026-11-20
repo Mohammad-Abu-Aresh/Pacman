@@ -1,7 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import pygame
-from photos.loderimages import Images
 from .ghost_lifecycle import (
     mark_monster_eaten,
     reactivate_eaten_monster,
@@ -26,12 +24,7 @@ def set_monster_frightened_visual(
     dimensions.
     made by: Mohammad Abu Aresh
     """
-    if enabled:
-        monster.image = pygame.transform.scale(
-            Images.blue_ghost, monster.image.get_size()
-        )
-    else:
-        monster.load_size()
+    monster.image = monster.walk.current(enabled)
 
 
 def step_towards(current: float, target: float, distance: float) -> float:
