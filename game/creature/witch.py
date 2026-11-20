@@ -6,6 +6,7 @@ from ..block import Block
 from photos import Images
 from .algo_monster import AlgoMonster
 from .bfs import PathFinder
+from .walk_animation import WalkAnimation, frame_set
 
 
 class Witch(Monster):
@@ -34,11 +35,10 @@ class Witch(Monster):
         Store the scaled image surface for drawing.
         made by: Mohammad Abu Aresh
         """
-        Images._update_size(
-            "witch",
-            (Block.size * 0.6, Block.size * 1.8)
+        self.walk = WalkAnimation(
+            frame_set(Images.witch_frames, round(Block.size * 1.8))
         )
-        self.image = Images.witch_new
+        self.image = self.walk.current(False)
 
     def throw_slow_potion(self, player: Player) -> bool:
         """

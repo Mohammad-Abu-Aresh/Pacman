@@ -4,6 +4,7 @@ from photos.loderimages import Images
 from .ability_state import update_group_abilities
 from .effects import ParticleEffects
 from .ghost_modes import set_group_level
+from .walk_animation import WalkAnimation, anchored_rect
 from .ghost_state import (
     activate_group_frightened,
     check_ghost_collisions,
@@ -14,6 +15,8 @@ import pygame
 
 
 class Creature(ABC):
+    walk: WalkAnimation
+
     @abstractmethod
     def __init__(
         self,
@@ -65,9 +68,7 @@ class Creature(ABC):
         Preserve the shared creature drawing offset.
         made by: Mohammad Abu Aresh
         """
-        px = mape.origin_x + (self.x + 0.7) * Block.size
-        py = mape.origin_y + (self.y - 0.5) * Block.size
-        return self.image.get_rect(topleft=(int(px), int(py)))
+        return anchored_rect(self.image, self.x, self.y, mape)
 
     def draw(self, mape: Mape) -> None:
         """

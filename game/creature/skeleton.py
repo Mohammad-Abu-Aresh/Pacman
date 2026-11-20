@@ -5,6 +5,7 @@ from .player import Direction, Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
+from .walk_animation import WalkAnimation, frame_set
 
 
 class Skeleton(Monster):
@@ -35,11 +36,10 @@ class Skeleton(Monster):
         Store the scaled image surface for drawing.
         made by: Mohammad Abu Aresh
         """
-        Images._update_size(
-            "skeleton",
-            (Block.size * 0.6, Block.size * 1.8)
+        self.walk = WalkAnimation(
+            frame_set(Images.skeleton_frames, round(Block.size * 1.8))
         )
-        self.image = Images.skeleton_new
+        self.image = self.walk.current(False)
 
     def has_line_of_sight(
         self, player: Player, mape: Mape

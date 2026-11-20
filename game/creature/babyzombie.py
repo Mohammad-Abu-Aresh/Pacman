@@ -5,6 +5,7 @@ from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
 from .algo_monster import AlgoMonster
+from .walk_animation import WalkAnimation, anchored_rect, frame_set
 
 
 class BabyZombie(Monster):
@@ -36,11 +37,10 @@ class BabyZombie(Monster):
         Store the scaled surface for subsequent drawing.
         made by: Mohammad Abu Aresh
         """
-        Images._update_size(
-            "zombie",
-            (Block.size * 0.6, Block.size * 0.9)
+        self.walk = WalkAnimation(
+            frame_set(Images.zombie_frames, round(Block.size * 0.9))
         )
-        self.image = Images.zombie_new
+        self.image = self.walk.current(False)
 
     def sync_hardcore_speed(self) -> None:
         """
@@ -58,9 +58,7 @@ class BabyZombie(Monster):
         Preserve the zombie-specific vertical drawing offset.
         made by: Mohammad Abu Aresh
         """
-        px = mape.origin_x + (self.x + 0.7) * Block.size
-        py = mape.origin_y + (self.y + 0.2) * Block.size
-        return self.image.get_rect(topleft=(int(px), int(py)))
+        return anchored_rect(self.image, self.x, self.y, mape)
 
     def draw(self, mape: Mape) -> None:
         """

@@ -7,6 +7,7 @@ from .player import Direction, Player
 from ..block import Mape, Block
 from photos import Images
 from .algo_monster import AlgoMonster
+from .walk_animation import WalkAnimation, anchored_rect, frame_set
 
 
 class Enderman(Monster):
@@ -34,11 +35,10 @@ class Enderman(Monster):
         Store the scaled image surface for drawing.
         made by: Mohammad Abu Aresh
         """
-        Images._update_size(
-            "enderman",
-            (Block.size * 0.6, Block.size * 2.8)
+        self.walk = WalkAnimation(
+            frame_set(Images.enderman_frames, round(Block.size * 2.8))
         )
-        self.image = Images.enderman_new
+        self.image = self.walk.current(False)
 
     def get_render_rect(self, mape: Mape) -> pygame.Rect:
         """
@@ -46,9 +46,7 @@ class Enderman(Monster):
         Preserve the Enderman-specific vertical drawing offset.
         made by: Mohammad Abu Aresh
         """
-        px = mape.origin_x + (self.x + 0.7) * Block.size
-        py = mape.origin_y + (self.y - 1) * Block.size
-        return self.image.get_rect(topleft=(int(px), int(py)))
+        return anchored_rect(self.image, self.x, self.y, mape)
 
     def draw(self, mape: Mape) -> None:
         """

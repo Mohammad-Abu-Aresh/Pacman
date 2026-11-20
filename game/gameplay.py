@@ -11,6 +11,7 @@ from typing import Dict, Any
 from .block import Mape
 from .game_modes import Mod
 from .cheat_codes import apply_heart_cheat, apply_next_level_cheat
+from .creature.walk_animation import animate_creatures
 from .collectible_system import eat_pacgums
 from .level_builder import build_level
 from .level_intro import LevelIntro, announce_spawns, pressed_keys
@@ -228,6 +229,7 @@ class GameSystem:
                 ),
             )
 
+        animate_creatures(self.player_creature)
         player_hit = self.player_creature.check_collision(
             self.config.get("points_per_ghost", 200)
         )

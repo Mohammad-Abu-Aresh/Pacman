@@ -1,7 +1,11 @@
 from __future__ import annotations
 import math
+from typing import TYPE_CHECKING
 import pygame
 from ..block import Block, Mape
+
+if TYPE_CHECKING:
+    from .creature import Control_creature
 
 FEET_OFFSET = 1.3
 STRIDE = 0.5
@@ -209,3 +213,21 @@ class WalkAnimation:
             self.phase = 0.0
         self.last = (x, y)
         return self.current(tinted)
+
+
+def animate_creatures(controller: Control_creature) -> None:
+    """
+    Show the next walking frame of every live monster.
+    Eaten monsters keep their eyes only sprite until they respawn.
+    made by: Mohammad Abu Aresh
+    """
+    for monster in (
+        controller.BabyZombie,
+        controller.Skeleton,
+        controller.Enderman,
+        controller.witch,
+    ):
+        if monster.live:
+            monster.image = monster.walk.update(
+                monster.x, monster.y, monster.frightened
+            )
