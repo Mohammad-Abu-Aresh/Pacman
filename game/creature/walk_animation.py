@@ -145,7 +145,7 @@ def build_frames(
     }
     scale = frame_scale(height, boxes[""][2])
     size = sheet_size(list(boxes.values()), scale)
-    frames = {}
+    frames: dict[str, pygame.Surface] = {}
     for name, image in raw.items():
         box = boxes[name]
         part = pygame.transform.smoothscale(
