@@ -217,10 +217,12 @@ class WalkAnimation:
 
 def animate_creatures(controller: Control_creature) -> None:
     """
-    Show the next walking frame of every live monster.
+    Show the next walking frame of Steve and every live monster.
     Eaten monsters keep their eyes only sprite until they respawn.
     made by: Mohammad Abu Aresh
     """
+    player = controller.player
+    player.image = player.walk.update(player.x, player.y, False)
     for monster in (
         controller.BabyZombie,
         controller.Skeleton,

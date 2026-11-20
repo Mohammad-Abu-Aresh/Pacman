@@ -31,7 +31,8 @@ def make_game(collision: bool, arrow: bool) -> Any:
     game.config = {}
     game.maze_map = SimpleNamespace(every_cell=[[False]])
     player = SimpleNamespace(
-        x=1.0, y=1.0, change_diric=MagicMock(), move=MagicMock()
+        x=1.0, y=1.0, change_diric=MagicMock(), move=MagicMock(),
+        image="steve", walk=SimpleNamespace(update=lambda x, y, tinted: "f"),
     )
     game.player_creature = SimpleNamespace(
         player=player,

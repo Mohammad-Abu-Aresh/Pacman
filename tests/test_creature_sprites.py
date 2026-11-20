@@ -13,10 +13,12 @@ from game.creature import enderman as enderman_module  # noqa: E402
 from game.creature import skeleton as skeleton_module  # noqa: E402
 from game.creature import witch as witch_module  # noqa: E402
 from game.creature.babyzombie import BabyZombie  # noqa: E402
+from game.creature import player as player_module  # noqa: E402
 from game.creature.enderman import Enderman  # noqa: E402
 from game.creature.ghost_state import (  # noqa: E402
     set_monster_frightened_visual,
 )
+from game.creature.player import Player  # noqa: E402
 from game.creature.skeleton import Skeleton  # noqa: E402
 from game.creature.walk_animation import (  # noqa: E402
     WalkAnimation,
@@ -133,10 +135,11 @@ class AnimateCreaturesTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         names = ("BabyZombie", "Skeleton", "Enderman", "witch")
-        return SimpleNamespace(**{
+        monsters = {
             name: self.monster(*flags.get(name, (True, False)))
             for name in names
-        })
+        }
+        return SimpleNamespace(player=self.monster(True, False), **monsters)
 
     def test_live_monsters_get_their_next_frame(self) -> None:
         """Verify every live monster shows the frame of its position.
@@ -185,6 +188,85 @@ class AnimateCreaturesTests(unittest.TestCase):
         self.assertEqual(monster.image, "n-a")
 
 
+class SteveTests(unittest.TestCase):
+    def setUp(self) -> None:
+        """Set a block size of forty pixels for the height math.
+        Restore the real block size after every test.
+        made by: Mohammad Abu Aresh
+        """
+        self.old_size = Block.size
+        Block.size = 40
+        self.addCleanup(setattr, Block, "size", self.old_size)
+
+    def test_steve_is_exactly_two_blocks_tall(self) -> None:
+        """Verify Steve is scaled to a height of two blocks.
+        Check the requested height and the first frame shown.
+        made by: Mohammad Abu Aresh
+        """
+        steve: Any = Player.__new__(Player)
+        with patch.object(
+            player_module, "frame_set", return_value=fake_frames()
+        ) as builder:
+            steve.load_size()
+        self.assertEqual(builder.call_args.args[1], 80)
+        self.assertEqual(steve.image, "n-idle")
+
+    def test_steve_uses_his_own_frames(self) -> None:
+        """Verify Steve is built from his own set of frames.
+        The monsters frames must not be used for him.
+        made by: Mohammad Abu Aresh
+        """
+        steve: Any = Player.__new__(Player)
+        with patch.object(
+            player_module, "frame_set", return_value=fake_frames()
+        ) as builder:
+            steve.load_size()
+        self.assertIs(
+            builder.call_args.args[0], player_module.Images.steve_frames
+        )
+
+    def test_steve_walks_and_stands_like_the_monsters(self) -> None:
+        """Verify Steve changes frames while he moves and stands still.
+        Move him one step and then keep him in place.
+        made by: Mohammad Abu Aresh
+        """
+        steve = SimpleNamespace(
+            x=0.0, y=0.0, image="old", walk=WalkAnimation(fake_frames())
+        )
+        monster = SimpleNamespace(live=False)
+        controller = SimpleNamespace(
+            player=steve, BabyZombie=monster, Skeleton=monster,
+            Enderman=monster, witch=monster,
+        )
+        animate_creatures(controller)
+        self.assertEqual(steve.image, "n-idle")
+        steve.x = 0.25
+        animate_creatures(controller)
+        self.assertEqual(steve.image, "n-a")
+        animate_creatures(controller)
+        self.assertEqual(steve.image, "n-idle")
+
+    def test_steve_is_never_tinted(self) -> None:
+        """Verify Steve always asks for the normal look.
+        Only frightened monsters use the blue frames.
+        made by: Mohammad Abu Aresh
+        """
+        asked: list[bool] = []
+        steve = SimpleNamespace(
+            x=0.0, y=0.0, image="old",
+            walk=SimpleNamespace(
+                update=lambda x, y, tinted: asked.append(tinted) or "frame"
+            ),
+        )
+        monster = SimpleNamespace(live=False)
+        controller = SimpleNamespace(
+            player=steve, BabyZombie=monster, Skeleton=monster,
+            Enderman=monster, witch=monster,
+        )
+        animate_creatures(controller)
+        self.assertEqual(asked, [False])
+
+
 class FrightenedLookTests(unittest.TestCase):
     def monster(self) -> Any:
         """Create a light monster that owns a real walk animation.
@@ -223,6 +305,10 @@ class FrightenedLookTests(unittest.TestCase):
         monster.live, monster.frightened = True, True
         monster.x, monster.y = 0.0, 0.0
         controller = SimpleNamespace(
+            player=SimpleNamespace(
+                x=0.0, y=0.0, image="steve",
+                walk=SimpleNamespace(update=lambda x, y, tinted: "steve"),
+            ),
             BabyZombie=monster, Skeleton=monster,
             Enderman=monster, witch=monster,
         )

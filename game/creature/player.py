@@ -1,6 +1,7 @@
 # import time
 from .creature import Creature
 from ..block import Mape, Block
+from .walk_animation import WalkAnimation, frame_set
 from photos.loderimages import Images
 import pygame
 
@@ -96,12 +97,11 @@ class Player(Creature):
         Store the scaled surface used by the player drawing routine.
         made by: Mohammad Abu Aresh
         """
-        Images._update_size(
-            "player",
-            size=(Block.size * 0.7, Block.size * 2.8)
+        self.walk = WalkAnimation(
+            frame_set(Images.steve_frames, round(Block.size * 2))
             # 2.8 just on this photo so its temp it was 1.8
         )
-        self.image = Images.player_new
+        self.image = self.walk.current(False)
 
     def change_diric(self) -> None:
         """
