@@ -8,6 +8,12 @@ if TYPE_CHECKING:
     from .creature import Control_creature
 
 FEET_OFFSET = 1.3
+FRONT_WIDTH_CAP = 0.95
+ENTITY_HEIGHTS = {
+    "steve": 1.8, "zombie": 0.975, "skeleton": 1.99,
+    "witch": 1.95, "enderman": 2.9,
+}
+CAPPED_VIEWS = (("", "_walking"), ("_up", "_up_walking"))
 STRIDE = 0.5
 TELEPORT_DISTANCE = 1.5
 TINT_MULTIPLY = (120, 150, 255, 255)
@@ -29,25 +35,41 @@ def facing_from_delta(dx: float, dy: float) -> str:
 
 def frame_scale(target_height: float, reference_height: float) -> float:
     """
-    Return the scale that makes the reference frame the target height.
-    Use one scale for every frame so the creature never changes size.
+    Return the scale that makes a frame the target height.
+    Use it on every frame so the creature keeps one height.
     made by: Mohammad Abu Aresh
     """
     return target_height / max(reference_height, 1)
 
 
-def sheet_size(boxes: list[FrameBox], scale: float) -> tuple[int, int]:
+def view_scales(
+    boxes: dict[str, FrameBox], height: float, width_cap: float
+) -> dict[str, float]:
+    """
+    Choose the scale of every frame so all of them share one height.
+    Shrink the front and back views together when they exceed the cap.
+    made by: Mohammad Abu Aresh
+    """
+    scales = {name: frame_scale(height, box[2]) for name, box in boxes.items()}
+    for group in CAPPED_VIEWS:
+        widest = max(boxes[name][1] * scales[name] for name in group)
+        for name in group:
+            scales[name] *= min(1.0, width_cap / widest)
+    return scales
+
+
+def sheet_size(items: list[tuple[FrameBox, float]]) -> tuple[int, int]:
     """
     Compute the common size of all frames of one creature.
-    Each box holds the left edge, width, height and canvas width.
+    Each item holds a box with its left edge, width, height and canvas
     made by: Mohammad Abu Aresh
     """
     half = max(
-        max(abs(left - canvas / 2), abs(left + width - canvas / 2))
-        for left, width, _, canvas in boxes
+        max(abs(left - canvas / 2), abs(left + width - canvas / 2)) * scale
+        for (left, width, _, canvas), scale in items
     )
-    height = max(box[2] for box in boxes)
-    return 2 * math.ceil(half * scale), math.ceil(height * scale)
+    height = max(box[2] * scale for box, scale in items)
+    return 2 * math.ceil(half), math.ceil(height)
 
 
 def paste_position(
@@ -124,11 +146,11 @@ class FrameSet:
         )
 
 
-_CACHE: dict[tuple[int, int], FrameSet] = {}
+_CACHE: dict[tuple[int, int, int], FrameSet] = {}
 
 
 def build_frames(
-    raw: dict[str, pygame.Surface], height: int
+    raw: dict[str, pygame.Surface], height: int, width_cap: int
 ) -> dict[str, pygame.Surface]:
     """
     Crop, scale and align the raw frames of one creature.
@@ -143,11 +165,11 @@ def build_frames(
         name: (rect.x, rect.w, rect.h, raw[name].get_width())
         for name, rect in rects.items()
     }
-    scale = frame_scale(height, boxes[""][2])
-    size = sheet_size(list(boxes.values()), scale)
+    scales = view_scales(boxes, height, width_cap)
+    size = sheet_size([(boxes[name], scales[name]) for name in boxes])
     frames: dict[str, pygame.Surface] = {}
     for name, image in raw.items():
-        box = boxes[name]
+        box, scale = boxes[name], scales[name]
         part = pygame.transform.smoothscale(
             image.subsurface(rects[name]),
             (round(box[1] * scale), round(box[2] * scale)),
@@ -164,9 +186,10 @@ def frame_set(raw: dict[str, pygame.Surface], height: int) -> FrameSet:
     Rebuild it only when the block size changes the height.
     made by: Mohammad Abu Aresh
     """
-    key = (id(raw), height)
+    width_cap = round(Block.size * FRONT_WIDTH_CAP)
+    key = (id(raw), height, width_cap)
     if key not in _CACHE:
-        _CACHE[key] = FrameSet(build_frames(raw, height))
+        _CACHE[key] = FrameSet(build_frames(raw, height, width_cap))
     return _CACHE[key]
 
 
@@ -224,10 +247,8 @@ def animate_creatures(controller: Control_creature) -> None:
     player = controller.player
     player.image = player.walk.update(player.x, player.y, False)
     for monster in (
-        controller.BabyZombie,
-        controller.Skeleton,
-        controller.Enderman,
-        controller.witch,
+        controller.BabyZombie, controller.Skeleton,
+        controller.Enderman, controller.witch,
     ):
         if monster.live:
             monster.image = monster.walk.update(

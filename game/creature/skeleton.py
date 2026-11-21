@@ -5,7 +5,7 @@ from .player import Direction, Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
-from .walk_animation import WalkAnimation, frame_set
+from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
 
 
 class Skeleton(Monster):
@@ -36,8 +36,9 @@ class Skeleton(Monster):
         Store the scaled image surface for drawing.
         made by: Mohammad Abu Aresh
         """
+        height = round(Block.size * ENTITY_HEIGHTS["skeleton"])
         self.walk = WalkAnimation(
-            frame_set(Images.skeleton_frames, round(Block.size * 1.8))
+            frame_set(Images.skeleton_frames, height)
         )
         self.image = self.walk.current(False)
 

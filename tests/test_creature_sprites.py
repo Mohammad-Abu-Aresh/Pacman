@@ -66,37 +66,37 @@ class MonsterSizeTests(unittest.TestCase):
             return kind((1, 1), True), builder
 
     def test_zombie_is_less_than_one_block_tall(self) -> None:
-        """Verify the baby zombie keeps its small height of 0.9 block.
+        """Verify the baby zombie is half a Minecraft zombie tall.
         Check the requested height and the first frame shown.
         made by: Mohammad Abu Aresh
         """
         monster, builder = self.build(zombie_module, BabyZombie)
-        self.assertEqual(builder.call_args.args[1], 36)
+        self.assertEqual(builder.call_args.args[1], 39)
         self.assertEqual(monster.image, "n-idle")
 
-    def test_skeleton_is_one_and_eight_tenths_blocks_tall(self) -> None:
-        """Verify the skeleton height is 1.8 blocks.
+    def test_skeleton_has_its_minecraft_height(self) -> None:
+        """Verify the skeleton height is 1.99 blocks.
         The height decides the scale of every frame.
         made by: Mohammad Abu Aresh
         """
         monster, builder = self.build(skeleton_module, Skeleton)
-        self.assertEqual(builder.call_args.args[1], 72)
+        self.assertEqual(builder.call_args.args[1], 80)
 
-    def test_witch_is_one_and_eight_tenths_blocks_tall(self) -> None:
-        """Verify the witch height is 1.8 blocks.
+    def test_witch_has_its_minecraft_height(self) -> None:
+        """Verify the witch height is 1.95 blocks.
         The height decides the scale of every frame.
         made by: Mohammad Abu Aresh
         """
         monster, builder = self.build(witch_module, Witch)
-        self.assertEqual(builder.call_args.args[1], 72)
+        self.assertEqual(builder.call_args.args[1], 78)
 
-    def test_enderman_is_two_and_eight_tenths_blocks_tall(self) -> None:
-        """Verify the Enderman height is 2.8 blocks.
+    def test_enderman_has_its_minecraft_height(self) -> None:
+        """Verify the Enderman height is 2.9 blocks.
         The height decides the scale of every frame.
         made by: Mohammad Abu Aresh
         """
         monster, builder = self.build(enderman_module, Enderman)
-        self.assertEqual(builder.call_args.args[1], 112)
+        self.assertEqual(builder.call_args.args[1], 116)
 
     def test_every_monster_stands_on_the_same_ground_line(self) -> None:
         """Verify all monsters are anchored by their feet at one height.
@@ -198,8 +198,8 @@ class SteveTests(unittest.TestCase):
         Block.size = 40
         self.addCleanup(setattr, Block, "size", self.old_size)
 
-    def test_steve_is_exactly_two_blocks_tall(self) -> None:
-        """Verify Steve is scaled to a height of two blocks.
+    def test_steve_is_one_point_eight_blocks_tall(self) -> None:
+        """Verify Steve has the Minecraft height of 1.8 blocks.
         Check the requested height and the first frame shown.
         made by: Mohammad Abu Aresh
         """
@@ -208,7 +208,7 @@ class SteveTests(unittest.TestCase):
             player_module, "frame_set", return_value=fake_frames()
         ) as builder:
             steve.load_size()
-        self.assertEqual(builder.call_args.args[1], 80)
+        self.assertEqual(builder.call_args.args[1], 72)
         self.assertEqual(steve.image, "n-idle")
 
     def test_steve_uses_his_own_frames(self) -> None:
