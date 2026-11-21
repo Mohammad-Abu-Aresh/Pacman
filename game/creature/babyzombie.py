@@ -5,7 +5,9 @@ from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
 from .algo_monster import AlgoMonster
-from .walk_animation import WalkAnimation, anchored_rect, frame_set
+from .walk_animation import (
+    ENTITY_HEIGHTS, WalkAnimation, anchored_rect, frame_set,
+)
 
 
 class BabyZombie(Monster):
@@ -37,8 +39,9 @@ class BabyZombie(Monster):
         Store the scaled surface for subsequent drawing.
         made by: Mohammad Abu Aresh
         """
+        height = round(Block.size * ENTITY_HEIGHTS["zombie"])
         self.walk = WalkAnimation(
-            frame_set(Images.zombie_frames, round(Block.size * 0.9))
+            frame_set(Images.zombie_frames, height)
         )
         self.image = self.walk.current(False)
 

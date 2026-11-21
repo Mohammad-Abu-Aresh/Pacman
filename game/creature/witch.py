@@ -6,7 +6,7 @@ from ..block import Block
 from photos import Images
 from .algo_monster import AlgoMonster
 from .bfs import PathFinder
-from .walk_animation import WalkAnimation, frame_set
+from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
 
 
 class Witch(Monster):
@@ -35,8 +35,9 @@ class Witch(Monster):
         Store the scaled image surface for drawing.
         made by: Mohammad Abu Aresh
         """
+        height = round(Block.size * ENTITY_HEIGHTS["witch"])
         self.walk = WalkAnimation(
-            frame_set(Images.witch_frames, round(Block.size * 1.8))
+            frame_set(Images.witch_frames, height)
         )
         self.image = self.walk.current(False)
 
