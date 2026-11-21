@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Variables
-PYTHON       ?= python3.14
+PYTHON       ?= python3
 VENV         := .venv
 VENV_PYTHON  := $(VENV)/bin/python
 VENV_PIP     := $(VENV)/bin/pip
@@ -25,11 +25,10 @@ all: install
 # Create venv if not exists, upgrade pip, install poetry and all requirements
 .PHONY: install
 install: venv
-	python3 -m pip install --upgrade pyinstaller
-	@echo "Installing dependencies using poetry in virtual environment..."
-	@$(VENV_PIP) install --upgrade pip
-	@$(VENV_PIP) install poetry
-	@$(VENV_PYTHON) -m poetry install
+	@echo "Installing dependencies in the virtual environment..."
+	@$(VENV_PYTHON) -m pip install --upgrade pip
+	@$(VENV_PYTHON) -m pip install --upgrade pyinstaller poetry
+	@POETRY_KEYRING_ENABLED=false $(VENV_PYTHON) -m poetry install
 	@echo ""
 	@echo "========================================"
 	@echo "Dependencies installed successfully!"
@@ -41,6 +40,7 @@ install: venv
 .PHONY: venv
 venv:
 	@if [ ! -d "$(VENV)" ]; then \
+		$(PYTHON) -c 'import sys; assert sys.version_info >= (3, 14), "Python 3.14 or newer is required."' || exit 1; \
 		echo "Creating virtual environment at $(VENV)..."; \
 		$(PYTHON) -m venv $(VENV) || exit 1; \
 		echo "Virtual environment created successfully."; \

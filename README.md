@@ -41,7 +41,7 @@ a persistent JSON storage file.
 ### Prerequisites
 
 ```
-Python 3.10 or later
+Python 3.14 or later
 make utility
 Virtual environment (venv recommended)
 The assigned external A-Maze-ing package installed in your environment
