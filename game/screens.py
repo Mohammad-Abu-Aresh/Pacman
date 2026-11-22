@@ -294,8 +294,8 @@ class Screens:
         return draw_higscore
 
     def game_over_screen(
-            self, final_score: int = 0, winner: bool = False
-                        ) -> Callable[[], None]:
+        self, final_score: int = 0, winner: bool = False
+    ) -> Callable[[], None]:
         """
         Prepare the victory or game-over title, final score, and
         name input area.
@@ -310,53 +310,60 @@ class Screens:
             background, (self.width, self.height)
         )
 
-        font_score = pygame.font.Font(None, 55)
-        font_score.set_bold(True)
-
-        font_prompt = pygame.font.Font(None, 32)
-        font_prompt.set_bold(True)
-        score_color = (255, 215, 0) if winner else (255, 50, 50)
-        score_text = f"Final Score: {final_score}"
-        score_surf = font_score.render(score_text, True, score_color)
-        score_shadow = font_score.render(score_text, True, (0, 0, 0))
+        font_text = pygame.font.Font(None, 36)
+        score_surf = font_text.render(
+            f"Final Score: {final_score}", True, (255, 215, 0)
+        )
         score_rect = score_surf.get_rect(
-            center=(self.width // 2, int(self.height * 0.68))
+            center=(self.width // 2, int(self.height * 0.50))
         )
-        prompt_text = "Enter your name (max 10 chars) & press ENTER:"
-        prompt_surf = font_prompt.render(prompt_text, True, (255, 255, 255))
-        prompt_shadow = font_prompt.render(prompt_text, True, (0, 0, 0))
+        prompt_surf = font_text.render(
+            "Enter your name (max 10 chars) & press ENTER:",
+            True,
+            (100, 255, 255)
+        )
         prompt_rect = prompt_surf.get_rect(
-            center=(self.width // 2, int(self.height * 0.75))
+            center=(self.width // 2, int(self.height * 0.60))
         )
-        box_width = int(self.width * 0.25)
+        box_width = int(self.width * 0.3)
         box_height = 45
         input_rect = pygame.Rect(
             (self.width - box_width) // 2,
-            int(self.height * 0.79),
+            int(self.height * 0.70),
             box_width,
             box_height
         )
 
-        def draw_screen():
-            # رسم الخلفية
+        def draw_game_over() -> None:
+            """
+            Render the result title, final score, prompt, and name-entry
+            box.
+            Display the current user text within the input area.
+            made by: Abdalghani Abtah
+            """
+
             self.screen.blit(background, (0, 0))
-
-            self.screen.blit(
-                score_shadow, (score_rect.x + 2, score_rect.y + 2)
-            )
             self.screen.blit(score_surf, score_rect)
-
-            self.screen.blit(
-                prompt_shadow, (prompt_rect.x + 2, prompt_rect.y + 2)
-            )
             self.screen.blit(prompt_surf, prompt_rect)
             pygame.draw.rect(
-                self.screen, (20, 20, 20), input_rect, border_radius=5
+                self.screen, (30, 30, 45), input_rect, border_radius=6
             )
             pygame.draw.rect(
-                self.screen, (200, 200, 200), input_rect, 2, border_radius=5
+                self.screen,
+                (100, 150, 255),
+                input_rect,
+                2,
+                border_radius=6
             )
-        return draw_screen
+            current_name = self.user_text[:10]
+            name_surf = font_text.render(
+                current_name, True, (255, 255, 255)
+            )
+            self.screen.blit(
+                name_surf, (input_rect.x + 12, input_rect.y + 8)
+            )
+
+        return draw_game_over
 
     def addjson(self, name: str, score: int, file: str) -> None:
         """
