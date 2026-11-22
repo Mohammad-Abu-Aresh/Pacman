@@ -337,8 +337,8 @@ class Screens:
             box_height
         )
 
-        def draw_screen():
-            # رسم الخلفية
+        def draw_screen() -> None:
+            # draw the background
             self.screen.blit(background, (0, 0))
 
             self.screen.blit(
