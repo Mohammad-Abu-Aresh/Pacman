@@ -1,6 +1,7 @@
 # import time
 from .creature import Creature
 from ..block import Mape, Block
+from .step_probe import probe_cell
 from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
 from photos.loderimages import Images
 import pygame
@@ -159,7 +160,10 @@ class Player(Creature):
             return
         next_x = self.x + dx * self.speed
         next_y = self.y + dy * self.speed
-        if not self.can_move_to(round(next_x), round(next_y)):
+        if not self.can_move_to(*probe_cell(next_x, next_y, dx, dy)):
+            self.x = float(round(self.x))
+            self.y = float(round(self.y))
+            self.locaion = (self.x, self.y)
             movement.traffic_update(Direction.none)
             return
         self.x = next_x
