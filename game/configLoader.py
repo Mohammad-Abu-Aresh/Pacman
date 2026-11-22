@@ -12,7 +12,10 @@ class ConfigLoader:
         made by: Abdalghani Abtah
         update by: Mohammad Abu Aresh
         """
-        self.fileName: str = sys.argv[1]
+        if len(sys.argv) > 1:
+            self.fileName: str = sys.argv[1]
+        else:
+            self.fileName: str = ""
         self.default_config: dict[str, Any] = {
             "highscore_filename": "highscores.json",
             "lives": 3,
