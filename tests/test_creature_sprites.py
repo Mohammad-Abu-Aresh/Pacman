@@ -234,7 +234,7 @@ class SteveTests(unittest.TestCase):
             x=0.0, y=0.0, image="old", walk=WalkAnimation(fake_frames())
         )
         monster = SimpleNamespace(live=False)
-        controller = SimpleNamespace(
+        controller: Any = SimpleNamespace(
             player=steve, BabyZombie=monster, Skeleton=monster,
             Enderman=monster, witch=monster,
         )
@@ -252,14 +252,20 @@ class SteveTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         asked: list[bool] = []
+
+        def record(x: float, y: float, tinted: bool) -> str:
+            """Remember whether the tinted look was requested.
+            Return a marker frame for the animation helper.
+            made by: Mohammad Abu Aresh
+            """
+            asked.append(tinted)
+            return "frame"
+
         steve = SimpleNamespace(
-            x=0.0, y=0.0, image="old",
-            walk=SimpleNamespace(
-                update=lambda x, y, tinted: asked.append(tinted) or "frame"
-            ),
+            x=0.0, y=0.0, image="old", walk=SimpleNamespace(update=record)
         )
         monster = SimpleNamespace(live=False)
-        controller = SimpleNamespace(
+        controller: Any = SimpleNamespace(
             player=steve, BabyZombie=monster, Skeleton=monster,
             Enderman=monster, witch=monster,
         )
@@ -304,7 +310,7 @@ class FrightenedLookTests(unittest.TestCase):
         monster = self.monster()
         monster.live, monster.frightened = True, True
         monster.x, monster.y = 0.0, 0.0
-        controller = SimpleNamespace(
+        controller: Any = SimpleNamespace(
             player=SimpleNamespace(
                 x=0.0, y=0.0, image="steve",
                 walk=SimpleNamespace(update=lambda x, y, tinted: "steve"),

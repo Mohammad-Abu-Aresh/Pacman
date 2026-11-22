@@ -327,7 +327,7 @@ class FrameBuildTests(unittest.TestCase):
                 flip=lambda image, x, y: ("flip", image, x, y)
             )
         )
-        frames = {name: f"img{name}" for name in NAMES}
+        frames: Any = {name: f"img{name}" for name in NAMES}
         with patch.object(walk_module, "pygame", fake):
             look = Look(frames)
         self.assertEqual(look.cycles["right"][0], "img_r_front")
@@ -346,7 +346,7 @@ class FrameBuildTests(unittest.TestCase):
         fake = SimpleNamespace(
             transform=SimpleNamespace(flip=lambda image, x, y: image)
         )
-        frames = {name: f"img{name}" for name in NAMES}
+        frames: Any = {name: f"img{name}" for name in NAMES}
         with patch.object(walk_module, "pygame", fake), patch.object(
             walk_module, "tint_frame", lambda image: ("tint", image)
         ):
@@ -445,7 +445,7 @@ class FrameBuildTests(unittest.TestCase):
             SRCALPHA=1,
         )
         with patch.object(walk_module, "pygame", fake):
-            frames = build_frames(raw, 100, 1000)
+            frames: Any = build_frames(raw, 100, 1000)
         sizes = {sheet.size for sheet in frames.values()}
         self.assertEqual(len(sizes), 1)
         self.assertEqual(calls[0], (52, 100))
