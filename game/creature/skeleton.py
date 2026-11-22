@@ -5,7 +5,8 @@ from .player import Direction, Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
-from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .walk_animation import WalkAnimation
 
 
 class Skeleton(Monster):

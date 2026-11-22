@@ -6,7 +6,8 @@ from ..block import Block
 from photos import Images
 from .algo_monster import AlgoMonster
 from .bfs import PathFinder
-from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .walk_animation import WalkAnimation
 
 
 class Witch(Monster):

@@ -2,7 +2,8 @@
 from .creature import Creature
 from ..block import Mape, Block
 from .step_probe import probe_cell
-from .walk_animation import ENTITY_HEIGHTS, WalkAnimation, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .walk_animation import WalkAnimation
 from photos.loderimages import Images
 import pygame
 

@@ -5,9 +5,8 @@ from .player import Player
 from ..block import Block, Mape
 from photos.loderimages import Images
 from .algo_monster import AlgoMonster
-from .walk_animation import (
-    ENTITY_HEIGHTS, WalkAnimation, anchored_rect, frame_set,
-)
+from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .walk_animation import WalkAnimation, anchored_rect
 
 
 class BabyZombie(Monster):

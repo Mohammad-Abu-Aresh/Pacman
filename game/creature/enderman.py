@@ -7,9 +7,8 @@ from .player import Direction, Player
 from ..block import Mape, Block
 from photos import Images
 from .algo_monster import AlgoMonster
-from .walk_animation import (
-    ENTITY_HEIGHTS, WalkAnimation, anchored_rect, frame_set,
-)
+from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .walk_animation import WalkAnimation, anchored_rect
 
 
 class Enderman(Monster):
