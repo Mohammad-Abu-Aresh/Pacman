@@ -7,6 +7,7 @@ from photos.loderimages import Images
 from .game_modes import Mod
 from .screens import Screens
 from .gameplay import GameSystem
+from .name_entry import add_character, final_name, remove_character
 
 
 class GameEngine:
@@ -55,27 +56,25 @@ class GameEngine:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if Mod.state_variable in (
-                    Mod.SETTINGS_SCREEN,
                     Mod.VICTORY_SCREEN,
                     Mod.GAME_OVER_SCREEN,
                 ):
                     if event.key == pygame.K_BACKSPACE:
-                        self.screens.user_text = (
-                            self.screens.user_text[:-1]
+                        self.screens.user_text = remove_character(
+                            self.screens.user_text
                         )
-                    elif event.key == pygame.K_RETURN:
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         self.screens.addjson(
-                            self.screens.user_text, self.playr_score,
+                            final_name(self.screens.user_text),
+                            self.playr_score,
                             self.config["highscore_filename"]
                             )
                         self.screens.user_text = ""
                         Mod.updatemod(Mod.MAIN_MENU_SCREEN)
                     else:
-                        if (
-                            len(self.screens.user_text) < 10
-                            and event.unicode.isprintable()
-                        ):
-                            self.screens.user_text += event.unicode
+                        self.screens.user_text = add_character(
+                            self.screens.user_text, event.unicode
+                        )
                 if event.key == pygame.K_c:
                     if Mod.state_variable == Mod.GAME_SCREEN:
                         self.cheating = not self.cheating

@@ -2,6 +2,7 @@ from typing import Callable, Optional
 import pygame
 import json
 from photos import Images
+from .name_entry import cursor_text, visible_text_area
 from .overlay import make_shade, names_panel_box
 
 
@@ -302,6 +303,7 @@ class Screens:
         Return a callback that draws the prepared result screen.
         made by: Abdalghani Abtah
         """
+        self.user_text = ""
         background = (
             Images.victory_screen if winner
             else Images.game_over_screen
@@ -355,6 +357,21 @@ class Screens:
             )
             pygame.draw.rect(
                 self.screen, (200, 200, 200), input_rect, 2, border_radius=5
+            )
+            typed = font_prompt.render(
+                cursor_text(self.user_text, pygame.time.get_ticks()),
+                True, (255, 255, 255),
+            )
+            left, width = visible_text_area(
+                typed.get_width(), input_rect.width - 24
+            )
+            self.screen.blit(
+                typed,
+                (
+                    input_rect.x + 12,
+                    input_rect.centery - typed.get_height() // 2,
+                ),
+                pygame.Rect(left, 0, width, typed.get_height()),
             )
         return draw_screen
 
