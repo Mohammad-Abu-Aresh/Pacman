@@ -6,7 +6,7 @@ from ..block import Block
 from photos import Images
 from .algo_monster import AlgoMonster
 from .bfs import PathFinder
-from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, feet_offset, frame_set
 from .walk_animation import WalkAnimation
 
 
@@ -38,7 +38,7 @@ class Witch(Monster):
         """
         height = round(Block.size * ENTITY_HEIGHTS["witch"])
         self.walk = WalkAnimation(
-            frame_set(Images.witch_frames, height)
+            frame_set(Images.witch_frames, height), feet_offset("witch")
         )
         self.image = self.walk.current(False)
 

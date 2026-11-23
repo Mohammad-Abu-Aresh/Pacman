@@ -8,7 +8,6 @@ from .sprite_frames import FrameSet
 if TYPE_CHECKING:
     from .creature import Control_creature
 
-FEET_OFFSET = 1.3
 STRIDE = 0.5
 TELEPORT_DISTANCE = 1.5
 
@@ -25,26 +24,27 @@ def facing_from_delta(dx: float, dy: float) -> str:
 
 
 def anchored_rect(
-    image: pygame.Surface, x: float, y: float, mape: Mape
+    image: pygame.Surface, x: float, y: float, mape: Mape, feet: float
 ) -> pygame.Rect:
     """
     Return the rectangle that stands the image on its grid cell.
-    Center it horizontally and put its feet on the cell ground line.
+    Center it horizontally and put its feet at the given offset.
     made by: Mohammad Abu Aresh
     """
     px = mape.origin_x + (x + 1.0) * Block.size
-    py = mape.origin_y + (y + FEET_OFFSET) * Block.size
+    py = mape.origin_y + (y + feet) * Block.size
     return image.get_rect(midbottom=(int(px), int(py)))
 
 
 class WalkAnimation:
-    def __init__(self, frames: FrameSet) -> None:
+    def __init__(self, frames: FrameSet, feet: float) -> None:
         """
         Start a walking animation that faces the camera and stands.
-        Keep only the small state that changes while walking.
+        Keep the feet offset and the small state that changes while walking.
         made by: Mohammad Abu Aresh
         """
         self.frames = frames
+        self.feet = feet
         self.facing = "down"
         self.phase = 0.0
         self.moving = False

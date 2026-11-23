@@ -41,7 +41,7 @@ def make_animation() -> WalkAnimation:
     frames: Any = SimpleNamespace(
         normal=fake_look("n"), tinted=fake_look("t")
     )
-    return WalkAnimation(frames)
+    return WalkAnimation(frames, 1.3)
 
 
 def walk(
@@ -76,9 +76,33 @@ class GeometryTests(unittest.TestCase):
         self.addCleanup(setattr, Block, "size", old)
         image: Any = SimpleNamespace(get_rect=lambda **kwargs: kwargs)
         mape: Any = SimpleNamespace(origin_x=100, origin_y=50)
-        rect: Any = anchored_rect(image, 2, 3, mape)
+        rect: Any = anchored_rect(image, 2, 3, mape, 1.3)
         expected = (100 + 3 * 40, int(50 + 4.3 * 40))
         self.assertEqual(rect["midbottom"], expected)
+
+
+class FeetOffsetTests(unittest.TestCase):
+    def test_lower_feet_move_the_image_down_the_screen(self) -> None:
+        """Verify a bigger feet offset puts the feet lower.
+        Compare the same creature with two offsets.
+        made by: Mohammad Abu Aresh
+        """
+        old = Block.size
+        Block.size = 40
+        self.addCleanup(setattr, Block, "size", old)
+        image: Any = SimpleNamespace(get_rect=lambda **kwargs: kwargs)
+        mape: Any = SimpleNamespace(origin_x=0, origin_y=0)
+        high: Any = anchored_rect(image, 1, 1, mape, 1.3)
+        low: Any = anchored_rect(image, 1, 1, mape, 1.75)
+        self.assertEqual(low["midbottom"][0], high["midbottom"][0])
+        self.assertEqual(low["midbottom"][1] - high["midbottom"][1], 18)
+
+    def test_animation_remembers_its_feet_offset(self) -> None:
+        """Verify the animation stores the offset used for drawing.
+        The render rectangle reads it from there.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(make_animation().feet, 1.3)
 
 
 class WalkCycleTests(unittest.TestCase):

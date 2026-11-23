@@ -68,7 +68,7 @@ class Creature(ABC):
         Preserve the shared creature drawing offset.
         made by: Mohammad Abu Aresh
         """
-        return anchored_rect(self.image, self.x, self.y, mape)
+        return anchored_rect(self.image, self.x, self.y, mape, self.walk.feet)
 
     def draw(self, mape: Mape) -> None:
         """

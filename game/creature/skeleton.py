@@ -5,7 +5,7 @@ from .player import Direction, Player
 from .abilities import Arrow
 from ..block import Mape
 from .algo_monster import AlgoMonster
-from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, feet_offset, frame_set
 from .walk_animation import WalkAnimation
 
 
@@ -39,7 +39,7 @@ class Skeleton(Monster):
         """
         height = round(Block.size * ENTITY_HEIGHTS["skeleton"])
         self.walk = WalkAnimation(
-            frame_set(Images.skeleton_frames, height)
+            frame_set(Images.skeleton_frames, height), feet_offset("skeleton")
         )
         self.image = self.walk.current(False)
 

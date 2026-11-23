@@ -7,7 +7,7 @@ from .player import Direction, Player
 from ..block import Mape, Block
 from photos import Images
 from .algo_monster import AlgoMonster
-from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, feet_offset, frame_set
 from .walk_animation import WalkAnimation, anchored_rect
 
 
@@ -38,7 +38,7 @@ class Enderman(Monster):
         """
         height = round(Block.size * ENTITY_HEIGHTS["enderman"])
         self.walk = WalkAnimation(
-            frame_set(Images.enderman_frames, height)
+            frame_set(Images.enderman_frames, height), feet_offset("enderman")
         )
         self.image = self.walk.current(False)
 
@@ -48,7 +48,7 @@ class Enderman(Monster):
         Preserve the Enderman-specific vertical drawing offset.
         made by: Mohammad Abu Aresh
         """
-        return anchored_rect(self.image, self.x, self.y, mape)
+        return anchored_rect(self.image, self.x, self.y, mape, self.walk.feet)
 
     def draw(self, mape: Mape) -> None:
         """

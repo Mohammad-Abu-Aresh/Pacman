@@ -20,6 +20,7 @@ from game.creature.ghost_state import (  # noqa: E402
 )
 from game.creature.player import Player  # noqa: E402
 from game.creature.skeleton import Skeleton  # noqa: E402
+from game.creature.sprite_frames import feet_offset  # noqa: E402
 from game.creature.walk_animation import (  # noqa: E402
     WalkAnimation,
     animate_creatures,
@@ -98,21 +99,23 @@ class MonsterSizeTests(unittest.TestCase):
         monster, builder = self.build(enderman_module, Enderman)
         self.assertEqual(builder.call_args.args[1], 116)
 
-    def test_every_monster_stands_on_the_same_ground_line(self) -> None:
-        """Verify all monsters are anchored by their feet at one height.
-        Check the midbottom point of a skeleton and a zombie.
+    def test_every_monster_sinks_by_its_own_fraction(self) -> None:
+        """Verify each monster is lowered by its own part of the body.
+        Check the feet offset used to place a skeleton and a zombie.
         made by: Mohammad Abu Aresh
         """
         mape: Any = SimpleNamespace(origin_x=100, origin_y=50)
-        points = []
-        for module, kind in (
-            (skeleton_module, Skeleton), (zombie_module, BabyZombie)
+        for module, kind, key in (
+            (skeleton_module, Skeleton, "skeleton"),
+            (zombie_module, BabyZombie, "zombie"),
+            (enderman_module, Enderman, "enderman"),
+            (witch_module, Witch, "witch"),
         ):
             monster, _ = self.build(module, kind)
             monster.image = SimpleNamespace(get_rect=lambda **kw: kw)
-            points.append(monster.get_render_rect(mape)["midbottom"])
-        self.assertEqual(points[0], points[1])
-        self.assertEqual(points[0], (100 + 2 * 40, int(50 + 2.3 * 40)))
+            point = monster.get_render_rect(mape)["midbottom"]
+            expected = int(50 + (1 + feet_offset(key)) * 40)
+            self.assertEqual(point, (100 + 2 * 40, expected), key)
 
 
 class AnimateCreaturesTests(unittest.TestCase):
@@ -178,7 +181,7 @@ class AnimateCreaturesTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         monster = self.monster(True, False)
-        monster.walk = WalkAnimation(fake_frames())
+        monster.walk = WalkAnimation(fake_frames(), 1.3)
         controller = self.controller()
         controller.Skeleton = monster
         animate_creatures(controller)
@@ -231,7 +234,7 @@ class SteveTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         steve = SimpleNamespace(
-            x=0.0, y=0.0, image="old", walk=WalkAnimation(fake_frames())
+            x=0.0, y=0.0, image="old", walk=WalkAnimation(fake_frames(), 1.3)
         )
         monster = SimpleNamespace(live=False)
         controller: Any = SimpleNamespace(
@@ -280,7 +283,7 @@ class FrightenedLookTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         return SimpleNamespace(
-            walk=WalkAnimation(fake_frames()), image="old"
+            walk=WalkAnimation(fake_frames(), 1.3), image="old"
         )
 
     def test_fear_switches_to_the_blue_look(self) -> None:

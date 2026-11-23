@@ -2,7 +2,7 @@
 from .creature import Creature
 from ..block import Mape, Block
 from .step_probe import probe_cell
-from .sprite_frames import ENTITY_HEIGHTS, frame_set
+from .sprite_frames import ENTITY_HEIGHTS, feet_offset, frame_set
 from .walk_animation import WalkAnimation
 from photos.loderimages import Images
 import pygame
@@ -101,7 +101,7 @@ class Player(Creature):
         """
         height = round(Block.size * ENTITY_HEIGHTS["steve"])
         self.walk = WalkAnimation(
-            frame_set(Images.steve_frames, height)
+            frame_set(Images.steve_frames, height), feet_offset("steve")
             # 2.8 just on this photo so its temp it was 1.8
         )
         self.image = self.walk.current(False)
