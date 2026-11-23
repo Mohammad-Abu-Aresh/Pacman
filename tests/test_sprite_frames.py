@@ -10,12 +10,15 @@ os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 from game.block import Block  # noqa: E402
 from game.creature import sprite_frames as frames_module  # noqa: E402
 from game.creature.sprite_frames import (  # noqa: E402
+    BLOCK_TOP_OFFSET,
     ENTITY_HEIGHTS,
     FRONT_WIDTH_CAP,
+    GROUND_FRACTION,
     SIDE_WIDTH_CAP,
     FrameSet,
     Look,
     build_frames,
+    feet_offset,
     frame_scale,
     frame_set,
     paste_position,
@@ -100,6 +103,54 @@ class FrameGeometryTests(unittest.TestCase):
         """
         spot = paste_position((100, 260, 500, 460), (60, 100), (0.1, 0.2))
         self.assertEqual(spot, (round(30 + (100 - 230) * 0.1), 0))
+
+
+class FeetOffsetTests(unittest.TestCase):
+    def test_fractions_follow_the_requested_sinking(self) -> None:
+        """Verify how much of each body is hidden behind the block below.
+        A fifth for the people, a quarter for the baby, a sixth for Enderman.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(GROUND_FRACTION["steve"], 0.2)
+        self.assertEqual(GROUND_FRACTION["skeleton"], 0.2)
+        self.assertEqual(GROUND_FRACTION["witch"], 0.2)
+        self.assertEqual(GROUND_FRACTION["zombie"], 0.25)
+        self.assertAlmostEqual(GROUND_FRACTION["enderman"], 1 / 6)
+
+    def test_the_part_below_the_block_top_is_the_fraction_of_the_body(
+        self
+    ) -> None:
+        """Verify the sunk part divided by the height is the fraction.
+        Check every creature kind in the table.
+        made by: Mohammad Abu Aresh
+        """
+        for kind, fraction in GROUND_FRACTION.items():
+            sunk = feet_offset(kind) - BLOCK_TOP_OFFSET
+            self.assertAlmostEqual(sunk / ENTITY_HEIGHTS[kind], fraction)
+
+    def test_every_creature_has_a_size_and_a_fraction(self) -> None:
+        """Verify both tables describe the same five creatures.
+        A missing entry would break the sprite loading.
+        made by: Mohammad Abu Aresh
+        """
+        self.assertEqual(set(GROUND_FRACTION), set(ENTITY_HEIGHTS))
+
+    def test_the_tall_creature_sinks_less_than_the_others(self) -> None:
+        """Verify the Enderman hides the smallest part of its body.
+        Compare it with the people and the baby zombie.
+        made by: Mohammad Abu Aresh
+        """
+        enderman = GROUND_FRACTION["enderman"]
+        for kind in ("steve", "skeleton", "witch", "zombie"):
+            self.assertLess(enderman, GROUND_FRACTION[kind])
+
+    def test_feet_are_always_below_the_top_of_the_next_block(self) -> None:
+        """Verify every creature sinks into the block under its cell.
+        The feet offset must exceed the block top offset.
+        made by: Mohammad Abu Aresh
+        """
+        for kind in GROUND_FRACTION:
+            self.assertGreater(feet_offset(kind), BLOCK_TOP_OFFSET)
 
 
 class ViewScaleTests(unittest.TestCase):

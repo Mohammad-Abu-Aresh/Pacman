@@ -3,6 +3,11 @@ import math
 import pygame
 from ..block import Block
 
+BLOCK_TOP_OFFSET = 1.39
+GROUND_FRACTION = {
+    "steve": 0.2, "zombie": 0.25, "skeleton": 0.2,
+    "witch": 0.2, "enderman": 1 / 6,
+}
 FRONT_WIDTH_CAP = 0.75
 SIDE_WIDTH_CAP = 1.0
 ENTITY_HEIGHTS = {
@@ -19,6 +24,15 @@ TINT_ADD = (10, 20, 60, 0)
 RIGHT_CYCLE = ("_r_front", "_r_stoped", "_r_back", "_r_stoped")
 FrameBox = tuple[int, int, int, int]
 Scale = tuple[float, float]
+
+
+def feet_offset(kind: str) -> float:
+    """
+    Return how far below its cell the feet of a creature are drawn.
+    Hide the given part of the body behind the block under the cell.
+    made by: Mohammad Abu Aresh
+    """
+    return BLOCK_TOP_OFFSET + GROUND_FRACTION[kind] * ENTITY_HEIGHTS[kind]
 
 
 def frame_scale(target_height: float, reference_height: float) -> float:
