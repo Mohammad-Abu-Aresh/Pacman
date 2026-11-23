@@ -5,17 +5,9 @@ set -e
 python3 -m PyInstaller \
     --noconfirm \
     --clean \
-    --onedir \
+    --onefile \
     --name pacman \
+    --collect-all mazegenerator \
+    --add-data "config.json:." \
+    --add-data "photos:photos" \
     pac-man.py
-
-cp -r assets dist/pacman/assets
-cp config.example.json dist/pacman/config.json
-
-cat > dist/pacman/run-pacman.sh <<'EOF'
-#!/usr/bin/env bash
-cd "$(dirname "$0")"
-exec ./pacman config.json
-EOF
-
-chmod +x dist/pacman/run-pacman.sh
