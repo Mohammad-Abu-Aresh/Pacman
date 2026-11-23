@@ -3,16 +3,22 @@ import math
 import pygame
 from ..block import Block
 
-FRONT_WIDTH_CAP = 0.95
+FRONT_WIDTH_CAP = 0.75
+SIDE_WIDTH_CAP = 1.0
 ENTITY_HEIGHTS = {
     "steve": 1.8, "zombie": 0.975, "skeleton": 1.99,
     "witch": 1.95, "enderman": 2.9,
 }
-CAPPED_VIEWS = (("", "_walking"), ("_up", "_up_walking"))
+VIEW_CAPS = (
+    (("", "_walking"), FRONT_WIDTH_CAP),
+    (("_up", "_up_walking"), FRONT_WIDTH_CAP),
+    (("_r_stoped", "_r_front", "_r_back"), SIDE_WIDTH_CAP),
+)
 TINT_MULTIPLY = (120, 150, 255, 255)
 TINT_ADD = (10, 20, 60, 0)
 RIGHT_CYCLE = ("_r_front", "_r_stoped", "_r_back", "_r_stoped")
 FrameBox = tuple[int, int, int, int]
+Scale = tuple[float, float]
 
 
 def frame_scale(target_height: float, reference_height: float) -> float:
@@ -25,37 +31,40 @@ def frame_scale(target_height: float, reference_height: float) -> float:
 
 
 def view_scales(
-    boxes: dict[str, FrameBox], height: float, width_cap: float
-) -> dict[str, float]:
+    boxes: dict[str, FrameBox], height: float, block: int
+) -> dict[str, Scale]:
     """
-    Choose the scale of every frame so all of them share one height.
-    Shrink the front and back views together when they exceed the cap.
+    Choose the horizontal and vertical scale of every frame.
+    Keep one height and slim a view only when it is wider than its cap.
     made by: Mohammad Abu Aresh
     """
-    scales = {name: frame_scale(height, box[2]) for name, box in boxes.items()}
-    for group in CAPPED_VIEWS:
-        widest = max(boxes[name][1] * scales[name] for name in group)
-        for name in group:
-            scales[name] *= min(1.0, width_cap / widest)
-    return scales
+    heights = {n: frame_scale(height, box[2]) for n, box in boxes.items()}
+    widths = dict(heights)
+    for group, cap in VIEW_CAPS:
+        names = [name for name in group if name in boxes]
+        if names:
+            widest = max(boxes[name][1] * widths[name] for name in names)
+            for name in names:
+                widths[name] *= min(1.0, cap * block / widest)
+    return {name: (widths[name], heights[name]) for name in boxes}
 
 
-def sheet_size(items: list[tuple[FrameBox, float]]) -> tuple[int, int]:
+def sheet_size(items: list[tuple[FrameBox, Scale]]) -> tuple[int, int]:
     """
     Compute the common size of all frames of one creature.
     Each item holds a box with its left edge, width, height and canvas
     made by: Mohammad Abu Aresh
     """
     half = max(
-        max(abs(left - canvas / 2), abs(left + width - canvas / 2)) * scale
+        max(abs(left - canvas / 2), abs(left + width - canvas / 2)) * scale[0]
         for (left, width, _, canvas), scale in items
     )
-    height = max(box[2] * scale for box, scale in items)
+    height = max(box[2] * scale[1] for box, scale in items)
     return 2 * math.ceil(half), math.ceil(height)
 
 
 def paste_position(
-    box: FrameBox, size: tuple[int, int], scale: float
+    box: FrameBox, size: tuple[int, int], scale: Scale
 ) -> tuple[int, int]:
     """
     Compute where a cropped frame is placed on the common sheet.
@@ -63,8 +72,8 @@ def paste_position(
     made by: Mohammad Abu Aresh
     """
     left, _, height, canvas = box
-    x = size[0] / 2 + (left - canvas / 2) * scale
-    return round(x), size[1] - round(height * scale)
+    x = size[0] / 2 + (left - canvas / 2) * scale[0]
+    return round(x), size[1] - round(height * scale[1])
 
 
 def tint_frame(frame: pygame.Surface) -> pygame.Surface:
@@ -119,7 +128,7 @@ _CACHE: dict[tuple[int, int, int], FrameSet] = {}
 
 
 def build_frames(
-    raw: dict[str, pygame.Surface], height: int, width_cap: int
+    raw: dict[str, pygame.Surface], height: int, block: int
 ) -> dict[str, pygame.Surface]:
     """
     Crop, scale and align the raw frames of one creature.
@@ -134,14 +143,14 @@ def build_frames(
         name: (rect.x, rect.w, rect.h, raw[name].get_width())
         for name, rect in rects.items()
     }
-    scales = view_scales(boxes, height, width_cap)
+    scales = view_scales(boxes, height, block)
     size = sheet_size([(boxes[name], scales[name]) for name in boxes])
     frames: dict[str, pygame.Surface] = {}
     for name, image in raw.items():
         box, scale = boxes[name], scales[name]
         part = pygame.transform.smoothscale(
             image.subsurface(rects[name]),
-            (round(box[1] * scale), round(box[2] * scale)),
+            (round(box[1] * scale[0]), round(box[2] * scale[1])),
         )
         sheet = pygame.Surface(size, pygame.SRCALPHA)
         sheet.blit(part, paste_position(box, size, scale))
@@ -155,8 +164,7 @@ def frame_set(raw: dict[str, pygame.Surface], height: int) -> FrameSet:
     Rebuild it only when the block size changes the height.
     made by: Mohammad Abu Aresh
     """
-    width_cap = round(Block.size * FRONT_WIDTH_CAP)
-    key = (id(raw), height, width_cap)
+    key = (id(raw), height, Block.size)
     if key not in _CACHE:
-        _CACHE[key] = FrameSet(build_frames(raw, height, width_cap))
+        _CACHE[key] = FrameSet(build_frames(raw, height, Block.size))
     return _CACHE[key]

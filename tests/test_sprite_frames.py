@@ -12,6 +12,7 @@ from game.creature import sprite_frames as frames_module  # noqa: E402
 from game.creature.sprite_frames import (  # noqa: E402
     ENTITY_HEIGHTS,
     FRONT_WIDTH_CAP,
+    SIDE_WIDTH_CAP,
     FrameSet,
     Look,
     build_frames,
@@ -63,10 +64,21 @@ class FrameGeometryTests(unittest.TestCase):
         The farthest edge from the center decides the width.
         made by: Mohammad Abu Aresh
         """
-        items = [((100, 260, 488, 460), 0.2), ((91, 320, 479, 460), 0.2)]
+        items = [
+            ((100, 260, 488, 460), (0.2, 0.2)),
+            ((91, 320, 479, 460), (0.2, 0.2)),
+        ]
         width, height = sheet_size(items)
         self.assertEqual(width, 2 * 37)
         self.assertEqual(height, 98)
+
+    def test_sheet_uses_both_axes_of_a_slimmed_frame(self) -> None:
+        """Verify a slimmed frame is measured with its own two scales.
+        The width follows the horizontal scale and the height the vertical.
+        made by: Mohammad Abu Aresh
+        """
+        width, height = sheet_size([((100, 260, 500, 460), (0.1, 0.2))])
+        self.assertEqual((width, height), (2 * 13, 100))
 
     def test_frames_keep_the_body_center_and_the_feet(self) -> None:
         """Verify a frame is pasted around the center with feet down.
@@ -74,31 +86,39 @@ class FrameGeometryTests(unittest.TestCase):
         made by: Mohammad Abu Aresh
         """
         size = (56, 98)
-        narrow = paste_position((100, 260, 488, 460), size, 0.2)
+        narrow = paste_position((100, 260, 488, 460), size, (0.2, 0.2))
         self.assertEqual(
             narrow, (round(28 + (100 - 230) * 0.2), 98 - round(488 * 0.2))
         )
-        reaching = paste_position((150, 262, 506, 460), size, 0.2)
+        reaching = paste_position((150, 262, 506, 460), size, (0.2, 0.2))
         self.assertEqual(reaching[1], 98 - round(506 * 0.2))
+
+    def test_slimmed_frames_move_closer_to_the_center(self) -> None:
+        """Verify the horizontal scale shrinks the distance to the center.
+        The vertical scale only decides the feet position.
+        made by: Mohammad Abu Aresh
+        """
+        spot = paste_position((100, 260, 500, 460), (60, 100), (0.1, 0.2))
+        self.assertEqual(spot, (round(30 + (100 - 230) * 0.1), 0))
 
 
 class ViewScaleTests(unittest.TestCase):
-    def heights_and_widths(
-        self, boxes: Any, height: int, cap: int
+    def shown(
+        self, boxes: Any, height: int, block: int
     ) -> dict[str, tuple[float, float]]:
-        """Return the final height and width in pixels of every frame.
-        Use the scales chosen for the given target height and cap.
+        """Return the final width and height in pixels of every frame.
+        Use the two scales chosen for the target height and block.
         made by: Mohammad Abu Aresh
         """
-        scales = view_scales(boxes, height, cap)
+        scales = view_scales(boxes, height, block)
         return {
-            name: (box[2] * scales[name], box[1] * scales[name])
+            name: (box[1] * scales[name][0], box[2] * scales[name][1])
             for name, box in boxes.items()
         }
 
     def test_minecraft_heights_are_used_for_every_creature(self) -> None:
         """Verify the entity heights follow the real Minecraft sizes.
-        Steve is 1.8 blocks and the front cap is below one block.
+        Steve is 1.8 blocks and both caps are one block or less.
         made by: Mohammad Abu Aresh
         """
         self.assertEqual(ENTITY_HEIGHTS["steve"], 1.8)
@@ -106,63 +126,87 @@ class ViewScaleTests(unittest.TestCase):
         self.assertEqual(ENTITY_HEIGHTS["skeleton"], 1.99)
         self.assertEqual(ENTITY_HEIGHTS["witch"], 1.95)
         self.assertEqual(ENTITY_HEIGHTS["enderman"], 2.9)
-        self.assertLess(FRONT_WIDTH_CAP, 1.0)
+        self.assertEqual(FRONT_WIDTH_CAP, 0.75)
+        self.assertEqual(SIDE_WIDTH_CAP, 1.0)
 
-    def test_frames_share_one_height_without_a_cap(self) -> None:
-        """Verify every frame is brought to the same height.
-        A very large cap leaves the height rule alone.
+    def test_every_frame_keeps_exactly_the_target_height(self) -> None:
+        """Verify slimming never changes the height of a frame.
+        Check all seven frames of Steve with a block of sixty four.
         made by: Mohammad Abu Aresh
         """
-        shown = self.heights_and_widths(STEVE_BOXES, 115, 10000)
-        for height, _ in shown.values():
-            self.assertAlmostEqual(height, 115)
+        for name, (_, height) in self.shown(STEVE_BOXES, 115, 64).items():
+            self.assertAlmostEqual(height, 115, msg=name)
 
-    def test_steve_front_and_back_stay_under_one_block(self) -> None:
-        """Verify Steve is narrower than a block facing front or back.
-        Check all four frames with a block of sixty four pixels.
+    def test_steve_front_and_back_are_slimmed_to_the_cap(self) -> None:
+        """Verify Steve is no wider than three quarters of a block.
+        Check the four front and back frames.
         made by: Mohammad Abu Aresh
         """
-        cap = round(64 * FRONT_WIDTH_CAP)
-        shown = self.heights_and_widths(STEVE_BOXES, round(64 * 1.8), cap)
+        shown = self.shown(STEVE_BOXES, 115, 64)
+        cap = 64 * FRONT_WIDTH_CAP
         for name in ("", "_walking", "_up", "_up_walking"):
-            self.assertLessEqual(shown[name][1], cap + 1e-6)
-            self.assertLess(shown[name][1], 64)
+            self.assertLessEqual(shown[name][0], cap + 1e-6, msg=name)
+        names = ("", "_walking", "_up", "_up_walking")
+        widest = max(shown[name][0] for name in names)
+        self.assertAlmostEqual(widest, cap)
 
-    def test_capping_keeps_both_frames_of_a_view_equal(self) -> None:
-        """Verify the standing and walking frames keep one height.
-        The size must not jump between the two steps of a view.
+    def test_both_frames_of_a_view_share_the_slimming(self) -> None:
+        """Verify the standing and walking frames keep their proportions.
+        The width must not jump between the two steps of a view.
         made by: Mohammad Abu Aresh
         """
-        shown = self.heights_and_widths(STEVE_BOXES, 115, 61)
-        self.assertAlmostEqual(shown[""][0], shown["_walking"][0])
-        self.assertAlmostEqual(shown["_up"][0], shown["_up_walking"][0])
+        scales = view_scales(STEVE_BOXES, 115, 64)
+        self.assertAlmostEqual(
+            scales[""][0] / scales[""][1],
+            scales["_walking"][0] / scales["_walking"][1],
+        )
+        self.assertAlmostEqual(
+            scales["_up"][0] / scales["_up"][1],
+            scales["_up_walking"][0] / scales["_up_walking"][1],
+        )
 
-    def test_capping_shrinks_steve_only_a_little(self) -> None:
-        """Verify the cap does not make Steve much shorter.
-        He must keep at least ninety percent of his height.
+    def test_a_looser_cap_gives_a_wider_creature(self) -> None:
+        """Verify the width follows the block size and the cap.
+        A bigger block lets the same creature be wider.
         made by: Mohammad Abu Aresh
         """
-        shown = self.heights_and_widths(STEVE_BOXES, 115, 61)
-        for name in ("", "_walking", "_up", "_up_walking"):
-            self.assertGreater(shown[name][0], 115 * 0.9)
+        small = self.shown(STEVE_BOXES, 115, 64)[""][0]
+        large = self.shown(STEVE_BOXES, 115, 128)[""][0]
+        self.assertGreater(large, small)
 
-    def test_side_views_are_never_capped(self) -> None:
-        """Verify the side frames keep the full height.
-        Only the front and back views have a width cap.
+    def test_wide_side_views_are_limited_to_one_block(self) -> None:
+        """Verify strided side frames are no wider than a block.
+        The three side frames share one slimming factor.
         made by: Mohammad Abu Aresh
         """
-        shown = self.heights_and_widths(STEVE_BOXES, 115, 40)
+        boxes = {
+            "_r_stoped": (0, 100, 500, 460),
+            "_r_front": (0, 400, 500, 460),
+            "_r_back": (0, 420, 500, 460),
+        }
+        shown = self.shown(boxes, 115, 64)
+        self.assertAlmostEqual(shown["_r_back"][0], 64)
+        scales = view_scales(boxes, 115, 64)
+        ratios = {round(sx / sy, 6) for sx, sy in scales.values()}
+        self.assertEqual(len(ratios), 1)
+
+    def test_side_views_below_the_cap_are_not_changed(self) -> None:
+        """Verify narrow side frames keep their natural proportions.
+        Steve is narrower than a block from the side.
+        made by: Mohammad Abu Aresh
+        """
+        scales = view_scales(STEVE_BOXES, 115, 64)
         for name in ("_r_stoped", "_r_front", "_r_back"):
-            self.assertAlmostEqual(shown[name][0], 115)
+            self.assertAlmostEqual(scales[name][0], scales[name][1])
 
-    def test_narrow_creatures_are_not_changed_by_the_cap(self) -> None:
-        """Verify a creature that is already narrow keeps its height.
+    def test_narrow_creatures_are_not_slimmed(self) -> None:
+        """Verify a creature that is already thin keeps its proportions.
         The zombie is far below the cap at its Minecraft height.
         made by: Mohammad Abu Aresh
         """
-        shown = self.heights_and_widths(ZOMBIE_BOXES, 62, 61)
-        for height, _ in shown.values():
-            self.assertAlmostEqual(height, 62)
+        scales = view_scales(ZOMBIE_BOXES, 62, 64)
+        for name, (sx, sy) in scales.items():
+            self.assertAlmostEqual(sx, sy, msg=name)
 
 
 class FrameBuildTests(unittest.TestCase):
@@ -222,7 +266,7 @@ class FrameBuildTests(unittest.TestCase):
         self.assertEqual(build.call_count, 2)
 
     def test_frame_sets_are_rebuilt_when_the_block_size_changes(self) -> None:
-        """Verify a new block size rebuilds the frames with a new cap.
+        """Verify a new block size rebuilds the frames for that block.
         The same height with another block size is a different set.
         made by: Mohammad Abu Aresh
         """
@@ -240,8 +284,8 @@ class FrameBuildTests(unittest.TestCase):
             frame_set(raw, 80)
             Block.size = 60
             frame_set(raw, 80)
-        self.assertEqual(build.call_args_list[0].args[2], 38)
-        self.assertEqual(build.call_args_list[1].args[2], 57)
+        self.assertEqual(build.call_args_list[0].args[2], 40)
+        self.assertEqual(build.call_args_list[1].args[2], 60)
 
     def test_every_built_frame_shares_one_sheet_and_one_height(self) -> None:
         """Verify all frames get the same sheet size and the same height.
