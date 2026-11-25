@@ -1,4 +1,5 @@
 from sys import stderr
+import sys
 
 
 if __name__ == "__main__":
@@ -10,13 +11,13 @@ if __name__ == "__main__":
         game.run()
     except ModuleNotFoundError as e:
         print(f"Module not found: {e}", file=stderr)
-        exit(1)
+        sys.exit(1)
     except Exception as e:
         print(e, file=stderr)
-        exit(1)
+        sys.exit(1)
     except BaseException as e:
         print(e, file=stderr)
-        exit(1)
+        sys.exit(1)
     except KeyboardInterrupt:
         print("Game interrupted by user.", file=stderr)
-        exit(1)
+        sys.exit(1)
