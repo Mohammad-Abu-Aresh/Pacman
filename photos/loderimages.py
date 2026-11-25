@@ -15,14 +15,14 @@ def _resolve_path(path):
     return path
 
 
-_original_load = pygame.image.load
+# _original_load = pygame.image.load
 
 
-def _patched_load(path, *args, **kwargs):
-    return _original_load(_resolve_path(path), *args, **kwargs)
+# def _patched_load(path, *args, **kwargs):
+#     return _original_load(_resolve_path(path), *args, **kwargs)
 
 
-pygame.image.load = _patched_load
+# pygame.image.load = _patched_load
 
 
 WALK_FRAME_NAMES = (
