@@ -4,15 +4,15 @@ import os
 import sys
 
 
-def _resolve_path(path):
-    if isinstance(path, str) and not os.path.isabs(path):
-        base = getattr(
-            sys,
-            "_MEIPASS",
-            os.path.dirname(os.path.abspath(__file__)),
-        )
-        return os.path.join(base, path)
-    return path
+# def _resolve_path(path):
+#     if isinstance(path, str) and not os.path.isabs(path):
+#         base = getattr(
+#             sys,
+#             "_MEIPASS",
+#             os.path.dirname(os.path.abspath(__file__)),
+#         )
+#         return os.path.join(base, path)
+#     return path
 
 
 # _original_load = pygame.image.load
