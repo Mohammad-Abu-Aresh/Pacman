@@ -4,25 +4,30 @@ import os
 import sys
 
 
-# def _resolve_path(path):
-#     if isinstance(path, str) and not os.path.isabs(path):
-#         base = getattr(
-#             sys,
-#             "_MEIPASS",
-#             os.path.dirname(os.path.abspath(__file__)),
-#         )
-#         return os.path.join(base, path)
-#     return path
+def _resolve_path(path):
+    if isinstance(path, str) and not os.path.isabs(path):
+        candidates = [
+            os.path.join(os.getcwd(), path),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), path),
+        ]
+        if hasattr(sys, "_MEIPASS"):
+            candidates.insert(0, os.path.join(sys._MEIPASS, path))
+
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                return candidate
+        return candidates[0]
+    return path
 
 
-# _original_load = pygame.image.load
+_original_load = pygame.image.load
 
 
-# def _patched_load(path, *args, **kwargs):
-#     return _original_load(_resolve_path(path), *args, **kwargs)
+def _patched_load(path, *args, **kwargs):
+    return _original_load(_resolve_path(path), *args, **kwargs)
 
 
-# pygame.image.load = _patched_load
+pygame.image.load = _patched_load
 
 
 WALK_FRAME_NAMES = (
